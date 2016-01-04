@@ -8,8 +8,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.adapters.DrugArrayAdapters;
+import it.dedonatis.emanuele.drugstore.models.Drug;
 
 public class DrugsActivity extends AppCompatActivity {
 
@@ -20,6 +26,8 @@ public class DrugsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setupDrugsView();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -28,6 +36,18 @@ public class DrugsActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void setupDrugsView() {
+        List<Drug> drugs = new ArrayList<Drug>();
+        drugs.add(new Drug("Aspirina"));
+        drugs.add(new Drug("Tachipirina"));
+        drugs.add(new Drug("Montelukast"));
+        drugs.add(new Drug("Revinty"));
+
+        ListView drugsListView = (ListView)findViewById(R.id.drugs_listView);
+        DrugArrayAdapters drugArrayAdapters = new DrugArrayAdapters(this, drugs);
+        drugsListView.setAdapter(drugArrayAdapters);
     }
 
     @Override
