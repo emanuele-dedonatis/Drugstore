@@ -1,6 +1,7 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -116,9 +117,12 @@ public class MainActivity extends AppCompatActivity
 
     private void setupPharmaciesView() {
 
-        final List<Pharmacy> pharmacies = Collections
-                .synchronizedList(new ArrayList<Pharmacy>());
+        final ProgressDialog progressDialog =
+                ProgressDialog.show(this,
+                        getResources().getString(R.string.wait),
+                        getResources().getString(R.string.loading_pharmacies), true, false);
 
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(API_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -128,7 +132,7 @@ public class MainActivity extends AppCompatActivity
 
         PharmacyRestService restService = retrofit.create(PharmacyRestService.class);
 
-        restService.getPharmacies("cap eq '66013'","json").enqueue(
+        restService.getPharmacies("cap eq '66100'","json").enqueue(
                 new Callback<Pharmacies>() {
 
                         @Override
@@ -139,6 +143,8 @@ public class MainActivity extends AppCompatActivity
                                 Log.v(LOG_TAG, pharmacies.size() + "");
                                 for(int i = 0; i < pharmacies.size(); i++)
                                     Log.v(LOG_TAG, i + ": " + pharmacies.get(i).toString());
+
+                                progressDialog.dismiss();
                             }else {
                                 Log.e(LOG_TAG, response.message());
                             }

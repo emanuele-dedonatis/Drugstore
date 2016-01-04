@@ -11,4 +11,7 @@
 
     <string name="drugs">Drugs</string>
     <string name="pharmacies">Pharmacies</string>
+
+    <string name="wait">Wait</string>
+    <string name="loading_pharmacies">Loading pharmacies ...</string>
 </resources>
