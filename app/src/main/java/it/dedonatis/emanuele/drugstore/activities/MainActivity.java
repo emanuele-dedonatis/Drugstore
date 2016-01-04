@@ -1,11 +1,14 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,14 +22,25 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.DrugArrayAdapters;
 import it.dedonatis.emanuele.drugstore.models.Drug;
+import it.dedonatis.emanuele.drugstore.models.Pharmacy;
+import it.dedonatis.emanuele.drugstore.rest.PharmacyRestService;
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
+import retrofit.SimpleXmlConverterFactory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    final static String LOG_TAG = MainActivity.class.getSimpleName();
+    final static String API_BASE_URL = "http://opendatasalutedata.cloudapp.net";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +49,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setupDrugsView();
+        //setupDrugsView();
+
+        setupPharmaciesView();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +115,51 @@ public class MainActivity extends AppCompatActivity
         drugsListView.setAdapter(drugArrayAdapters);
     }
 
+
+    private void setupPharmaciesView() {
+
+        final List<Pharmacy> pharmacies = Collections
+                .synchronizedList(new ArrayList<Pharmacy>());
+/*
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(API_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();*/
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(API_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+
+
+        PharmacyRestService restService = retrofit.create(PharmacyRestService.class);
+
+        restService.getPharmacy("", "json").enqueue(
+                new Callback<Pharmacy>() {
+
+                        @Override
+                        public void onResponse(Response<Pharmacy> response,
+                                               Retrofit retrofit) {
+                            if(response.isSuccess()) {
+                                Pharmacy pharmacy = response.body();
+                                Log.v(LOG_TAG, pharmacy.toString());
+
+                            }else {
+                                Log.e(LOG_TAG, response.message());
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            Log.v(LOG_TAG, "FAIL: " + t.toString());
+                        }
+                    });
+
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -137,20 +198,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_drugs) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_pharmacies) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
