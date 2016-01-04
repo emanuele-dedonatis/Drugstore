@@ -1,9 +1,7 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,6 +26,7 @@ import java.util.List;
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.DrugArrayAdapters;
 import it.dedonatis.emanuele.drugstore.models.Drug;
+import it.dedonatis.emanuele.drugstore.models.Pharmacies;
 import it.dedonatis.emanuele.drugstore.models.Pharmacy;
 import it.dedonatis.emanuele.drugstore.rest.PharmacyRestService;
 import retrofit.Callback;
@@ -35,7 +34,6 @@ import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
-import retrofit.SimpleXmlConverterFactory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -120,12 +118,6 @@ public class MainActivity extends AppCompatActivity
 
         final List<Pharmacy> pharmacies = Collections
                 .synchronizedList(new ArrayList<Pharmacy>());
-/*
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();*/
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(API_BASE_URL)
@@ -136,16 +128,17 @@ public class MainActivity extends AppCompatActivity
 
         PharmacyRestService restService = retrofit.create(PharmacyRestService.class);
 
-        restService.getPharmacy("", "json").enqueue(
-                new Callback<Pharmacy>() {
+        restService.getPharmacies("cap eq '66013'","json").enqueue(
+                new Callback<Pharmacies>() {
 
                         @Override
-                        public void onResponse(Response<Pharmacy> response,
+                        public void onResponse(Response<Pharmacies> response,
                                                Retrofit retrofit) {
                             if(response.isSuccess()) {
-                                Pharmacy pharmacy = response.body();
-                                Log.v(LOG_TAG, pharmacy.toString());
-
+                                Pharmacies pharmacies = response.body();
+                                Log.v(LOG_TAG, pharmacies.size() + "");
+                                for(int i = 0; i < pharmacies.size(); i++)
+                                    Log.v(LOG_TAG, i + ": " + pharmacies.get(i).toString());
                             }else {
                                 Log.e(LOG_TAG, response.message());
                             }

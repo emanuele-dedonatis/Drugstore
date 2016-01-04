@@ -7,39 +7,39 @@ public class Pharmacy {
 
     @Expose
     @SerializedName("indirizzo")
-    private String indirizzo = "Piazzale Tricalle, 14";
+    private String indirizzo = "indirizzo";
 
     @Expose
     @SerializedName("descrizionefarmacia")
-    private String descrizione = "COMUNALE N.3";
+    private String descrizione = "descrizione";
 
     @Expose
     @SerializedName("cap")
-    private int cap = 66100;
+    private String cap = "00000";
 
     @Expose
     @SerializedName("descrizionecomune")
-    private String comune = "CHIETI";
+    private String comune = "comune";
 
     @Expose
     @SerializedName("siglaprovincia")
-    private String siglaProvincia = "CH";
+    private String siglaProvincia = "pv";
 
     @Expose
     @SerializedName("descrizioneprovincia")
-    private String provincia = "CHIETI";
+    private String provincia = "provincia";
 
     @Expose
     @SerializedName("descrizioneregione")
-    private String regione = "ABRUZZO";
+    private String regione = "regione";
 
     @Expose
     @SerializedName("latitudine")
-    private String lat = "42,3286083100631";
+    private String lat = "0";
 
     @Expose
     @SerializedName("longitudine")
-    private String lon = "14,0803173884522";
+    private String lon = "0";
 
     public Pharmacy() {}
 
