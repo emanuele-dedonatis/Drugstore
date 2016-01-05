@@ -163,6 +163,25 @@ public class DrugProvider extends ContentProvider{
         switch (match) {
             case DRUGS: {
                 long _id = db.insertWithOnConflict(DrugEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                if(_id < 0) {
+                    String selection = DrugEntry.TABLE_NAME + "." + DrugEntry.COLUMN_NAME + " = ?";
+                    String[] selectionArgs = new String[]{values.getAsString(DrugContract.DrugEntry.COLUMN_NAME)};
+
+                    Cursor cursor = mOpenHelper.getReadableDatabase().query(
+                            DrugEntry.TABLE_NAME,
+                            null,
+                            selection,
+                            selectionArgs,
+                            null,
+                            null,
+                            null
+                    );
+
+                    if (cursor.moveToFirst())
+                        _id = cursor.getLong(0);
+
+                    cursor.close();
+                }
                 returnUri = DrugEntry.buildDrugUri(_id);
                 break;
             }

@@ -1,5 +1,6 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
+import android.content.ContentUris;
 import android.support.v4.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
@@ -138,14 +139,40 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         values2.put(DrugContract.DrugEntry.COLUMN_NAME, "Ventolin");
         values2.put(DrugContract.DrugEntry.COLUMN_API, "Salbutamolo");
 
-            getContext().getContentResolver().insert(
-                    DrugContract.DrugEntry.CONTENT_URI,
-                    values1
-            );
-            getContext().getContentResolver().insert(
-                    DrugContract.DrugEntry.CONTENT_URI,
-                    values2
-            );
+        Uri tachipirinaUri = getContext().getContentResolver().insert(
+                DrugContract.DrugEntry.CONTENT_URI,
+                values1
+        );
+        Uri ventolinUri = getContext().getContentResolver().insert(
+                DrugContract.DrugEntry.CONTENT_URI,
+                values2
+        );
+
+        ContentValues tachipirinaPackage = new ContentValues();
+        tachipirinaPackage.put(DrugContract.PackageEntry._ID, 1);
+        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_DRUG, ContentUris.parseId(tachipirinaUri));
+        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, "Bustine 100mg");
+        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_UNITS, 10);
+        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_UNITS_LEFT, 8);
+        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, 20160405);
+
+        Uri pckTachipirinaUri = getContext().getContentResolver().insert(
+                DrugContract.PackageEntry.CONTENT_URI,
+                tachipirinaPackage
+        );
+
+        ContentValues ventolinPackage = new ContentValues();
+        ventolinPackage.put(DrugContract.PackageEntry._ID, 4);
+        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_DRUG, ContentUris.parseId(ventolinUri));
+        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, "Pillole 5mg");
+        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_UNITS, 20);
+        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_UNITS_LEFT, 10);
+        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, 20160101);
+
+        Uri pckVentolinUri = getContext().getContentResolver().insert(
+                DrugContract.PackageEntry.CONTENT_URI,
+                ventolinPackage
+        );
 
         return;
     }
