@@ -3,9 +3,11 @@ package it.dedonatis.emanuele.drugstore.activities;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +28,8 @@ import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.DrugArrayAdapters;
+import it.dedonatis.emanuele.drugstore.fragments.DrugDetailFragment;
+import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.models.Drug;
 import it.dedonatis.emanuele.drugstore.models.Pharmacies;
 import it.dedonatis.emanuele.drugstore.models.Pharmacy;
@@ -37,7 +41,7 @@ import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
     final static String LOG_TAG = MainActivity.class.getSimpleName();
     final static String API_BASE_URL = "http://opendatasalutedata.cloudapp.net";
 
@@ -50,16 +54,7 @@ public class MainActivity extends AppCompatActivity
 
         //setupDrugsView();
 
-        setupPharmaciesView();
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        //setupPharmaciesView();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -69,8 +64,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (findViewById(R.id.main_fragment_container_master) != null) {
+
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            DrugsListFragment listFragment = DrugsListFragment.newInstance("PROVA TESTO LISTA");
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.main_fragment_container_master, listFragment).commit();
+        }
     }
 
+    /*
     private void setupDrugsView() {
         final List<Drug> drugs = new ArrayList<Drug>();
         drugs.add(new Drug("Aspirina"));
@@ -132,7 +140,8 @@ public class MainActivity extends AppCompatActivity
 
         PharmacyRestService restService = retrofit.create(PharmacyRestService.class);
 
-        restService.getPharmacies("cap eq '66100'","json").enqueue(
+        String descrizionecomune = "CHIETI";
+        restService.getPharmacies("descrizionecomune eq '"+ descrizionecomune + "'","json").enqueue(
                 new Callback<Pharmacies>() {
 
                         @Override
@@ -158,7 +167,7 @@ public class MainActivity extends AppCompatActivity
                     });
 
     }
-
+    */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -205,5 +214,18 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onDrugSelected(String id) {
+// Create fragment and give it an argument specifying the article it should show
+        DrugDetailFragment newFragment = DrugDetailFragment.newInstance(id);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.main_fragment_container_master, newFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
     }
 }

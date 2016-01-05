@@ -26,7 +26,7 @@ public class DrugArrayAdapters extends ArrayAdapter<Drug>{
         // NAME
         // number of packages
         // -------------------
-
+/*
         Drug drug = getItem(position);
         DrugViewHolder drugViewHolder;
 
@@ -50,7 +50,7 @@ public class DrugArrayAdapters extends ArrayAdapter<Drug>{
 
         drugViewHolder.nameTextView.setText(drug.getName());
         drugViewHolder.numPackagesTextView.setText(drug.getPackages().size() + " packages");
-
+*/
         return convertView;
     }
 
