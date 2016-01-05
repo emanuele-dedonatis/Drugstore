@@ -4,7 +4,7 @@
     <string name="hello_user">Dear user</string>
     <string name="confirm">Va bene</string>
     <string name="click_on_movie">You have just clicked on %1$s with %2$s packages of %1$s</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_drugs">Drugs</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

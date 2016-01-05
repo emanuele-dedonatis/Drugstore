@@ -1,15 +1,9 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,31 +13,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.adapters.DrugArrayAdapters;
 import it.dedonatis.emanuele.drugstore.fragments.DrugDetailFragment;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
-import it.dedonatis.emanuele.drugstore.models.Drug;
-import it.dedonatis.emanuele.drugstore.models.Pharmacies;
-import it.dedonatis.emanuele.drugstore.models.Pharmacy;
-import it.dedonatis.emanuele.drugstore.rest.PharmacyRestService;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
 
-public class MainActivity extends AppCompatActivity
+public class DrugsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
-    final static String LOG_TAG = MainActivity.class.getSimpleName();
+    final static String LOG_TAG = DrugsActivity.class.getSimpleName();
     final static String API_BASE_URL = "http://opendatasalutedata.cloudapp.net";
+
+    boolean mDualPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +45,21 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
         if (findViewById(R.id.main_fragment_container_master) != null) {
+
+            View slaveFrame = findViewById(R.id.main_fragment_container_slave);
+
+            mDualPane = slaveFrame != null
+                    && slaveFrame.getVisibility() == View.VISIBLE;
 
             if (savedInstanceState != null) {
                 return;
@@ -76,6 +70,7 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.main_fragment_container_master, listFragment).commit();
         }
+
     }
 
     /*
@@ -95,7 +90,7 @@ public class MainActivity extends AppCompatActivity
                 Drug drug = drugs.get(position);
 
                 AlertDialog.Builder alertDialogBuilder =
-                        new AlertDialog.Builder(MainActivity.this);
+                        new AlertDialog.Builder(DrugsActivity.this);
 
                 CharSequence message = Html.fromHtml(
                         String.format(getResources().getString(R.string.click_on_movie),
@@ -218,13 +213,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDrugSelected(String id) {
-// Create fragment and give it an argument specifying the article it should show
-        DrugDetailFragment newFragment = DrugDetailFragment.newInstance(id);
+
+        DrugDetailFragment detailFragment = DrugDetailFragment.newInstance(id);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        transaction.replace(R.id.main_fragment_container_master, newFragment);
-        transaction.addToBackStack(null);
+        if(mDualPane)
+            transaction.replace(R.id.main_fragment_container_slave, detailFragment);
+        else {
+            transaction.replace(R.id.main_fragment_container_master, detailFragment);
+            transaction.addToBackStack(null);
+        }
+
 
         transaction.commit();
     }
