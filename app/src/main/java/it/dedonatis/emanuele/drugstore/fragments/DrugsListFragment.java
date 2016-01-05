@@ -1,30 +1,43 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
+import android.support.v4.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
+import android.support.v4.content.CursorLoader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
+import android.widget.ListView;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.models.Drug;
+import it.dedonatis.emanuele.drugstore.adapters.DrugsCursorAdapter;
+import it.dedonatis.emanuele.drugstore.data.DrugContract;
 
-public class DrugsListFragment extends Fragment {
+public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = DrugsListFragment.class.getSimpleName();
+    private static final int DRUG_LOADER = 0;
+
     private static final String ARG_TEXT = "arg_text";
 
     private String mParamText;
 
     private OnDrugSelectionListener mListener;
+    private DrugsCursorAdapter drugsCursorAdapter;
+
+    private static final String[] DRUG_COLUMNS = {
+            DrugContract.DrugEntry.TABLE_NAME + "." + DrugContract.DrugEntry._ID,
+            DrugContract.DrugEntry.COLUMN_NAME,
+            DrugContract.DrugEntry.COLUMN_API
+    };
+    public static final int COL_DRUG_ID = 0;
+    public static final int COL_DRUG_NAME = 1;
+    public static final int COL_DRUG_API = 2;
 
     public DrugsListFragment() {
         // Required empty public constructor
@@ -41,10 +54,12 @@ public class DrugsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getLoaderManager().initLoader(DRUG_LOADER, null, this);
         if (getArguments() != null) {
             mParamText = getArguments().getString(ARG_TEXT);
             Log.v(LOG_TAG, mParamText);
         }
+        populateDb();
     }
 
     @Override
@@ -53,22 +68,13 @@ public class DrugsListFragment extends Fragment {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_drug_list, container, false);
 
-        TextView tv = (TextView) fragmentView.findViewById(R.id.drug_list_tv);
-        tv.setText(mParamText);
+        Cursor cursor = getContext().getContentResolver().query(DrugContract.DrugEntry.CONTENT_URI, DRUG_COLUMNS,null,null,null);
+        //Log.v(LOG_TAG, DatabaseUtils.dumpCursorToString(cursor));
 
-        Button btn1 = (Button) fragmentView.findViewById(R.id.button1);
-        btn1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mListener.onDrugSelected("BUTTON 1");
-            }
-        });
-
-        Button btn2 = (Button) fragmentView.findViewById(R.id.button2);
-        btn2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mListener.onDrugSelected("BUTTON 2");
-            }
-        });
+        ListView drugLv = (ListView) fragmentView.findViewById(R.id.drugs_listview);
+        drugsCursorAdapter = new DrugsCursorAdapter(getActivity(), cursor);
+        drugLv.setAdapter(drugsCursorAdapter);
+        cursor.close();
 
         return  fragmentView;
     }
@@ -96,7 +102,52 @@ public class DrugsListFragment extends Fragment {
         mListener = null;
     }
 
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        String sortOrder = DrugContract.DrugEntry.COLUMN_NAME + " ASC";
+
+        Uri drugsUri = DrugContract.DrugEntry.CONTENT_URI;
+
+        return new CursorLoader(getActivity(),  drugsUri, DRUG_COLUMNS, null, null, sortOrder);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        drugsCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        drugsCursorAdapter.swapCursor(null);
+    }
+
     public interface OnDrugSelectionListener {
         void onDrugSelected(String id);
     }
+
+    private void populateDb() {
+
+        ContentValues values1 = new ContentValues();
+        values1.put(DrugContract.DrugEntry.COLUMN_NAME, "Tachipirina");
+        values1.put(DrugContract.DrugEntry.COLUMN_API, "Paracetamolo");
+
+
+        ContentValues values2 = new ContentValues();
+        values2.put(DrugContract.DrugEntry.COLUMN_NAME, "Ventolin");
+        values2.put(DrugContract.DrugEntry.COLUMN_API, "Salbutamolo");
+
+            getContext().getContentResolver().insert(
+                    DrugContract.DrugEntry.CONTENT_URI,
+                    values1
+            );
+            getContext().getContentResolver().insert(
+                    DrugContract.DrugEntry.CONTENT_URI,
+                    values2
+            );
+
+        return;
+    }
+
 }

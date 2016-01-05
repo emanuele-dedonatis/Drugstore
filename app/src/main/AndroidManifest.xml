@@ -18,6 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="it.drugstore.app"
+            android:name=".data.DrugProvider"
+            android:enabled="true"
+            />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

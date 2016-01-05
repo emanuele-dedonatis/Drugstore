@@ -4,25 +4,9 @@
     android:layout_height="match_parent"
     tools:context="it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/drug_list_tv"
-        android:text="list fragment" />
 
-
-    <Button
-        android:layout_width="180dp"
+    <ListView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="BUTTON 1"
-        android:id="@+id/button1"
-        android:layout_gravity="left|center_vertical" />
-
-    <Button
-        android:layout_width="196dp"
-        android:layout_height="wrap_content"
-        android:text="BUTTON 2"
-        android:id="@+id/button2"
-        android:layout_gravity="right|center_vertical" />
-
+        android:id="@+id/drugs_listview" />
 </FrameLayout>
