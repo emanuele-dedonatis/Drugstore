@@ -212,7 +212,7 @@ public class DrugsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDrugSelected(String id) {
+    public void onDrugSelected(long id) {
 
         DrugDetailFragment detailFragment = DrugDetailFragment.newInstance(id);
 

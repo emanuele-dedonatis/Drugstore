@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import it.dedonatis.emanuele.drugstore.R;
@@ -75,15 +76,23 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         ListView drugLv = (ListView) fragmentView.findViewById(R.id.drugs_listview);
         drugsCursorAdapter = new DrugsCursorAdapter(getActivity(), cursor);
         drugLv.setAdapter(drugsCursorAdapter);
+        drugLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // CursorAdapter returns a cursor at the correct position for getItem(), or null
+                // if it cannot seek to that position.
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                if (cursor != null) {
+                    if (mListener != null) {
+                        mListener.onDrugSelected(cursor.getLong(COL_DRUG_ID));
+                    }
+                }
+            }
+        });
         cursor.close();
 
         return  fragmentView;
-    }
-
-    public void onButtonPressed(String id) {
-        if (mListener != null) {
-            mListener.onDrugSelected(id);
-        }
     }
 
     @Override
@@ -125,7 +134,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     public interface OnDrugSelectionListener {
-        void onDrugSelected(String id);
+        void onDrugSelected(long id);
     }
 
     private void populateDb() {
