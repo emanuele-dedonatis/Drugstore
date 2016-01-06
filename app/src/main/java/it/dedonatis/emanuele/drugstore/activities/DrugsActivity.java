@@ -1,8 +1,10 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -54,19 +56,11 @@ public class DrugsActivity extends AppCompatActivity
             }
         });
 
-        View masterFrame = findViewById(R.id.main_fragment_container_master);
-        View slaveFrame = findViewById(R.id.main_fragment_container_slave);
-
-        mDualPane = masterFrame != null && masterFrame.getVisibility() == View.VISIBLE && slaveFrame != null && slaveFrame.getVisibility() == View.VISIBLE;
-
         if (savedInstanceState != null) {
             return;
         } else {
             DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
-            DrugDetailFragment drugDetailFragment = DrugDetailFragment.newInstance(-1);
-            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container_master, drugsListFragment).commit();
-            if(mDualPane)
-                getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container_slave, drugDetailFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, drugsListFragment).commit();
         }
 
 
@@ -217,16 +211,17 @@ public class DrugsActivity extends AppCompatActivity
 
         DrugDetailFragment detailFragment = DrugDetailFragment.newInstance(id);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        if(mDualPane)
-            transaction.replace(R.id.main_fragment_container_slave, detailFragment);
-        else {
-            transaction.replace(R.id.main_fragment_container_master, detailFragment);
-            transaction.addToBackStack(null);
+        switch(getResources().getConfiguration().orientation){
+            case Configuration.ORIENTATION_LANDSCAPE:
+                detailFragment.show(getSupportFragmentManager(), "dialog");
+                break;
+            default:
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_fragment_container, detailFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                break;
         }
 
-
-        transaction.commit();
     }
 }

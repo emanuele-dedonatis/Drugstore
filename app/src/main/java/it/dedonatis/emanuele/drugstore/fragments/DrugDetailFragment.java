@@ -1,24 +1,22 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.models.Drug;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DrugDetailFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DrugDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class DrugDetailFragment extends Fragment {
+
+public class DrugDetailFragment extends DialogFragment {
     private static final String ARG_DRUG_ID = "id";
+    private static final String LOG_TAG = DrugDetailFragment.class.getSimpleName();
 
     private String drugId;
 
@@ -46,6 +44,7 @@ public class DrugDetailFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_drug_detail, container, false);
         TextView tv = (TextView) fragmentView.findViewById(R.id.detail_fragment_tv);
         tv.setText(drugId);
+
         return  fragmentView;
     }
 }

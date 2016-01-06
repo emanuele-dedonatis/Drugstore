@@ -23,7 +23,7 @@
         android:id="@+id/item_drug_name"
         android:layout_weight="1"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textColor="@color/primary_text" />
 
     <TextView
         android:layout_width="match_parent"
@@ -31,7 +31,8 @@
         android:text="Api"
         android:id="@+id/item_drug_api"
         android:layout_weight="1"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textColor="@color/secondary_text" />
 </LinearLayout>
 
 </LinearLayout>
