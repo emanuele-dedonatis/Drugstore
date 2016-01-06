@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.dedonatis.emanuele.drugstore">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,13 +21,15 @@
             </intent-filter>
         </activity>
 
-        <provider
-            android:authorities="it.drugstore.app"
-            android:name=".data.DrugProvider"
-            android:enabled="true"
-            />
-    </application>
+        <activity
+            android:name=".activities.DrugDetailActivity"
+            android:label="@string/title_activity_drug_detail"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
-    <uses-permission android:name="android.permission.INTERNET" />
+        <provider
+            android:name=".data.DrugProvider"
+            android:authorities="it.drugstore.app"
+            android:enabled="true" />
+    </application>
 
 </manifest>

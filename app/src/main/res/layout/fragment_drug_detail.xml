@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.dedonatis.emanuele.drugstore.fragments.DrugDetailFragment">
+    tools:context="it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
         android:id="@+id/detail_fragment_tv"
-        android:text="detail fragment" />
-
+        android:layout_gravity="left|top" />
 </FrameLayout>

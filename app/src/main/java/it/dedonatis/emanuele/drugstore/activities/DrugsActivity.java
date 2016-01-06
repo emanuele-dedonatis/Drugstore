@@ -1,10 +1,10 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.fragments.DrugDetailFragment;
@@ -25,12 +26,14 @@ public class DrugsActivity extends AppCompatActivity
     final static String LOG_TAG = DrugsActivity.class.getSimpleName();
     final static String API_BASE_URL = "http://opendatasalutedata.cloudapp.net";
 
+    public final static String MESSAGE_DRUG_ID = DrugsActivity.class.getSimpleName() + ".DRUG_ID";
+
     boolean mDualPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_drugs);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -60,11 +63,8 @@ public class DrugsActivity extends AppCompatActivity
             return;
         } else {
             DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, drugsListFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.activity_drugs_container, drugsListFragment).commit();
         }
-
-
-
 
     }
 
@@ -208,20 +208,8 @@ public class DrugsActivity extends AppCompatActivity
 
     @Override
     public void onDrugSelected(long id) {
-
-        DrugDetailFragment detailFragment = DrugDetailFragment.newInstance(id);
-
-        switch(getResources().getConfiguration().orientation){
-            case Configuration.ORIENTATION_LANDSCAPE:
-                detailFragment.show(getSupportFragmentManager(), "dialog");
-                break;
-            default:
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.main_fragment_container, detailFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                break;
-        }
-
+        Intent intent = new Intent(this, DrugDetailActivity.class);
+        intent.putExtra(MESSAGE_DRUG_ID, id);
+        startActivity(intent);
     }
 }
