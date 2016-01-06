@@ -60,6 +60,10 @@ public class DrugContract {
         public static Uri buildPackageUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static Uri buildPackagesFromDrug(long drugId) {
+            return  DrugEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(drugId)).appendPath(PATH_PACKAGE).build();
+        }
     }
 
 }

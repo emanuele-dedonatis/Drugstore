@@ -54,22 +54,23 @@ public class DrugsActivity extends AppCompatActivity
             }
         });
 
-        if (findViewById(R.id.main_fragment_container_master) != null) {
+        View masterFrame = findViewById(R.id.main_fragment_container_master);
+        View slaveFrame = findViewById(R.id.main_fragment_container_slave);
 
-            View slaveFrame = findViewById(R.id.main_fragment_container_slave);
+        mDualPane = masterFrame != null && masterFrame.getVisibility() == View.VISIBLE && slaveFrame != null && slaveFrame.getVisibility() == View.VISIBLE;
 
-            mDualPane = slaveFrame != null
-                    && slaveFrame.getVisibility() == View.VISIBLE;
-
-            if (savedInstanceState != null) {
-                return;
-            }
-
-            DrugsListFragment listFragment = DrugsListFragment.newInstance("PROVA TESTO LISTA");
-
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_fragment_container_master, listFragment).commit();
+        if (savedInstanceState != null) {
+            return;
+        } else {
+            DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
+            DrugDetailFragment drugDetailFragment = DrugDetailFragment.newInstance(-1);
+            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container_master, drugsListFragment).commit();
+            if(mDualPane)
+                getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container_slave, drugDetailFragment).commit();
         }
+
+
+
 
     }
 

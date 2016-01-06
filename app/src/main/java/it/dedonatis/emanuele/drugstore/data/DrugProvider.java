@@ -92,7 +92,7 @@ public class DrugProvider extends ContentProvider{
                         PackageEntry.TABLE_NAME,
                         projection,
                         PackageEntry.TABLE_NAME + "." + PackageEntry.COLUMN_DRUG + " = ?",
-                        new String[]{uri.getPathSegments().get(2)},
+                        new String[]{uri.getPathSegments().get(1)},
                         null,
                         null,
                         sortOrder

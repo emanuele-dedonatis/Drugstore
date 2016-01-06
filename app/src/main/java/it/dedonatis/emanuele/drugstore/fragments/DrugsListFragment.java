@@ -45,11 +45,8 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         // Required empty public constructor
     }
 
-    public static DrugsListFragment newInstance(String paramText) {
+    public static DrugsListFragment newInstance() {
         DrugsListFragment fragment = new DrugsListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_TEXT, paramText);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -80,8 +77,6 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // CursorAdapter returns a cursor at the correct position for getItem(), or null
-                // if it cannot seek to that position.
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     if (mListener != null) {
@@ -90,7 +85,6 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
                 }
             }
         });
-        cursor.close();
 
         return  fragmentView;
     }
@@ -120,7 +114,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
         Uri drugsUri = DrugContract.DrugEntry.CONTENT_URI;
 
-        return new CursorLoader(getActivity(),  drugsUri, DRUG_COLUMNS, null, null, sortOrder);
+        return new CursorLoader(getActivity(), drugsUri, DRUG_COLUMNS, null, null, sortOrder);
     }
 
     @Override
@@ -148,6 +142,22 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         values2.put(DrugContract.DrugEntry.COLUMN_NAME, "Ventolin");
         values2.put(DrugContract.DrugEntry.COLUMN_API, "Salbutamolo");
 
+
+        ContentValues values3 = new ContentValues();
+        values3.put(DrugContract.DrugEntry.COLUMN_NAME, "Aspirina");
+        values3.put(DrugContract.DrugEntry.COLUMN_API, "Acido acetilsalicilico");
+        getContext().getContentResolver().insert(
+                DrugContract.DrugEntry.CONTENT_URI,
+                values3
+        );
+
+        ContentValues values4 = new ContentValues();
+        values4.put(DrugContract.DrugEntry.COLUMN_NAME, "Voltaren");
+        values4.put(DrugContract.DrugEntry.COLUMN_API, "Diclofenac sodico");
+        getContext().getContentResolver().insert(
+                DrugContract.DrugEntry.CONTENT_URI,
+                values4
+        );
         Uri tachipirinaUri = getContext().getContentResolver().insert(
                 DrugContract.DrugEntry.CONTENT_URI,
                 values1
