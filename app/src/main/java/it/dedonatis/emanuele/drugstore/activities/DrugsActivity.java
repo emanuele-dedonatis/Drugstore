@@ -27,6 +27,8 @@ public class DrugsActivity extends AppCompatActivity
     final static String API_BASE_URL = "http://opendatasalutedata.cloudapp.net";
 
     public final static String MESSAGE_DRUG_ID = DrugsActivity.class.getSimpleName() + ".DRUG_ID";
+    public final static String MESSAGE_DRUG_NAME = DrugsActivity.class.getSimpleName() + ".DRUG_NAME";
+    public final static String MESSAGE_DRUG_API = DrugsActivity.class.getSimpleName() + ".DRUG_API";
 
     boolean mDualPane;
 
@@ -207,9 +209,11 @@ public class DrugsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDrugSelected(long id) {
+    public void onDrugSelected(long id, String name, String api) {
         Intent intent = new Intent(this, DrugDetailActivity.class);
         intent.putExtra(MESSAGE_DRUG_ID, id);
+        intent.putExtra(MESSAGE_DRUG_NAME, name);
+        intent.putExtra(MESSAGE_DRUG_API, api);
         startActivity(intent);
     }
 }

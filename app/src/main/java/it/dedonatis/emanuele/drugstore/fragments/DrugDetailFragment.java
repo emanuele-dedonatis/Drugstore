@@ -42,8 +42,8 @@ public class DrugDetailFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_drug_detail, container, false);
-        TextView tv = (TextView) fragmentView.findViewById(R.id.detail_fragment_tv);
-        tv.setText(drugId);
+        //TextView tv = (TextView) fragmentView.findViewById(R.id.detail_fragment_tv);
+        //tv.setText(drugId);
 
         return  fragmentView;
     }
