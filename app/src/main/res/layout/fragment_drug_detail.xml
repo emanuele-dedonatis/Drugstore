@@ -4,6 +4,9 @@
     android:layout_height="match_parent"
     tools:context="it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment">
 
-    <include layout="@layout/item_package_card"/>
-
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/package_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 </FrameLayout>

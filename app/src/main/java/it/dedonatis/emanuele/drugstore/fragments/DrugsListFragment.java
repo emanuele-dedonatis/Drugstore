@@ -32,6 +32,13 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     private OnDrugSelectionListener mListener;
     private DrugsCursorAdapter drugsCursorAdapter;
 
+    public static final String TABLE_NAME = "packages";
+    public static final String COLUMN_DRUG = "drug";
+    public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_UNITS = "units";
+    public static final String COLUMN_UNITS_LEFT = "units_left";
+    public static final String COLUMN_EXPIRATION_DATE = "expiration_date";
+
     private static final String[] DRUG_COLUMNS = {
             DrugContract.DrugEntry.TABLE_NAME + "." + DrugContract.DrugEntry._ID,
             DrugContract.DrugEntry.COLUMN_NAME,
