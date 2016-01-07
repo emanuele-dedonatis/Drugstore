@@ -112,11 +112,8 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
         String sortOrder = DrugContract.DrugEntry.COLUMN_NAME + " ASC";
-
         Uri drugsUri = DrugContract.DrugEntry.CONTENT_URI;
-
         return new CursorLoader(getActivity(), drugsUri, DRUG_COLUMNS, null, null, sortOrder);
     }
 

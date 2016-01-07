@@ -2,8 +2,12 @@ package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,13 +24,15 @@ import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.PackageRecyclerAdapter;
+import it.dedonatis.emanuele.drugstore.data.DrugContract;
 import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
 import it.dedonatis.emanuele.drugstore.models.Drug;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 
 
-public class DrugDetailFragment extends DialogFragment {
+public class DrugDetailFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String ARG_DRUG_ID = "id";
+    private static final int PACKAGE_LOADER = 1;
     private static final String LOG_TAG = DrugDetailFragment.class.getSimpleName();
 
     private static final String[] PACKAGE_COLUMNS = {
@@ -45,8 +51,8 @@ public class DrugDetailFragment extends DialogFragment {
     public static final int COL_PACKAGE_EXPIRATION_DATE = 5;
 
     private long drugId;
-    private List<DrugPackage> packages;
-
+    private List<DrugPackage> packages = new ArrayList<DrugPackage>();
+    private PackageRecyclerAdapter mAdapter;
     public DrugDetailFragment() {}
 
     public static DrugDetailFragment newInstance(long id) {
@@ -62,19 +68,7 @@ public class DrugDetailFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             drugId = getArguments().getLong(ARG_DRUG_ID);
-            Cursor cursor = getContext().getContentResolver().query(PackageEntry.buildPackagesFromDrug(drugId), PACKAGE_COLUMNS,null,null,null);
-            packages = new ArrayList<DrugPackage>();
-            while(cursor.moveToNext()) {
-                DrugPackage pkg = new DrugPackage(
-                        cursor.getLong(COL_PACKAGE_ID),
-                        cursor.getLong(COL_DRUG),
-                        cursor.getString(COL_PACKAGE_DESCRIPTION),
-                        cursor.getInt(COL_PACKAGE_UNITS),
-                        cursor.getInt(COL_PACKAGE_UNITS_LEFT),
-                        cursor.getInt(COL_PACKAGE_EXPIRATION_DATE)
-                        );
-                packages.add(pkg);
-            }
+            getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
         }
     }
 
@@ -88,9 +82,36 @@ public class DrugDetailFragment extends DialogFragment {
         RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.package_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        PackageRecyclerAdapter mAdapter = new PackageRecyclerAdapter(packages);
+        mAdapter = new PackageRecyclerAdapter(packages);
         mRecyclerView.setAdapter(mAdapter);
         return  fragmentView;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(), PackageEntry.buildPackagesFromDrug(drugId), PACKAGE_COLUMNS, null, null, PackageEntry.COLUMN_EXPIRATION_DATE + " ASC");
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v(LOG_TAG, "CURSOR LOADED " + DatabaseUtils.dumpCursorToString(data));
+        while(data.moveToNext()) {
+            DrugPackage pkg = new DrugPackage(
+                    data.getLong(COL_PACKAGE_ID),
+                    data.getLong(COL_DRUG),
+                    data.getString(COL_PACKAGE_DESCRIPTION),
+                    data.getInt(COL_PACKAGE_UNITS),
+                    data.getInt(COL_PACKAGE_UNITS_LEFT),
+                    data.getInt(COL_PACKAGE_EXPIRATION_DATE)
+            );
+            packages.add(pkg);
+        }
+        Log.v(LOG_TAG, "packages =  " + packages.toString());
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
