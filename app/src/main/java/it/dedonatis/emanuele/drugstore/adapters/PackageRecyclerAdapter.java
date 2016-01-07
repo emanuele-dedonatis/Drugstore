@@ -21,19 +21,16 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
 
     private static final String LOG_TAG = PackageRecyclerAdapter.class.getSimpleName();
     private List<DrugPackage> drugPackages;
+    private PackageClickListener packageClickListener;
 
-    public PackageRecyclerAdapter(List<DrugPackage> drugPackages) {
+    public PackageRecyclerAdapter(List<DrugPackage> drugPackages, PackageClickListener packageClickListener) {
         this.drugPackages = drugPackages;
+        this.packageClickListener = packageClickListener;
     }
 
     @Override
     public int getItemCount() {
         return drugPackages.size();
-    }
-
-    protected void decrementUnitsLeft(DrugPackage drugPackage) {
-        drugPackage.decrementUnits_left();
-        notifyDataSetChanged();
     }
 
     @Override
@@ -45,7 +42,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         packageViewHolder.btnUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                decrementUnitsLeft(pkg);
+                packageClickListener.onClickPackageUse(pkg.getPackageID());
             }
         });
     }
@@ -71,5 +68,9 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
             tvUnits = (TextView)  v.findViewById(R.id.package_units_left);
             btnUse = (Button) v.findViewById(R.id.button_use);
         }
+    }
+
+    public interface PackageClickListener {
+        public void onClickPackageUse(long packageId);
     }
 }

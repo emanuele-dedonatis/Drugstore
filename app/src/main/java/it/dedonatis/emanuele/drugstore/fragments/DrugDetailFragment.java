@@ -30,7 +30,7 @@ import it.dedonatis.emanuele.drugstore.models.Drug;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 
 
-public class DrugDetailFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>{
+public class DrugDetailFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>, PackageRecyclerAdapter.PackageClickListener{
     private static final String ARG_DRUG_ID = "id";
     private static final int PACKAGE_LOADER = 1;
     private static final String LOG_TAG = DrugDetailFragment.class.getSimpleName();
@@ -82,7 +82,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
         RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.package_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new PackageRecyclerAdapter(packages);
+        mAdapter = new PackageRecyclerAdapter(packages, this);
         mRecyclerView.setAdapter(mAdapter);
         return  fragmentView;
     }
@@ -95,6 +95,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.v(LOG_TAG, "CURSOR LOADED " + DatabaseUtils.dumpCursorToString(data));
+        packages.clear();
         while(data.moveToNext()) {
             DrugPackage pkg = new DrugPackage(
                     data.getLong(COL_PACKAGE_ID),
@@ -113,5 +114,11 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void onClickPackageUse(long packageId) {
+        Log.v(LOG_TAG, "USE " + packageId);
+        getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
     }
 }
