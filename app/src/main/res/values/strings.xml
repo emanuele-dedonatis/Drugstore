@@ -15,6 +15,9 @@
     <string name="wait">Wait</string>
     <string name="loading_pharmacies">Loading pharmacies ...</string>
 
+    <string name="use">Use</string>
+    <string name="exp">EXP</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_drug_detail">DrugDetailActivity</string>

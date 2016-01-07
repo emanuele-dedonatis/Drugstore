@@ -65,7 +65,9 @@ public class DrugDetailFragment extends DialogFragment {
             Cursor cursor = getContext().getContentResolver().query(PackageEntry.buildPackagesFromDrug(drugId), PACKAGE_COLUMNS,null,null,null);
             packages = new ArrayList<DrugPackage>();
             while(cursor.moveToNext()) {
-                DrugPackage pkg = new DrugPackage(cursor.getLong(COL_DRUG),
+                DrugPackage pkg = new DrugPackage(
+                        cursor.getLong(COL_PACKAGE_ID),
+                        cursor.getLong(COL_DRUG),
                         cursor.getString(COL_PACKAGE_DESCRIPTION),
                         cursor.getInt(COL_PACKAGE_UNITS),
                         cursor.getInt(COL_PACKAGE_UNITS_LEFT),

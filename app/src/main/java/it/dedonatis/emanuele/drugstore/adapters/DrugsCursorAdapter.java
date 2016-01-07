@@ -21,8 +21,8 @@ import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 public class DrugsCursorAdapter extends CursorAdapter {
     private static final String LOG_TAG = DrugsCursorAdapter.class.getSimpleName();
 
-    public DrugsCursorAdapter(Context context, Cursor c) {
-        super(context, c, 0);
+    public DrugsCursorAdapter(Context context) {
+        super(context, null, 0);
     }
 
     private static final String[] PKG_COLUMNS = {
@@ -53,13 +53,6 @@ public class DrugsCursorAdapter extends CursorAdapter {
 
         viewHolder.nameTv.setText(name);
         viewHolder.apiTv.setText(api);
-
-        Cursor pkgCursor = context.getContentResolver().query(DrugContract.PackageEntry.buildPackagesFromDrug(id),PKG_COLUMNS,null,null,null);
-
-        int tot = 0;
-        while (pkgCursor.moveToNext()) {
-            tot += pkgCursor.getInt(COL_PKG_UNITS_LEFT);
-        }
 
         String letter = String.valueOf(name.charAt(0));
 

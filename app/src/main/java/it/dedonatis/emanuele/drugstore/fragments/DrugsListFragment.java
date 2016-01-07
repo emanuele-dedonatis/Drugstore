@@ -71,14 +71,10 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_drug_list, container, false);
 
-        Cursor cursor = getContext().getContentResolver().query(DrugContract.DrugEntry.CONTENT_URI, DRUG_COLUMNS,null,null,null);
-        //Log.v(LOG_TAG, DatabaseUtils.dumpCursorToString(cursor));
-
         ListView drugLv = (ListView) fragmentView.findViewById(R.id.drugs_listview);
-        drugsCursorAdapter = new DrugsCursorAdapter(getActivity(), cursor);
+        drugsCursorAdapter = new DrugsCursorAdapter(getActivity());
         drugLv.setAdapter(drugsCursorAdapter);
         drugLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
