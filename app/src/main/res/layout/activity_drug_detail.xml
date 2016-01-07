@@ -16,10 +16,39 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:elevation="4dp"
+            android:minHeight="56dp">
 
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:layout_marginRight="16dp"
+                android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Headline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/drug_name"
+                        android:text="Title" />
+
+
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Subhead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/drug_api"
+                    android:text="Description"
+                    android:layout_marginBottom="16dp" />
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,11 +58,11 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_new_package"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        android:src="@drawable/ic_add" />
 
 </android.support.design.widget.CoordinatorLayout>

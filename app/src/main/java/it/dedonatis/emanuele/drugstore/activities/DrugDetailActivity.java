@@ -9,8 +9,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 
@@ -31,8 +33,9 @@ public class DrugDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_drug_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_new_package);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,8 +48,10 @@ public class DrugDetailActivity extends AppCompatActivity {
         long drugId = intent.getLongExtra(DrugsActivity.MESSAGE_DRUG_ID, -1);
         String drugName = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_NAME);
         String drugApi = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_API);
-        getSupportActionBar().setTitle(drugName);
-        getSupportActionBar().setSubtitle(drugApi);
+        TextView tvName = (TextView) findViewById(R.id.drug_name);
+        tvName.setText(drugName);
+        TextView tvApi = (TextView) findViewById(R.id.drug_api);
+        tvApi.setText(drugApi);
         int color = generator.getColor(drugName);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
         getWindow().setStatusBarColor(ColorUtils.getDarkerColor(color));
@@ -56,6 +61,17 @@ public class DrugDetailActivity extends AppCompatActivity {
         } else {
             DrugDetailFragment drugDetailFragment = DrugDetailFragment.newInstance(drugId);
             getSupportFragmentManager().beginTransaction().add(R.id.activity_drug_detail_container, drugDetailFragment).commit();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

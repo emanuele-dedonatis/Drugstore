@@ -38,7 +38,7 @@ public class DrugsActivity extends AppCompatActivity
         setContentView(R.layout.activity_drugs);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setTitle(R.string.title_activity_drugs);
         //setupDrugsView();
 
         //setupPharmaciesView();
