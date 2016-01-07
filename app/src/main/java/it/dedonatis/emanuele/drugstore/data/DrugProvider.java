@@ -79,7 +79,7 @@ public class DrugProvider extends ContentProvider{
                         DrugEntry.TABLE_NAME,
                         projection,
                         DrugEntry.TABLE_NAME + "." + DrugEntry._ID + " = ?",
-                        new String[]{uri.getPathSegments().get(2)},
+                        new String[]{uri.getPathSegments().get(1)},
                         null,
                         null,
                         sortOrder
@@ -118,7 +118,7 @@ public class DrugProvider extends ContentProvider{
                         PackageEntry.TABLE_NAME,
                         projection,
                         PackageEntry.TABLE_NAME + "." + PackageEntry._ID + " = ?",
-                        new String[]{uri.getPathSegments().get(2)},
+                        new String[]{uri.getPathSegments().get(1)},
                         null,
                         null,
                         sortOrder
@@ -239,9 +239,19 @@ public class DrugProvider extends ContentProvider{
                 rowsUpdated = db.update(DrugEntry.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
+            case DRUG:
+                rowsUpdated = db.update(DrugEntry.TABLE_NAME, values,
+                        DrugEntry.TABLE_NAME + "." + DrugEntry._ID + " = ?",
+                        new String[]{uri.getPathSegments().get(1)});
+                break;
             case PACKAGES:
                 rowsUpdated = db.update(PackageEntry.TABLE_NAME, values, selection,
                         selectionArgs);
+                break;
+            case PACKAGE:
+                rowsUpdated = db.update(PackageEntry.TABLE_NAME, values,
+                        PackageEntry.TABLE_NAME + "." + PackageEntry._ID + " = ?",
+                        new String[]{uri.getPathSegments().get(1)});
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -251,3 +261,4 @@ public class DrugProvider extends ContentProvider{
         }
         return rowsUpdated;    }
 }
+

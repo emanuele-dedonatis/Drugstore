@@ -1,5 +1,6 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -70,15 +71,15 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
             drugId = getArguments().getLong(ARG_DRUG_ID);
             getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
         }
+        if(savedInstanceState != null) {
+            getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_drug_detail, container, false);
-        //TextView tv = (TextView) fragmentView.findViewById(R.id.detail_fragment_tv);
-        //tv.setText(drugId);
-
         RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.package_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -94,7 +95,6 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.v(LOG_TAG, "CURSOR LOADED " + DatabaseUtils.dumpCursorToString(data));
         packages.clear();
         while(data.moveToNext()) {
             DrugPackage pkg = new DrugPackage(
@@ -107,7 +107,6 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
             );
             packages.add(pkg);
         }
-        Log.v(LOG_TAG, "packages =  " + packages.toString());
         mAdapter.notifyDataSetChanged();
     }
 
@@ -117,8 +116,10 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     }
 
     @Override
-    public void onClickPackageUse(long packageId) {
-        Log.v(LOG_TAG, "USE " + packageId);
+    public void onClickPackageUse(long packageId, int units) {
+        ContentValues values = new ContentValues();
+        values.put(PackageEntry.COLUMN_UNITS_LEFT, units-1);
+        getActivity().getContentResolver().update(DrugContract.PackageEntry.buildPackageUri(packageId), values, null, null);
         getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
     }
 }

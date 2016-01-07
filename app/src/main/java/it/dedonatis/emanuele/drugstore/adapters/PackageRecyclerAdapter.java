@@ -42,7 +42,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         packageViewHolder.btnUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                packageClickListener.onClickPackageUse(pkg.getPackageID());
+                packageClickListener.onClickPackageUse(pkg.getPackageID(), pkg.getUnits_left());
             }
         });
     }
@@ -71,6 +71,6 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
     }
 
     public interface PackageClickListener {
-        public void onClickPackageUse(long packageId);
+        public void onClickPackageUse(long packageId, int units);
     }
 }
