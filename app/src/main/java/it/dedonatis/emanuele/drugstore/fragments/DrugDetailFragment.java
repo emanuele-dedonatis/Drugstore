@@ -117,9 +117,12 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
 
     @Override
     public void onClickPackageUse(long packageId, int units) {
-        ContentValues values = new ContentValues();
-        values.put(PackageEntry.COLUMN_UNITS_LEFT, units-1);
-        getActivity().getContentResolver().update(DrugContract.PackageEntry.buildPackageUri(packageId), values, null, null);
-        getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
+        int newUnits = units-1;
+        if(newUnits >= 0) {
+            ContentValues values = new ContentValues();
+            values.put(PackageEntry.COLUMN_UNITS_LEFT, newUnits);
+            getActivity().getContentResolver().update(DrugContract.PackageEntry.buildPackageUri(packageId), values, null, null);
+            getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
+        }
     }
 }
