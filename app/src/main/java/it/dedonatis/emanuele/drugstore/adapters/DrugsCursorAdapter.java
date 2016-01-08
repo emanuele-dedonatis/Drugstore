@@ -47,18 +47,21 @@ public class DrugsCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        long id = cursor.getLong(DrugsListFragment.COL_DRUG_ID);
         String name = cursor.getString(DrugsListFragment.COL_DRUG_NAME);
         String api = cursor.getString(DrugsListFragment.COL_DRUG_API);
 
         viewHolder.nameTv.setText(name);
         viewHolder.apiTv.setText(api);
 
-        String letter = String.valueOf(name.charAt(0));
+        String letter = "";
+        try {
+            letter = String.valueOf(name.charAt(0));
+        }catch (StringIndexOutOfBoundsException e) {
 
-
+        }
         TextDrawable drawable = TextDrawable.builder().buildRound(letter, generator.getColor(name));
         viewHolder.countImg.setImageDrawable(drawable);
+
     }
 
     public static class ViewHolder{

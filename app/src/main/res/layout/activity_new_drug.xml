@@ -63,7 +63,7 @@
                         <EditText
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/drug_name"
+                            android:id="@+id/drug_name_et"
                             android:hint="Title" />
 
 
@@ -71,7 +71,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginTop="8dp"
-                            android:id="@+id/drug_api"
+                            android:id="@+id/drug_api_et"
                             android:hint="Description"
                             android:layout_marginBottom="16dp" />
 

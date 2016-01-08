@@ -71,9 +71,6 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
             drugId = getArguments().getLong(ARG_DRUG_ID);
             getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
         }
-        if(savedInstanceState != null) {
-            getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
-        }
     }
 
     @Override
@@ -86,6 +83,12 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
         mAdapter = new PackageRecyclerAdapter(packages, this);
         mRecyclerView.setAdapter(mAdapter);
         return  fragmentView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
     }
 
     @Override

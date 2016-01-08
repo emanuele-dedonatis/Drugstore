@@ -38,6 +38,7 @@ public class DrugContract {
         public static Uri buildDrugFromApi(String api) {
             return  CONTENT_URI.buildUpon().appendQueryParameter(COLUMN_API, api).build();
         }
+
     }
 
     public static final class PackageEntry implements BaseColumns {
