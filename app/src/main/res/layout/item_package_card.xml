@@ -14,12 +14,17 @@ card_view:cardCornerRadius="4dp">
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:baselineAligned="false">
-
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="169dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/package_image"
+            android:layout_gravity="center_horizontal" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:paddingLeft="16dp"
             android:paddingTop="8dp"
             android:paddingRight="16dp"
@@ -69,11 +74,12 @@ card_view:cardCornerRadius="4dp">
             </LinearLayout>
         </LinearLayout>
 
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:weightSum="1"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"

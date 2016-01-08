@@ -1,5 +1,6 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
+import android.content.AsyncQueryHandler;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -101,9 +102,11 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] bitMapData = stream.toByteArray();
+            pkg.put(DrugContract.PackageEntry.COLUMN_IMAGE, bitMapData);
             Log.v(LOG_TAG, "insert new pkg");
+            AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {};
 
-            getContentResolver().insert(
+            queryHandler.startInsert(0, null,
                     DrugContract.PackageEntry.CONTENT_URI,
                     pkg
             );

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -39,6 +40,8 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         packageViewHolder.tvDescription.setText(pkg.getDescription());
         packageViewHolder.tvExpDate.setText(pkg.getStringExpriartion_date());
         packageViewHolder.tvUnits.setText(pkg.getUnits() + "");
+        packageViewHolder.imageView.setImageBitmap(pkg.getImageBitmap());
+        Log.v(LOG_TAG, packageViewHolder.imageView.getLayoutParams().height + "");
         if(pkg.getUnits() < 1)
             packageViewHolder.btnUse.setEnabled(false);
         packageViewHolder.btnUse.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +65,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         protected TextView tvExpDate;
         protected TextView tvUnits;
         protected Button btnUse;
+        protected ImageView imageView;
 
         public PackageViewHolder(View v) {
             super(v);
@@ -69,6 +73,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
             tvExpDate = (TextView)  v.findViewById(R.id.package_exp_date);
             tvUnits = (TextView)  v.findViewById(R.id.package_units_left);
             btnUse = (Button) v.findViewById(R.id.button_use);
+            imageView = (ImageView) v.findViewById(R.id.package_image);
         }
     }
 
