@@ -2,8 +2,6 @@ package it.dedonatis.emanuele.drugstore.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +25,10 @@ public class DrugsCursorAdapter extends CursorAdapter {
 
     private static final String[] PKG_COLUMNS = {
             DrugContract.PackageEntry.TABLE_NAME + "." + DrugContract.PackageEntry._ID,
-            DrugContract.PackageEntry.COLUMN_UNITS_LEFT
+            DrugContract.PackageEntry.COLUMN_UNITS
     };
     public static final int COL_PKG_ID = 0;
-    public static final int COL_PKG_UNITS_LEFT = 1;
+    public static final int COL_PKG_UNITS = 1;
 
     ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -60,19 +58,19 @@ public class DrugsCursorAdapter extends CursorAdapter {
 
         }
         TextDrawable drawable = TextDrawable.builder().buildRound(letter, generator.getColor(name));
-        viewHolder.countImg.setImageDrawable(drawable);
+        viewHolder.roundLetter.setImageDrawable(drawable);
 
     }
 
     public static class ViewHolder{
             public TextView nameTv;
             public TextView apiTv;
-        public ImageView countImg;
+            public ImageView roundLetter;
 
             public ViewHolder(View itemView) {
                 nameTv = (TextView) itemView.findViewById(R.id.item_drug_name);
                 apiTv = (TextView) itemView.findViewById(R.id.item_drug_api);
-                countImg = (ImageView) itemView.findViewById(R.id.item_drug_count);
+                roundLetter = (ImageView) itemView.findViewById(R.id.item_drug_letter);
             }
         }
 }

@@ -41,15 +41,17 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
             PackageEntry.COLUMN_DRUG,
             PackageEntry.COLUMN_DESCRIPTION,
             PackageEntry.COLUMN_UNITS,
-            PackageEntry.COLUMN_UNITS_LEFT,
+            PackageEntry.COLUMN_IS_PERCENTAGE,
             PackageEntry.COLUMN_EXPIRATION_DATE,
+            PackageEntry.COLUMN_IMAGE
     };
     public static final int COL_PACKAGE_ID = 0;
     public static final int COL_DRUG = 1;
     public static final int COL_PACKAGE_DESCRIPTION = 2;
     public static final int COL_PACKAGE_UNITS = 3;
-    public static final int COL_PACKAGE_UNITS_LEFT = 4;
+    public static final int COL_PACKAGE_IS_PERECENTAGE = 4;
     public static final int COL_PACKAGE_EXPIRATION_DATE = 5;
+    public static final int COL_PACKAGE_IMAGE = 6;
 
     private long drugId;
     private List<DrugPackage> packages = new ArrayList<DrugPackage>();
@@ -105,8 +107,9 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
                     data.getLong(COL_DRUG),
                     data.getString(COL_PACKAGE_DESCRIPTION),
                     data.getInt(COL_PACKAGE_UNITS),
-                    data.getInt(COL_PACKAGE_UNITS_LEFT),
-                    data.getInt(COL_PACKAGE_EXPIRATION_DATE)
+                    data.getInt(COL_PACKAGE_IS_PERECENTAGE) != 0,
+                    data.getInt(COL_PACKAGE_EXPIRATION_DATE),
+                    data.getBlob(COL_PACKAGE_IMAGE)
             );
             packages.add(pkg);
         }
@@ -123,7 +126,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
         int newUnits = units-1;
         if(newUnits >= 0) {
             ContentValues values = new ContentValues();
-            values.put(PackageEntry.COLUMN_UNITS_LEFT, newUnits);
+            values.put(PackageEntry.COLUMN_UNITS, newUnits);
             getActivity().getContentResolver().update(DrugContract.PackageEntry.buildPackageUri(packageId), values, null, null);
             getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
         }

@@ -8,7 +8,7 @@ import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
 
 public class DrugDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     static final String DATABASE_NAME = "drugs.db";
 
@@ -21,7 +21,8 @@ public class DrugDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_DRUG_TABLE = "CREATE TABLE " + DrugEntry.TABLE_NAME + " (" +
                 DrugEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 DrugEntry.COLUMN_NAME + " TEXT UNIQUE NOT NULL, " +
-                DrugEntry.COLUMN_API + " TEXT NOT NULL " +
+                DrugEntry.COLUMN_API + " TEXT NOT NULL, " +
+                DrugEntry.COLUMN_NEED_PRESCRIPTION + " INTEGER NOT NULL " +
                 " );";
 
         final String SQL_CREATE_PACKAGE_TABLE = "CREATE TABLE " + PackageEntry.TABLE_NAME + " (" +
@@ -31,8 +32,9 @@ public class DrugDbHelper extends SQLiteOpenHelper {
 
                 PackageEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL, " +
                 PackageEntry.COLUMN_UNITS + " INTEGER NOT NULL, " +
-                PackageEntry.COLUMN_UNITS_LEFT + " INTEGER NOT NULL, " +
+                PackageEntry.COLUMN_IS_PERCENTAGE + " INTEGER NOT NULL, " +
                 PackageEntry.COLUMN_EXPIRATION_DATE + " INTEGER NOT NULL," +
+                PackageEntry.COLUMN_IMAGE + " BLOB," +
 
                 " FOREIGN KEY (" + PackageEntry.COLUMN_DRUG + ") REFERENCES " +
                 DrugEntry.TABLE_NAME + " (" + DrugEntry._ID + "));";

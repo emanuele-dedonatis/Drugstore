@@ -65,7 +65,6 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
             mParamText = getArguments().getString(ARG_TEXT);
             Log.v(LOG_TAG, mParamText);
         }
-        populateDb();
     }
 
     @Override
@@ -129,71 +128,6 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
     public interface OnDrugSelectionListener {
         void onDrugSelected(long id, String name, String api);
-    }
-
-    private void populateDb() {
-
-        ContentValues values1 = new ContentValues();
-        values1.put(DrugContract.DrugEntry.COLUMN_NAME, "Tachipirina");
-        values1.put(DrugContract.DrugEntry.COLUMN_API, "Paracetamolo");
-
-
-        ContentValues values2 = new ContentValues();
-        values2.put(DrugContract.DrugEntry.COLUMN_NAME, "Ventolin");
-        values2.put(DrugContract.DrugEntry.COLUMN_API, "Salbutamolo");
-
-
-        ContentValues values3 = new ContentValues();
-        values3.put(DrugContract.DrugEntry.COLUMN_NAME, "Aspirina");
-        values3.put(DrugContract.DrugEntry.COLUMN_API, "Acido acetilsalicilico");
-        getContext().getContentResolver().insert(
-                DrugContract.DrugEntry.CONTENT_URI,
-                values3
-        );
-
-        ContentValues values4 = new ContentValues();
-        values4.put(DrugContract.DrugEntry.COLUMN_NAME, "Voltaren");
-        values4.put(DrugContract.DrugEntry.COLUMN_API, "Diclofenac sodico");
-        getContext().getContentResolver().insert(
-                DrugContract.DrugEntry.CONTENT_URI,
-                values4
-        );
-        Uri tachipirinaUri = getContext().getContentResolver().insert(
-                DrugContract.DrugEntry.CONTENT_URI,
-                values1
-        );
-        Uri ventolinUri = getContext().getContentResolver().insert(
-                DrugContract.DrugEntry.CONTENT_URI,
-                values2
-        );
-
-        ContentValues tachipirinaPackage = new ContentValues();
-        tachipirinaPackage.put(DrugContract.PackageEntry._ID, 1);
-        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_DRUG, ContentUris.parseId(tachipirinaUri));
-        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, "Bustine 100mg");
-        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_UNITS, 10);
-        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_UNITS_LEFT, 8);
-        tachipirinaPackage.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, 20160405);
-
-        Uri pckTachipirinaUri = getContext().getContentResolver().insert(
-                DrugContract.PackageEntry.CONTENT_URI,
-                tachipirinaPackage
-        );
-
-        ContentValues ventolinPackage = new ContentValues();
-        ventolinPackage.put(DrugContract.PackageEntry._ID, 4);
-        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_DRUG, ContentUris.parseId(ventolinUri));
-        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, "Pillole 5mg");
-        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_UNITS, 20);
-        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_UNITS_LEFT, 10);
-        ventolinPackage.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, 20160101);
-
-        Uri pckVentolinUri = getContext().getContentResolver().insert(
-                DrugContract.PackageEntry.CONTENT_URI,
-                ventolinPackage
-        );
-
-        return;
     }
 
 }

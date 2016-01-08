@@ -3,7 +3,11 @@ package it.dedonatis.emanuele.drugstore.activities;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +18,8 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+
+import java.io.ByteArrayOutputStream;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
@@ -68,11 +74,12 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
     }
 
     @Override
-    public void addDrug(String description, int units, int units_left, int exp_date) {
+    public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image) {
         if (drugId < 0){
             ContentValues drug = new ContentValues();
             drug.put(DrugContract.DrugEntry.COLUMN_NAME, ((EditText) findViewById(R.id.drug_name_et)).getText().toString());
             drug.put(DrugContract.DrugEntry.COLUMN_API, ((EditText) findViewById(R.id.drug_api_et)).getText().toString());
+            drug.put(DrugContract.DrugEntry.COLUMN_NEED_PRESCRIPTION, 0);
             Uri uri = getContentResolver().insert(
                     DrugContract.DrugEntry.CONTENT_URI,
                     drug
@@ -86,8 +93,14 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
             pkg.put(DrugContract.PackageEntry.COLUMN_DRUG, drugId);
             pkg.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, description);
             pkg.put(DrugContract.PackageEntry.COLUMN_UNITS, units);
-            pkg.put(DrugContract.PackageEntry.COLUMN_UNITS_LEFT, units_left);
+            pkg.put(DrugContract.PackageEntry.COLUMN_IS_PERCENTAGE, isPercentage);
             pkg.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);
+            Resources res = getResources();
+            Drawable drawable = res.getDrawable(R.drawable.ventolin);
+            Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] bitMapData = stream.toByteArray();
             Log.v(LOG_TAG, "insert new pkg");
 
             getContentResolver().insert(

@@ -7,7 +7,7 @@
 
     <ImageView android:layout_width="40dp"
         android:layout_height="40dp"
-        android:id="@+id/item_drug_count"
+        android:id="@+id/item_drug_letter"
         android:layout_gravity="center"
         android:layout_marginRight="16dp" />
 

@@ -38,13 +38,13 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         final DrugPackage pkg = drugPackages.get(i);
         packageViewHolder.tvDescription.setText(pkg.getDescription());
         packageViewHolder.tvExpDate.setText(pkg.getStringExpriartion_date());
-        packageViewHolder.tvUnits.setText(pkg.getUnits_left() + "");
-        if(pkg.getUnits_left() < 1)
+        packageViewHolder.tvUnits.setText(pkg.getUnits() + "");
+        if(pkg.getUnits() < 1)
             packageViewHolder.btnUse.setEnabled(false);
         packageViewHolder.btnUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                packageClickListener.onClickPackageUse(pkg.getPackageID(), pkg.getUnits_left());
+                packageClickListener.onClickPackageUse(pkg.getPackageID(), pkg.getUnits());
             }
         });
     }

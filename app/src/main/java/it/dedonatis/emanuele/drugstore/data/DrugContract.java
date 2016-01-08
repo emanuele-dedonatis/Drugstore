@@ -18,6 +18,7 @@ public class DrugContract {
         public static final String TABLE_NAME = "drugs";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_API = "api";
+        public static final String COLUMN_NEED_PRESCRIPTION = "need_prescription";
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_DRUG).build();
@@ -46,8 +47,9 @@ public class DrugContract {
         public static final String COLUMN_DRUG = "drug";
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_UNITS = "units";
-        public static final String COLUMN_UNITS_LEFT = "units_left";
+        public static final String COLUMN_IS_PERCENTAGE = "is_percentage";
         public static final String COLUMN_EXPIRATION_DATE = "expiration_date";
+        public static final String COLUMN_IMAGE = "need_prescription";
 
 
         public static final Uri CONTENT_URI =

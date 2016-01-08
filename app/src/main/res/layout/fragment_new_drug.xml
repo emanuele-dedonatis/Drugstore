@@ -24,12 +24,6 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:id="@+id/units_left_et"
-            android:hint="Units left"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
             android:id="@+id/expiration_date_et"
             android:hint="Expiration date"/>
 

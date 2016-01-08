@@ -1,5 +1,9 @@
 package it.dedonatis.emanuele.drugstore.models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.ImageView;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,16 +15,18 @@ public class DrugPackage {
     private long drugID;
     private String description;
     private int units;
-    private int units_left;
+    private boolean isPercentage;
     private int expiration_date;
+    private byte[] image;
 
-    public DrugPackage(long packageID, long drugID, String description, int units, int units_left, int expiration_date) {
+    public DrugPackage(long packageID, long drugID, String description, int units, boolean isPercentage, int expiration_date, byte[] image) {
         this.packageID = packageID;
         this.drugID = drugID;
         this.description = description;
         this.units = units;
-        this.units_left = units_left;
+        this.isPercentage = isPercentage;
         this.expiration_date = expiration_date;
+        this.image = image;
     }
 
     public long getPackageID() {
@@ -39,14 +45,12 @@ public class DrugPackage {
         return units;
     }
 
-    public int getUnits_left() {
-        return units_left;
+    public boolean isPercentage() {
+        return isPercentage;
     }
 
-    public int decrementUnits_left() {
-
-        units_left--;
-        return units_left;
+    public Bitmap getImageBitmap() {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
     public int getExpiration_date() {
@@ -63,6 +67,11 @@ public class DrugPackage {
     }
     @Override
     public String toString() {
-        return drugID + " - " + description + " - " + units + "/" + units_left + " - " + expiration_date;
+        String unitString = units + "";
+        if(isPercentage)
+            unitString += " %";
+
+        return drugID + " - " + description + " - " + unitString +  " - " + expiration_date;
+
     }
 }

@@ -30,14 +30,13 @@ public class NewDrugFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_new_drug, container, false);
         final EditText descriptionEt = (EditText) fragmentView.findViewById(R.id.description_et);
         final EditText unitsEt = (EditText) fragmentView.findViewById(R.id.units_et);
-        final EditText unitsLeftEt = (EditText) fragmentView.findViewById(R.id.units_left_et);
         final EditText expDateEt = (EditText) fragmentView.findViewById(R.id.expiration_date_et);
         Button doneBtn = (Button) fragmentView.findViewById(R.id.done_btn);
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (newDrugListener != null) {
-                    newDrugListener.addDrug(descriptionEt.getText().toString(), Integer.parseInt(unitsEt.getText().toString()), Integer.parseInt(unitsLeftEt.getText().toString()), Integer.parseInt(expDateEt.getText().toString()));
+                    newDrugListener.addDrug(descriptionEt.getText().toString(), Integer.parseInt(unitsEt.getText().toString()), 0, Integer.parseInt(expDateEt.getText().toString()), null);
                 }
             }
         });
@@ -62,6 +61,6 @@ public class NewDrugFragment extends Fragment {
         newDrugListener = null;
     }
     public interface OnNewDrugListener {
-        public void addDrug(String description, int units, int units_left, int exp_date);
+        public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image);
     }
 }
