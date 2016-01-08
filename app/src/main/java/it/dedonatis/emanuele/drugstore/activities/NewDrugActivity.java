@@ -11,6 +11,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,6 +23,10 @@ import android.widget.ViewSwitcher;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
@@ -31,7 +37,11 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
 
     private static final String LOG_TAG = NewDrugActivity.class.getSimpleName();
     ColorGenerator generator = ColorGenerator.MATERIAL;
+    static final int REQUEST_TAKE_PHOTO = 1;
+    String mCurrentPhotoPath;
+
     private long drugId = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +85,13 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            Log.v(LOG_TAG, "Image taken");
+        }
+    }
+
+    @Override
     public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image) {
         if (drugId < 0){
             ContentValues drug = new ContentValues();
@@ -95,14 +112,11 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
             pkg.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, description);
             pkg.put(DrugContract.PackageEntry.COLUMN_UNITS, units);
             pkg.put(DrugContract.PackageEntry.COLUMN_IS_PERCENTAGE, isPercentage);
-            pkg.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);
-            Resources res = getResources();
-            Drawable drawable = res.getDrawable(R.drawable.ventolin);
-            Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+            pkg.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);/*
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] bitMapData = stream.toByteArray();
-            pkg.put(DrugContract.PackageEntry.COLUMN_IMAGE, bitMapData);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] bitMapData = stream.toByteArray(); */
+            pkg.put(DrugContract.PackageEntry.COLUMN_IMAGE, mCurrentPhotoPath);
             Log.v(LOG_TAG, "insert new pkg");
             AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {};
 
@@ -112,5 +126,42 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
             );
         }
         finish();
+    }
+
+    @Override
+    public void dispatchTakePictureIntent() {
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Log.e(LOG_TAG, ex.toString());
+            }
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(null);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+
+        Log.v(LOG_TAG, "Create image file @ " +mCurrentPhotoPath + " with uri "+ Uri.fromFile(image));
+        return image;
     }
 }

@@ -109,7 +109,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
                     data.getInt(COL_PACKAGE_UNITS),
                     data.getInt(COL_PACKAGE_IS_PERECENTAGE) != 0,
                     data.getInt(COL_PACKAGE_EXPIRATION_DATE),
-                    data.getBlob(COL_PACKAGE_IMAGE)
+                    Uri.parse(data.getString(COL_PACKAGE_IMAGE))
             );
             Log.v(LOG_TAG, "BLOB: " + data.getBlob(COL_PACKAGE_IMAGE).toString());
             packages.add(pkg);

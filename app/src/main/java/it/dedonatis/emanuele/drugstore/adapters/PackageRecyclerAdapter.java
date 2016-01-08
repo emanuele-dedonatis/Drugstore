@@ -40,7 +40,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         packageViewHolder.tvDescription.setText(pkg.getDescription());
         packageViewHolder.tvExpDate.setText(pkg.getStringExpriartion_date());
         packageViewHolder.tvUnits.setText(pkg.getUnits() + "");
-        packageViewHolder.imageView.setImageBitmap(pkg.getImageBitmap());
+        packageViewHolder.imageView.setImageURI(pkg.getImageUri());
         Log.v(LOG_TAG, packageViewHolder.imageView.getLayoutParams().height + "");
         if(pkg.getUnits() < 1)
             packageViewHolder.btnUse.setEnabled(false);

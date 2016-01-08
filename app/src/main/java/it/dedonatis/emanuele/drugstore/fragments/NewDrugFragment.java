@@ -1,6 +1,8 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,6 +33,16 @@ public class NewDrugFragment extends Fragment {
         final EditText descriptionEt = (EditText) fragmentView.findViewById(R.id.description_et);
         final EditText unitsEt = (EditText) fragmentView.findViewById(R.id.units_et);
         final EditText expDateEt = (EditText) fragmentView.findViewById(R.id.expiration_date_et);
+        Button cameraBtn = (Button) fragmentView.findViewById(R.id.camera_btn);
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (newDrugListener != null) {
+                    newDrugListener.dispatchTakePictureIntent();
+                }
+            }
+        });
+
         Button doneBtn = (Button) fragmentView.findViewById(R.id.done_btn);
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,5 +74,8 @@ public class NewDrugFragment extends Fragment {
     }
     public interface OnNewDrugListener {
         public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image);
+
+        public void dispatchTakePictureIntent();
     }
+
 }
