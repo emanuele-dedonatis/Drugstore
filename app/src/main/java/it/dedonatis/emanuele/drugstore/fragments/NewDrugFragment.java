@@ -16,6 +16,10 @@ public class NewDrugFragment extends Fragment {
     public NewDrugFragment() {
     }
 
+    public static NewDrugFragment newInstance() {
+        NewDrugFragment fragment = new NewDrugFragment();
+        return fragment;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

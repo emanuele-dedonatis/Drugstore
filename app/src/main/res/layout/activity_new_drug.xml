@@ -82,7 +82,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/activity_drug_detail_container"
+        android:id="@+id/activity_new_drug_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>

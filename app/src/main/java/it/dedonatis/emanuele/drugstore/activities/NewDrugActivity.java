@@ -15,6 +15,8 @@ import android.widget.ViewSwitcher;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.fragments.DrugDetailFragment;
+import it.dedonatis.emanuele.drugstore.fragments.NewDrugFragment;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
 public class NewDrugActivity extends AppCompatActivity {
@@ -47,6 +49,13 @@ public class NewDrugActivity extends AppCompatActivity {
             ViewSwitcher viewSwitcher =   (ViewSwitcher)findViewById(R.id.toolbar_switcher);
             viewSwitcher.showNext();
 
+        }
+
+        if (savedInstanceState != null) {
+            return;
+        } else {
+            NewDrugFragment newDrugFragment = NewDrugFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().add(R.id.activity_new_drug_container, newDrugFragment).commit();
         }
     }
 
