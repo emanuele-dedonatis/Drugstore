@@ -1,10 +1,13 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import it.dedonatis.emanuele.drugstore.R;
 
@@ -13,6 +16,7 @@ import it.dedonatis.emanuele.drugstore.R;
  */
 public class NewDrugFragment extends Fragment {
 
+    private OnNewDrugListener newDrugListener;
     public NewDrugFragment() {
     }
 
@@ -23,6 +27,41 @@ public class NewDrugFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_new_drug, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_new_drug, container, false);
+        final EditText descriptionEt = (EditText) fragmentView.findViewById(R.id.description_et);
+        final EditText unitsEt = (EditText) fragmentView.findViewById(R.id.units_et);
+        final EditText unitsLeftEt = (EditText) fragmentView.findViewById(R.id.units_left_et);
+        final EditText expDateEt = (EditText) fragmentView.findViewById(R.id.expiration_date_et);
+        Button doneBtn = (Button) fragmentView.findViewById(R.id.done_btn);
+        doneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (newDrugListener != null) {
+                    newDrugListener.addDrug(descriptionEt.getText().toString(), Integer.parseInt(unitsEt.getText().toString()), Integer.parseInt(unitsLeftEt.getText().toString()), Integer.parseInt(expDateEt.getText().toString()));
+                }
+            }
+        });
+        return fragmentView;
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnNewDrugListener) {
+            newDrugListener = (OnNewDrugListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        newDrugListener = null;
+    }
+    public interface OnNewDrugListener {
+        public void addDrug(String description, int units, int units_left, int exp_date);
     }
 }

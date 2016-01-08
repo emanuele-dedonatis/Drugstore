@@ -32,5 +32,12 @@
             android:layout_height="50dp"
             android:id="@+id/expiration_date_et"
             android:hint="Expiration date"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DONE"
+            android:id="@+id/done_btn"
+            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 </FrameLayout>
