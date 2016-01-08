@@ -24,7 +24,9 @@ import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 public class DrugDetailActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = DrugDetailActivity.class.getSimpleName();
-
+    public final static String MESSAGE_DRUG_ID = DrugDetailActivity.class.getSimpleName() + ".DRUG_ID";
+    public final static String MESSAGE_DRUG_NAME = DrugDetailActivity.class.getSimpleName() + ".DRUG_NAME";
+    public final static String MESSAGE_DRUG_API = DrugDetailActivity.class.getSimpleName() + ".DRUG_API";
     ColorGenerator generator = ColorGenerator.MATERIAL;
 
     @Override
@@ -35,19 +37,12 @@ public class DrugDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_new_package);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         Intent intent = getIntent();
-        long drugId = intent.getLongExtra(DrugsActivity.MESSAGE_DRUG_ID, -1);
-        String drugName = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_NAME);
-        String drugApi = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_API);
+        final long drugId = intent.getLongExtra(DrugsActivity.MESSAGE_DRUG_ID, -1);
+        final String drugName = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_NAME);
+        final String drugApi = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_API);
         TextView tvName = (TextView) findViewById(R.id.drug_name);
         tvName.setText(drugName);
         TextView tvApi = (TextView) findViewById(R.id.drug_api);
@@ -55,6 +50,18 @@ public class DrugDetailActivity extends AppCompatActivity {
         int color = generator.getColor(drugName);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
         getWindow().setStatusBarColor(ColorUtils.getDarkerColor(color));
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_new_package);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DrugDetailActivity.this, NewDrugActivity.class);
+                intent.putExtra(MESSAGE_DRUG_ID, drugId);
+                intent.putExtra(MESSAGE_DRUG_NAME, drugName);
+                intent.putExtra(MESSAGE_DRUG_API, drugApi);
+                startActivity(intent);
+            }
+        });
 
         if (savedInstanceState != null) {
             return;
@@ -65,14 +72,9 @@ public class DrugDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    public boolean onSupportNavigateUp() {
+        finish();
+        return false;
     }
 
 }
