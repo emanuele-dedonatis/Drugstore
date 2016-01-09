@@ -49,6 +49,12 @@ public class DrugDetailActivity extends AppCompatActivity {
         tvApi.setText(drugApi);
         int color = generator.getColor(drugName);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
+
+
+        DrugDetailFragment drugDetailFragment = DrugDetailFragment.newInstance(drugId);
+        getSupportFragmentManager().beginTransaction().add(R.id.activity_drug_detail_container, drugDetailFragment).commit();
+
+
         getWindow().setStatusBarColor(ColorUtils.getDarkerColor(color));
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_new_package);
 
@@ -63,12 +69,6 @@ public class DrugDetailActivity extends AppCompatActivity {
             }
         });
 
-        if (savedInstanceState != null) {
-            return;
-        } else {
-            DrugDetailFragment drugDetailFragment = DrugDetailFragment.newInstance(drugId);
-            getSupportFragmentManager().beginTransaction().add(R.id.activity_drug_detail_container, drugDetailFragment).commit();
-        }
     }
 
     @Override

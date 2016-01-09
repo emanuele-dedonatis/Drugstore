@@ -68,6 +68,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             drugId = getArguments().getLong(ARG_DRUG_ID);
@@ -78,28 +79,32 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreateView");
         View fragmentView = inflater.inflate(R.layout.fragment_drug_detail, container, false);
         RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.package_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new PackageRecyclerAdapter(packages, this);
+        mAdapter = new PackageRecyclerAdapter(getActivity(), packages, this);
         mRecyclerView.setAdapter(mAdapter);
         return  fragmentView;
     }
 
     @Override
     public void onResume() {
+        Log.v(LOG_TAG, "onResume");
         super.onResume();
         getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.v(LOG_TAG, "onCreateLoader");
         return new CursorLoader(getActivity(), PackageEntry.buildPackagesFromDrug(drugId), PACKAGE_COLUMNS, null, null, PackageEntry.COLUMN_EXPIRATION_DATE + " ASC");
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v(LOG_TAG, "onLoadFinished");
         packages.clear();
         while(data.moveToNext()) {
             DrugPackage pkg = new DrugPackage(
@@ -111,7 +116,6 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
                     data.getInt(COL_PACKAGE_EXPIRATION_DATE),
                     Uri.parse(data.getString(COL_PACKAGE_IMAGE))
             );
-            Log.v(LOG_TAG, "BLOB: " + data.getBlob(COL_PACKAGE_IMAGE).toString());
             packages.add(pkg);
         }
         mAdapter.notifyDataSetChanged();
@@ -119,11 +123,13 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.v(LOG_TAG, "onLoaderReset");
 
     }
 
     @Override
     public void onClickPackageUse(long packageId, int units) {
+        Log.v(LOG_TAG, "onClickPackageUse");
         int newUnits = units-1;
         if(newUnits >= 0) {
             ContentValues values = new ContentValues();

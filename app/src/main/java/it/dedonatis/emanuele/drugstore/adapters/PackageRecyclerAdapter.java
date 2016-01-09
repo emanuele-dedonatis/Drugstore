@@ -1,5 +1,7 @@
 package it.dedonatis.emanuele.drugstore.adapters;
 
+import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,25 +27,30 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
     private static final String LOG_TAG = PackageRecyclerAdapter.class.getSimpleName();
     private List<DrugPackage> drugPackages;
     private PackageClickListener packageClickListener;
+    private Context mContext;
 
-    public PackageRecyclerAdapter(List<DrugPackage> drugPackages, PackageClickListener packageClickListener) {
+    public PackageRecyclerAdapter(Context context, List<DrugPackage> drugPackages, PackageClickListener packageClickListener) {
+        Log.v(LOG_TAG, "new PackageRecyclerAdapter");
+        this.mContext = context;
         this.drugPackages = drugPackages;
         this.packageClickListener = packageClickListener;
     }
 
     @Override
     public int getItemCount() {
+        Log.v(LOG_TAG, "getItemCount");
+
         return drugPackages.size();
     }
 
     @Override
     public void onBindViewHolder(PackageViewHolder packageViewHolder, int i) {
+        Log.v(LOG_TAG, "onBindViewHolder");
         final DrugPackage pkg = drugPackages.get(i);
         packageViewHolder.tvDescription.setText(pkg.getDescription());
         packageViewHolder.tvExpDate.setText(pkg.getStringExpriartion_date());
         packageViewHolder.tvUnits.setText(pkg.getUnits() + "");
         packageViewHolder.imageView.setImageURI(pkg.getImageUri());
-        Log.v(LOG_TAG, packageViewHolder.imageView.getLayoutParams().height + "");
         if(pkg.getUnits() < 1)
             packageViewHolder.btnUse.setEnabled(false);
         packageViewHolder.btnUse.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +63,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
 
     @Override
     public PackageViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        Log.v(LOG_TAG, "onCreateViewHolder");
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
                 inflate(R.layout.item_package_card, viewGroup, false);

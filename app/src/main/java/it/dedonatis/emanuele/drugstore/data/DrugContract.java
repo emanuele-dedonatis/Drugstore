@@ -50,6 +50,7 @@ public class DrugContract {
         public static final String COLUMN_IS_PERCENTAGE = "is_percentage";
         public static final String COLUMN_EXPIRATION_DATE = "expiration_date";
         public static final String COLUMN_IMAGE = "need_prescription";
+        public static final String IMAGE_THUMB_SUFFIX = "thumb";
 
 
         public static final Uri CONTENT_URI =

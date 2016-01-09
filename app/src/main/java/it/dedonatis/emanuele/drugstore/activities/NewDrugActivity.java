@@ -24,6 +24,7 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,7 +40,6 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
     ColorGenerator generator = ColorGenerator.MATERIAL;
     static final int REQUEST_TAKE_PHOTO = 1;
     String mCurrentPhotoPath;
-
     private long drugId = -1;
 
     @Override
@@ -87,8 +87,44 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Log.v(LOG_TAG, "Image taken");
+            Uri uri = Uri.parse(mCurrentPhotoPath);
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                Bitmap thumb = scaleDown(bitmap, 600, true);
+                saveToInternalSorage(thumb);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.v(LOG_TAG, uri.toString());
+
         }
+    }
+
+    private void saveToInternalSorage(Bitmap bitmapImage) throws IOException {
+        File mypath = new File(Uri.parse(mCurrentPhotoPath).getPath());
+        Log.v(LOG_TAG, "Resizing file " + mypath.toString());
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            fos.close();
+        }
+    }
+
+    public static Bitmap scaleDown(Bitmap realImage, float maxImageSize,
+                                   boolean filter) {
+        float ratio = Math.min(
+                (float) maxImageSize / realImage.getWidth(),
+                (float) maxImageSize / realImage.getHeight());
+        int width = Math.round((float) ratio * realImage.getWidth());
+        int height = Math.round((float) ratio * realImage.getHeight());
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
+                height, filter);
+        return newBitmap;
     }
 
     @Override
@@ -161,7 +197,6 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
 
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
 
-        Log.v(LOG_TAG, "Create image file @ " +mCurrentPhotoPath + " with uri "+ Uri.fromFile(image));
         return image;
     }
 }
