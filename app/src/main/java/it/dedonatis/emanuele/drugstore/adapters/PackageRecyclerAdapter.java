@@ -30,7 +30,6 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
     private Context mContext;
 
     public PackageRecyclerAdapter(Context context, List<DrugPackage> drugPackages, PackageClickListener packageClickListener) {
-        Log.v(LOG_TAG, "new PackageRecyclerAdapter");
         this.mContext = context;
         this.drugPackages = drugPackages;
         this.packageClickListener = packageClickListener;
@@ -38,14 +37,11 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
 
     @Override
     public int getItemCount() {
-        Log.v(LOG_TAG, "getItemCount");
-
         return drugPackages.size();
     }
 
     @Override
     public void onBindViewHolder(PackageViewHolder packageViewHolder, int i) {
-        Log.v(LOG_TAG, "onBindViewHolder");
         final DrugPackage pkg = drugPackages.get(i);
         packageViewHolder.tvDescription.setText(pkg.getDescription());
         packageViewHolder.tvExpDate.setText(pkg.getStringExpriartion_date());
@@ -63,7 +59,6 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
 
     @Override
     public PackageViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        Log.v(LOG_TAG, "onCreateViewHolder");
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
                 inflate(R.layout.item_package_card, viewGroup, false);

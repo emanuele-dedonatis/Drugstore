@@ -36,6 +36,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     private static final int PACKAGE_LOADER = 1;
     private static final String LOG_TAG = DrugDetailFragment.class.getSimpleName();
 
+    /***** CONTENT PROVIDER PROJECTION *****/
     private static final String[] PACKAGE_COLUMNS = {
             PackageEntry.TABLE_NAME + "." + PackageEntry._ID,
             PackageEntry.COLUMN_DRUG,
@@ -53,9 +54,10 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     public static final int COL_PACKAGE_EXPIRATION_DATE = 5;
     public static final int COL_PACKAGE_IMAGE = 6;
 
-    private long drugId;
-    private List<DrugPackage> packages = new ArrayList<DrugPackage>();
+    private long mDrugId;
+    private List<DrugPackage> mPackages = new ArrayList<DrugPackage>();
     private PackageRecyclerAdapter mAdapter;
+
     public DrugDetailFragment() {}
 
     public static DrugDetailFragment newInstance(long id) {
@@ -68,44 +70,39 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            drugId = getArguments().getLong(ARG_DRUG_ID);
-            getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
-        }
+        mDrugId = getArguments().getLong(ARG_DRUG_ID);
+        getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreateView");
         View fragmentView = inflater.inflate(R.layout.fragment_drug_detail, container, false);
         RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.package_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new PackageRecyclerAdapter(getActivity(), packages, this);
+        mAdapter = new PackageRecyclerAdapter(getActivity(), mPackages, this);
         mRecyclerView.setAdapter(mAdapter);
         return  fragmentView;
     }
 
+    /*
     @Override
     public void onResume() {
-        Log.v(LOG_TAG, "onResume");
         super.onResume();
         getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
-    }
+    }*/
 
+    /***** LOADER CALLBACKS *****/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.v(LOG_TAG, "onCreateLoader");
-        return new CursorLoader(getActivity(), PackageEntry.buildPackagesFromDrug(drugId), PACKAGE_COLUMNS, null, null, PackageEntry.COLUMN_EXPIRATION_DATE + " ASC");
+        return new CursorLoader(getActivity(), PackageEntry.buildPackagesFromDrug(mDrugId), PACKAGE_COLUMNS, null, null, PackageEntry.COLUMN_EXPIRATION_DATE + " ASC");
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.v(LOG_TAG, "onLoadFinished");
-        packages.clear();
+        mPackages.clear();
         while(data.moveToNext()) {
             DrugPackage pkg = new DrugPackage(
                     data.getLong(COL_PACKAGE_ID),
@@ -116,20 +113,18 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
                     data.getInt(COL_PACKAGE_EXPIRATION_DATE),
                     Uri.parse(data.getString(COL_PACKAGE_IMAGE))
             );
-            packages.add(pkg);
+            mPackages.add(pkg);
         }
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.v(LOG_TAG, "onLoaderReset");
-
     }
 
+    /***** OTHER METHODS *****/
     @Override
     public void onClickPackageUse(long packageId, int units) {
-        Log.v(LOG_TAG, "onClickPackageUse");
         int newUnits = units-1;
         if(newUnits >= 0) {
             ContentValues values = new ContentValues();

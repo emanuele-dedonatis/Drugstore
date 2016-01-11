@@ -59,7 +59,7 @@ public class DrugsActivity extends AppCompatActivity
         DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
 
-        // FAB
+        // Fab
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

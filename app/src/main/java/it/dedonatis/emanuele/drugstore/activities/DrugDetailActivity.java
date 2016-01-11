@@ -31,6 +31,11 @@ public class DrugDetailActivity extends AppCompatActivity {
     public final static String MESSAGE_DRUG_ID = DrugDetailActivity.class.getSimpleName() + ".DRUG_ID";
     public final static String MESSAGE_DRUG_NAME = DrugDetailActivity.class.getSimpleName() + ".DRUG_NAME";
     public final static String MESSAGE_DRUG_API = DrugDetailActivity.class.getSimpleName() + ".DRUG_API";
+
+    private long mDrugId;
+    private String mDrugName;
+    private String mDrugApi;
+    private int mColor;
     ColorGenerator generator = ColorGenerator.MATERIAL;
 
     @Override
@@ -38,38 +43,39 @@ public class DrugDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drug_detail);
 
+        // Get extras from intent
+        Intent intent = getIntent();
+        mDrugId = intent.getLongExtra(DrugsActivity.MESSAGE_DRUG_ID, -1);
+        mDrugName = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_NAME);
+        mDrugApi = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_API);
+        mColor = generator.getColor(mDrugName);
+
+        // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 ;
-
-
-        Intent intent = getIntent();
-        final long drugId = intent.getLongExtra(DrugsActivity.MESSAGE_DRUG_ID, -1);
-        final String drugName = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_NAME);
-        final String drugApi = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_API);
+        // Header
         TextView tvName = (TextView) findViewById(R.id.drug_name);
-        tvName.setText(drugName);
+        tvName.setText(mDrugName);
         TextView tvApi = (TextView) findViewById(R.id.drug_api);
-        tvApi.setText(drugApi);
-        int color = generator.getColor(drugName);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
+        tvApi.setText(mDrugApi);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(mColor));
+        getWindow().setStatusBarColor(ColorUtils.getDarkerColor(mColor));
 
-
-        DrugDetailFragment drugDetailFragment = DrugDetailFragment.newInstance(drugId);
+        // Fragment
+        DrugDetailFragment drugDetailFragment = DrugDetailFragment.newInstance(mDrugId);
         getSupportFragmentManager().beginTransaction().add(R.id.activity_drug_detail_container, drugDetailFragment).commit();
 
-
-        getWindow().setStatusBarColor(ColorUtils.getDarkerColor(color));
+        // Fab
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DrugDetailActivity.this, NewDrugActivity.class);
-                intent.putExtra(MESSAGE_DRUG_ID, drugId);
-                intent.putExtra(MESSAGE_DRUG_NAME, drugName);
-                intent.putExtra(MESSAGE_DRUG_API, drugApi);
+                intent.putExtra(MESSAGE_DRUG_ID, mDrugId);
+                intent.putExtra(MESSAGE_DRUG_NAME, mDrugName);
+                intent.putExtra(MESSAGE_DRUG_API, mDrugApi);
                 startActivity(intent);
             }
         });
