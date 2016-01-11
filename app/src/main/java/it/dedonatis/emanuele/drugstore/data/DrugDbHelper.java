@@ -8,7 +8,7 @@ import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
 
 public class DrugDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     static final String DATABASE_NAME = "drugs.db";
 

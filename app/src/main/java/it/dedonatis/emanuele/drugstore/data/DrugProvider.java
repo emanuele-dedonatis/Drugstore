@@ -4,11 +4,13 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.File;
 import java.sql.SQLException;
 
 import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
@@ -212,7 +214,15 @@ public class DrugProvider extends ContentProvider{
                         new String[]{uri.getPathSegments().get(1)}
                 );
                 break;
+            // "package/#"
             case PACKAGE:
+                Cursor cursor = query(uri, new String[] {PackageEntry.COLUMN_IMAGE},null,null,null);
+                Uri imageUri;
+                while (cursor.moveToNext() && cursor.getString(0) != null) {
+                    imageUri = Uri.parse(cursor.getString(0));
+                    File imageFile = new File(imageUri.getPath());
+                    imageFile.delete();
+                }
                 rowsDeleted = db.delete(PackageEntry.TABLE_NAME,
                         PackageEntry.TABLE_NAME + "." + PackageEntry._ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)}
