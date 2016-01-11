@@ -17,7 +17,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/transparent"
             android:transitionName="drugColor"
             android:elevation="4dp"
             android:minHeight="56dp">
@@ -65,8 +64,8 @@
         app:fabSize="mini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|left"
-        android:layout_marginLeft="16dp"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="108dp"
         android:src="@drawable/ic_add" />
 

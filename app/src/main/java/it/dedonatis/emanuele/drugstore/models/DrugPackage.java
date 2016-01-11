@@ -15,9 +15,10 @@ public class DrugPackage {
     private int units;
     private boolean isPercentage;
     private int expiration_date;
+    private int drugColor;
     private Uri imageUri;
 
-    public DrugPackage(long packageID, long drugID, String description, int units, boolean isPercentage, int expiration_date, Uri imageUri) {
+    public DrugPackage(long packageID, long drugID, String description, int units, boolean isPercentage, int expiration_date, Uri imageUri, int drugColor) {
         this.packageID = packageID;
         this.drugID = drugID;
         this.description = description;
@@ -25,6 +26,7 @@ public class DrugPackage {
         this.isPercentage = isPercentage;
         this.expiration_date = expiration_date;
         this.imageUri = imageUri;
+        this.drugColor = drugColor;
     }
 
     public long getPackageID() {
@@ -62,6 +64,10 @@ public class DrugPackage {
     public String getStringExpriartion_date() {
         SimpleDateFormat simpleDate =  new SimpleDateFormat("dd/MM/yyyy");
         return "EXP" + " " + simpleDate.format(getParsedExpriartion_date());
+    }
+
+    public int getDrugColor() {
+        return drugColor;
     }
     @Override
     public String toString() {

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -47,6 +48,15 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         packageViewHolder.tvExpDate.setText(pkg.getStringExpriartion_date());
         packageViewHolder.tvUnits.setText(pkg.getUnits() + "");
         packageViewHolder.imageView.setImageURI(pkg.getImageUri());
+
+        String letter = "";
+        try {
+            letter = String.valueOf(pkg.getDescription().charAt(0));
+        }catch (StringIndexOutOfBoundsException e) {
+
+        }
+        TextDrawable drawable = TextDrawable.builder().buildRound(letter, pkg.getDrugColor());
+        packageViewHolder.roundLetter.setImageDrawable(drawable);
         if(pkg.getUnits() < 1)
             packageViewHolder.btnUse.setEnabled(false);
         packageViewHolder.btnUse.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +81,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         protected TextView tvUnits;
         protected Button btnUse;
         protected ImageView imageView;
+        protected ImageView roundLetter;
 
         public PackageViewHolder(View v) {
             super(v);
@@ -79,6 +90,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
             tvUnits = (TextView)  v.findViewById(R.id.package_units_left);
             btnUse = (Button) v.findViewById(R.id.button_use);
             imageView = (ImageView) v.findViewById(R.id.package_image);
+            roundLetter = (ImageView) v.findViewById(R.id.item_package_letter);
         }
     }
 

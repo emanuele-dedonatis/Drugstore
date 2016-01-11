@@ -9,7 +9,6 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
     <color name="delete">#D32F2F</color>
-    <color name="transparent">#FFFFFFFF</color>
 
     <color name="colorPrimary">@color/primary</color>
     <color name="colorPrimaryDark">@color/primary_dark</color>

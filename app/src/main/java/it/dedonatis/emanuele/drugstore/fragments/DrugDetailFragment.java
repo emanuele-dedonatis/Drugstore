@@ -33,6 +33,7 @@ import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 
 public class DrugDetailFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>, PackageRecyclerAdapter.PackageClickListener{
     private static final String ARG_DRUG_ID = "id";
+    private static final String ARG_DRUG_COLOR = "color";
     private static final int PACKAGE_LOADER = 1;
     private static final String LOG_TAG = DrugDetailFragment.class.getSimpleName();
 
@@ -55,15 +56,17 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     public static final int COL_PACKAGE_IMAGE = 6;
 
     private long mDrugId;
+    private int mDrugColor;
     private List<DrugPackage> mPackages = new ArrayList<DrugPackage>();
     private PackageRecyclerAdapter mAdapter;
 
     public DrugDetailFragment() {}
 
-    public static DrugDetailFragment newInstance(long id) {
+    public static DrugDetailFragment newInstance(long id, int drugColor) {
         DrugDetailFragment fragment = new DrugDetailFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_DRUG_ID, id);
+        args.putInt(ARG_DRUG_COLOR, drugColor);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,6 +75,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDrugId = getArguments().getLong(ARG_DRUG_ID);
+        mDrugColor = getArguments().getInt(ARG_DRUG_COLOR);
         getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
     }
 
@@ -111,7 +115,8 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
                     data.getInt(COL_PACKAGE_UNITS),
                     data.getInt(COL_PACKAGE_IS_PERECENTAGE) != 0,
                     data.getInt(COL_PACKAGE_EXPIRATION_DATE),
-                    Uri.parse(data.getString(COL_PACKAGE_IMAGE))
+                    Uri.parse(data.getString(COL_PACKAGE_IMAGE)),
+                    mDrugColor
             );
             mPackages.add(pkg);
         }
