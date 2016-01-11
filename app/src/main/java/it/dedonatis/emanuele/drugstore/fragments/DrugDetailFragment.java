@@ -1,6 +1,7 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +31,7 @@ import it.dedonatis.emanuele.drugstore.data.DrugContract;
 import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
 import it.dedonatis.emanuele.drugstore.models.Drug;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
+import me.drakeet.materialdialog.MaterialDialog;
 
 
 public class DrugDetailFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>, PackageRecyclerAdapter.PackageClickListener{
@@ -91,12 +94,11 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
         return  fragmentView;
     }
 
-    /*
     @Override
     public void onResume() {
         super.onResume();
         getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
-    }*/
+    }
 
     /***** LOADER CALLBACKS *****/
     @Override
@@ -115,7 +117,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
                     data.getInt(COL_PACKAGE_UNITS),
                     data.getInt(COL_PACKAGE_IS_PERECENTAGE) != 0,
                     data.getInt(COL_PACKAGE_EXPIRATION_DATE),
-                    Uri.parse(data.getString(COL_PACKAGE_IMAGE)),
+                    data.getString(COL_PACKAGE_IMAGE),
                     mDrugColor
             );
             mPackages.add(pkg);
@@ -127,7 +129,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    /***** OTHER METHODS *****/
+    /***** PackageRecyclerAdapter METHODS *****/
     @Override
     public void onClickPackageUse(long packageId, int units) {
         int newUnits = units-1;
@@ -137,5 +139,22 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
             getActivity().getContentResolver().update(DrugContract.PackageEntry.buildPackageUri(packageId), values, null, null);
             getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
         }
+    }
+
+    @Override
+    public void onClickPackageDelete(final long packageId) {
+        Log.v(LOG_TAG, "Request deleting package " + packageId);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+        builder.setMessage(R.string.delete_question);
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getActivity().getContentResolver().delete(PackageEntry.buildPackageUri(packageId), null, null);
+                        Log.v(LOG_TAG, "Package " + packageId + " deleted");
+                        getLoaderManager().restartLoader(PACKAGE_LOADER, null, DrugDetailFragment.this);
+                    }
+                });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.show();
     }
 }

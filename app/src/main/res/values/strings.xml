@@ -18,6 +18,8 @@
 
     <string name="use">Use</string>
     <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_question">Delete package?</string>
     <string name="exp">EXP</string>
 
     <!-- TODO: Remove or change this placeholder text -->

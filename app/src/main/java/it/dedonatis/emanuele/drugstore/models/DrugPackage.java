@@ -2,6 +2,7 @@ package it.dedonatis.emanuele.drugstore.models;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,14 +19,15 @@ public class DrugPackage {
     private int drugColor;
     private Uri imageUri;
 
-    public DrugPackage(long packageID, long drugID, String description, int units, boolean isPercentage, int expiration_date, Uri imageUri, int drugColor) {
+    public DrugPackage(long packageID, long drugID, String description, int units, boolean isPercentage, int expiration_date, String imageUri, int drugColor) {
         this.packageID = packageID;
         this.drugID = drugID;
         this.description = description;
         this.units = units;
         this.isPercentage = isPercentage;
         this.expiration_date = expiration_date;
-        this.imageUri = imageUri;
+        if(imageUri != null)
+            this.imageUri = Uri.parse(imageUri);
         this.drugColor = drugColor;
     }
 
@@ -75,7 +77,7 @@ public class DrugPackage {
         if(isPercentage)
             unitString += " %";
 
-        return drugID + " - " + description + " - " + unitString +  " exp." + expiration_date + " img " + imageUri.toString();
+        return drugID + " - " + description + " - " + unitString +  " exp." + expiration_date;
 
     }
 }

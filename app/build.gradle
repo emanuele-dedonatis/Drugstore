@@ -46,5 +46,6 @@ dependencies {
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.wrapp.floatlabelededittext:library:0.0.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'me.drakeet.materialdialog:library:1.2.8'
 
 }

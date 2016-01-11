@@ -47,22 +47,33 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         packageViewHolder.tvDescription.setText(pkg.getDescription());
         packageViewHolder.tvExpDate.setText(pkg.getStringExpriartion_date());
         packageViewHolder.tvUnits.setText(pkg.getUnits() + "");
-        packageViewHolder.imageView.setImageURI(pkg.getImageUri());
+        if(pkg.getImageUri() != null)
+            packageViewHolder.imageView.setImageURI(pkg.getImageUri());
+        else
+            packageViewHolder.imageView.setVisibility(View.GONE);
 
         String letter = "";
         try {
-            letter = String.valueOf(pkg.getDescription().charAt(0));
+            letter = String.valueOf(pkg.getDescription().charAt(0)).toUpperCase();
         }catch (StringIndexOutOfBoundsException e) {
 
         }
         TextDrawable drawable = TextDrawable.builder().buildRound(letter, pkg.getDrugColor());
         packageViewHolder.roundLetter.setImageDrawable(drawable);
+
         if(pkg.getUnits() < 1)
             packageViewHolder.btnUse.setEnabled(false);
         packageViewHolder.btnUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 packageClickListener.onClickPackageUse(pkg.getPackageID(), pkg.getUnits());
+            }
+        });
+
+        packageViewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                packageClickListener.onClickPackageDelete(pkg.getPackageID());
             }
         });
     }
@@ -80,6 +91,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
         protected TextView tvExpDate;
         protected TextView tvUnits;
         protected Button btnUse;
+        protected Button btnDelete;
         protected ImageView imageView;
         protected ImageView roundLetter;
 
@@ -89,6 +101,7 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
             tvExpDate = (TextView)  v.findViewById(R.id.package_exp_date);
             tvUnits = (TextView)  v.findViewById(R.id.package_units_left);
             btnUse = (Button) v.findViewById(R.id.button_use);
+            btnDelete = (Button) v.findViewById(R.id.button_delete);
             imageView = (ImageView) v.findViewById(R.id.package_image);
             roundLetter = (ImageView) v.findViewById(R.id.item_package_letter);
         }
@@ -96,5 +109,6 @@ public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecycler
 
     public interface PackageClickListener {
         public void onClickPackageUse(long packageId, int units);
+        public void onClickPackageDelete(long packageId);
     }
 }

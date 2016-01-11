@@ -205,18 +205,18 @@ public class DrugProvider extends ContentProvider{
 
         if ( null == selection ) selection = "1";
         switch (match) {
-            case DRUGS:
-                String name = uri.getQueryParameter(DrugEntry.COLUMN_NAME);
-
-                if(name != null) {
-                    selection = DrugEntry.TABLE_NAME + "." + DrugEntry.COLUMN_NAME + " = ?";
-                    selectionArgs = new String[]{name};
-                }
-
-                rowsDeleted = db.delete(DrugEntry.TABLE_NAME, selection, selectionArgs);
+            // "drug/#"
+            case DRUG:
+                rowsDeleted = db.delete(DrugEntry.TABLE_NAME,
+                        DrugEntry.TABLE_NAME + "." + DrugEntry._ID + " = ?",
+                        new String[]{uri.getPathSegments().get(1)}
+                );
                 break;
-            case PACKAGES:
-                rowsDeleted = db.delete(PackageEntry.TABLE_NAME, selection, selectionArgs);
+            case PACKAGE:
+                rowsDeleted = db.delete(PackageEntry.TABLE_NAME,
+                        PackageEntry.TABLE_NAME + "." + PackageEntry._ID + " = ?",
+                        new String[]{uri.getPathSegments().get(1)}
+                );
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
