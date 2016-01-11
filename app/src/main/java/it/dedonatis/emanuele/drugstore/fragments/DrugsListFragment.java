@@ -1,5 +1,6 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
+import android.content.DialogInterface;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.CursorLoader;
@@ -8,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +21,7 @@ import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.DrugsCursorAdapter;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
 
-public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemLongClickListener {
     private static final String LOG_TAG = DrugsListFragment.class.getSimpleName();
     private static final int DRUG_LOADER = 0;
 
@@ -83,9 +86,31 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
 
+        drugListView.setOnItemLongClickListener(this);
+
+
         return  fragmentView;
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+        if (cursor != null) {
+            final long drugId = cursor.getLong(COL_DRUG_ID);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+            builder.setMessage(R.string.delete_question);
+            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    getActivity().getContentResolver().delete(DrugContract.DrugEntry.buildDrugUri(drugId), null, null);
+                    getLoaderManager().restartLoader(DRUG_LOADER, null, DrugsListFragment.this);
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.show();
+        }
+        return true;
+    }
 
     @Override
     public void onDetach() {

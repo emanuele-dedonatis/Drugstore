@@ -204,6 +204,7 @@ public class DrugProvider extends ContentProvider{
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         int rowsDeleted;
+        Log.v(LOG_TAG, "Delete request " + uri.toString());
 
         if ( null == selection ) selection = "1";
         switch (match) {

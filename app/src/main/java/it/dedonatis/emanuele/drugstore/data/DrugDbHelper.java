@@ -8,7 +8,7 @@ import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
 
 public class DrugDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     static final String DATABASE_NAME = "drugs.db";
 
@@ -37,7 +37,7 @@ public class DrugDbHelper extends SQLiteOpenHelper {
                 PackageEntry.COLUMN_IMAGE + " STRING," +
 
                 " FOREIGN KEY (" + PackageEntry.COLUMN_DRUG + ") REFERENCES " +
-                DrugEntry.TABLE_NAME + " (" + DrugEntry._ID + "));";
+                DrugEntry.TABLE_NAME + " (" + DrugEntry._ID + ") ON DELETE CASCADE);";
 
         db.execSQL(SQL_CREATE_DRUG_TABLE);
         db.execSQL(SQL_CREATE_PACKAGE_TABLE);
