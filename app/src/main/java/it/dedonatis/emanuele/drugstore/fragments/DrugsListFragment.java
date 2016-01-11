@@ -71,7 +71,13 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     if (mListener != null) {
-                        mListener.onDrugSelected(cursor.getLong(COL_DRUG_ID), cursor.getString(COL_DRUG_NAME), cursor.getString(COL_DRUG_API));
+                        mListener.onDrugSelected(
+                                view.findViewById(R.id.item_drug_name),
+                                view.findViewById(R.id.item_drug_api),
+                                view.findViewById(R.id.item_drug_letter),
+                                cursor.getLong(COL_DRUG_ID),
+                                cursor.getString(COL_DRUG_NAME),
+                                cursor.getString(COL_DRUG_API));
                     }
                 }
             }
@@ -107,7 +113,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
     /***** FRAGMENT LISTENER *****/
     public interface OnDrugSelectionListener {
-        void onDrugSelected(long id, String name, String api);
+        void onDrugSelected(View nameView, View apiView, View colorView, long id, String name, String api);
     }
 
 }

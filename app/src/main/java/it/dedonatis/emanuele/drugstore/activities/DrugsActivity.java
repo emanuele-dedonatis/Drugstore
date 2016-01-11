@@ -5,7 +5,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
+import android.transition.Explode;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.EditText;
 
 import it.dedonatis.emanuele.drugstore.R;
@@ -35,10 +41,11 @@ public class DrugsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drugs);
+
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.title_activity_drugs);
+        getSupportActionBar().setTitle("");
 
         // Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -93,7 +100,7 @@ public class DrugsActivity extends AppCompatActivity
 
     /***** FRAGMENTS METHODS *****/
     @Override
-    public void onDrugSelected(long id, String name, String api) {
+    public void onDrugSelected(View nameView, View apiView, View colorView, long id, String name, String api) {
         Intent intent = new Intent(this, DrugDetailActivity.class);
         intent.putExtra(MESSAGE_DRUG_ID, id);
         intent.putExtra(MESSAGE_DRUG_NAME, name);

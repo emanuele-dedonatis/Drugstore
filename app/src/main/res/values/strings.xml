@@ -10,6 +10,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="drugs">Drugs</string>
+    <string name="my_drugs">My Drugs</string>
     <string name="pharmacies">Pharmacies</string>
 
     <string name="wait">Wait</string>

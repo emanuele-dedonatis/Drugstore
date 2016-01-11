@@ -17,15 +17,17 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary"
+            android:background="@color/transparent"
+            android:transitionName="drugColor"
             android:elevation="4dp"
             android:minHeight="56dp">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="72dp"
                 android:layout_marginTop="56dp"
                 android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
                 android:orientation="vertical">
 
                     <TextView
@@ -33,6 +35,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/drug_name"
+                        android:transitionName="drugName"
                         android:text="Title" />
 
 
@@ -40,8 +43,8 @@
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:id="@+id/drug_api"
+                    android:transitionName="drugApi"
                     android:text="Description"
                     android:layout_marginBottom="16dp" />
 
@@ -58,11 +61,13 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_new_package"
+        android:id="@+id/fab"
+        app:fabSize="mini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="top|left"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="108dp"
         android:src="@drawable/ic_add" />
 
 </android.support.design.widget.CoordinatorLayout>

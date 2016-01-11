@@ -3,6 +3,7 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="72dp"
     android:paddingLeft="16dp"
+    android:transitionName="drugColor"
     android:paddingRight="16dp">
 
     <ImageView android:layout_width="40dp"
@@ -22,6 +23,7 @@
         android:layout_height="match_parent"
         android:text="Name"
         android:id="@+id/item_drug_name"
+        android:transitionName="drugName"
         android:layout_weight="1"
         android:textColor="@color/primary_text" />
 
@@ -31,6 +33,7 @@
         android:layout_height="match_parent"
         android:text="Api"
         android:id="@+id/item_drug_api"
+        android:transitionName="drugApi"
         android:layout_weight="1"
         android:textColor="@color/secondary_text" />
 </LinearLayout>
