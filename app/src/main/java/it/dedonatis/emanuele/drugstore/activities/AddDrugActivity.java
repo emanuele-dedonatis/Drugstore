@@ -9,12 +9,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -52,12 +55,21 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
+        // Fab
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchTakePictureIntent();
+            }
+        });
+        // Header selection
         Intent intent = getIntent();
-
         drugId = intent.getLongExtra(DrugDetailActivity.MESSAGE_DRUG_ID, -1);
         if(drugId >= 0) {
-            final String drugName = intent.getStringExtra(DrugDetailActivity.MESSAGE_DRUG_NAME);
-            final String drugApi = intent.getStringExtra(DrugDetailActivity.MESSAGE_DRUG_API);
+            // Existing drug
+            String drugName = intent.getStringExtra(DrugDetailActivity.MESSAGE_DRUG_NAME);
+            String drugApi = intent.getStringExtra(DrugDetailActivity.MESSAGE_DRUG_API);
             TextView tvName = (TextView) findViewById(R.id.drug_name);
             tvName.setText(drugName);
             TextView tvApi = (TextView) findViewById(R.id.drug_api);
@@ -65,17 +77,22 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             int color = generator.getColor(drugName);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
             getWindow().setStatusBarColor(ColorUtils.getDarkerColor(color));
+
         }else{
+            // New drug
             ViewSwitcher viewSwitcher =   (ViewSwitcher)findViewById(R.id.toolbar_switcher);
             viewSwitcher.showNext();
+
+            ViewGroup.MarginLayoutParams fabParam = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+            fabParam.setMargins(fabParam.leftMargin, fabParam.topMargin + 60, fabParam.rightMargin, fabParam.bottomMargin);
+            fab.setLayoutParams(fabParam);
         }
 
-        if (savedInstanceState != null) {
-            return;
-        } else {
-            mAddDrugFragment = AddDrugFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().add(R.id.activity_new_drug_container, mAddDrugFragment).commit();
-        }
+
+
+
+        mAddDrugFragment = AddDrugFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().add(R.id.activity_new_drug_container, mAddDrugFragment).commit();
     }
 
     @Override
@@ -183,7 +200,6 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
         finish();
     }
 
-    @Override
     public void dispatchTakePictureIntent() {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
