@@ -4,25 +4,23 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,21 +29,24 @@ import java.util.Date;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
-import it.dedonatis.emanuele.drugstore.fragments.NewDrugFragment;
+import it.dedonatis.emanuele.drugstore.fragments.AddDrugFragment;
+import it.dedonatis.emanuele.drugstore.interfaces.OnMenuItemClickListener;
+import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
-public class NewDrugActivity extends AppCompatActivity implements NewDrugFragment.OnNewDrugListener {
+public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListener {
 
-    private static final String LOG_TAG = NewDrugActivity.class.getSimpleName();
+    private static final String LOG_TAG = AddDrugActivity.class.getSimpleName();
     ColorGenerator generator = ColorGenerator.MATERIAL;
     static final int REQUEST_TAKE_PHOTO = 1;
     String mCurrentPhotoPath;
     private long drugId = -1;
-
+    private AddDrugFragment mAddDrugFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_drug);
+        setContentView(R.layout.activity_add_drug);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -57,9 +58,9 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
         if(drugId >= 0) {
             final String drugName = intent.getStringExtra(DrugDetailActivity.MESSAGE_DRUG_NAME);
             final String drugApi = intent.getStringExtra(DrugDetailActivity.MESSAGE_DRUG_API);
-            TextView tvName = (TextView) findViewById(R.id.drug_name_tv);
+            TextView tvName = (TextView) findViewById(R.id.drug_name);
             tvName.setText(drugName);
-            TextView tvApi = (TextView) findViewById(R.id.drug_api_tv);
+            TextView tvApi = (TextView) findViewById(R.id.drug_api);
             tvApi.setText(drugApi);
             int color = generator.getColor(drugName);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
@@ -67,14 +68,13 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
         }else{
             ViewSwitcher viewSwitcher =   (ViewSwitcher)findViewById(R.id.toolbar_switcher);
             viewSwitcher.showNext();
-
         }
 
         if (savedInstanceState != null) {
             return;
         } else {
-            NewDrugFragment newDrugFragment = NewDrugFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().add(R.id.activity_new_drug_container, newDrugFragment).commit();
+            mAddDrugFragment = AddDrugFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().add(R.id.activity_new_drug_container, mAddDrugFragment).commit();
         }
     }
 
@@ -82,6 +82,25 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
     public boolean onSupportNavigateUp() {
         finish();
         return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_save, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.save:
+                ((OnMenuItemClickListener)mAddDrugFragment).onDone();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -199,4 +218,5 @@ public class NewDrugActivity extends AppCompatActivity implements NewDrugFragmen
 
         return image;
     }
+
 }

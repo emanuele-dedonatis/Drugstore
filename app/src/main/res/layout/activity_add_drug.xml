@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="it.dedonatis.emanuele.drugstore.activities.NewDrugActivity">
+    tools:context=".activities.AddDrugActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -16,47 +16,23 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/primary"
+            android:layout_height="wrap_content"
+            android:transitionName="drugColor"
             android:elevation="4dp"
             android:minHeight="56dp">
+
                 <ViewSwitcher
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/toolbar_switcher">
-                        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="56dp"
-                            android:layout_marginRight="16dp"
-                            android:orientation="vertical"
-                            android:id="@+id/toolbar_tv">
 
-                            <TextView
-                                style="@style/Base.TextAppearance.AppCompat.Headline"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/drug_name_tv"
-                                android:text="Title" />
-
-
-                            <TextView
-                                style="@style/Base.TextAppearance.AppCompat.Subhead"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:id="@+id/drug_api_tv"
-                                android:text="Description"
-                                android:layout_marginBottom="16dp" />
-
-
-                        </LinearLayout>
+                    <include layout="@layout/header_drug"/>
 
                     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="56dp"
+                        android:layout_height="@dimen/header_height"
                         android:layout_marginRight="16dp"
+                        android:layout_marginLeft="72dp"
                         android:orientation="vertical"
                         android:id="@+id/toolbar_et">
 
@@ -78,6 +54,7 @@
 
                     </LinearLayout>
                 </ViewSwitcher>
+
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -86,5 +63,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        app:fabSize="mini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_mini_margin_top"
+        android:src="@drawable/ic_menu_camera"
+        android:tint="@color/white"/>
 
 </android.support.design.widget.CoordinatorLayout>

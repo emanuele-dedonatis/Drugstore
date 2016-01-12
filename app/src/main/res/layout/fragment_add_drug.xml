@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.NewDrugFragment">
+    tools:context=".fragments.AddDrugFragment">
 
     <LinearLayout
         android:orientation="vertical"
@@ -32,13 +32,6 @@
             android:layout_height="wrap_content"
             android:text="CAMERA"
             android:id="@+id/camera_btn"
-            android:layout_gravity="center_horizontal" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DONE"
-            android:id="@+id/done_btn"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
 </FrameLayout>

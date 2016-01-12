@@ -1,8 +1,6 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,27 +10,35 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.interfaces.OnMenuItemClickListener;
+import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class NewDrugFragment extends Fragment {
+public class AddDrugFragment extends Fragment implements OnMenuItemClickListener {
 
     private OnNewDrugListener newDrugListener;
-    public NewDrugFragment() {
+    private EditText mDescriptionEt;
+    private EditText mUnitsEt;
+    private EditText mExpDateEt;
+
+    public AddDrugFragment() {
     }
 
-    public static NewDrugFragment newInstance() {
-        NewDrugFragment fragment = new NewDrugFragment();
+    public static AddDrugFragment newInstance() {
+        AddDrugFragment fragment = new AddDrugFragment();
         return fragment;
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_new_drug, container, false);
-        final EditText descriptionEt = (EditText) fragmentView.findViewById(R.id.description_et);
-        final EditText unitsEt = (EditText) fragmentView.findViewById(R.id.units_et);
-        final EditText expDateEt = (EditText) fragmentView.findViewById(R.id.expiration_date_et);
+        View fragmentView = inflater.inflate(R.layout.fragment_add_drug, container, false);
+
+        mDescriptionEt = (EditText) fragmentView.findViewById(R.id.description_et);
+        mUnitsEt = (EditText) fragmentView.findViewById(R.id.units_et);
+        mExpDateEt = (EditText) fragmentView.findViewById(R.id.expiration_date_et);
+
         Button cameraBtn = (Button) fragmentView.findViewById(R.id.camera_btn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,15 +49,6 @@ public class NewDrugFragment extends Fragment {
             }
         });
 
-        Button doneBtn = (Button) fragmentView.findViewById(R.id.done_btn);
-        doneBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (newDrugListener != null) {
-                    newDrugListener.addDrug(descriptionEt.getText().toString(), Integer.parseInt(unitsEt.getText().toString()), 0, Integer.parseInt(expDateEt.getText().toString()), null);
-                }
-            }
-        });
         return fragmentView;
     }
 
@@ -72,10 +69,14 @@ public class NewDrugFragment extends Fragment {
         super.onDetach();
         newDrugListener = null;
     }
-    public interface OnNewDrugListener {
-        public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image);
 
-        public void dispatchTakePictureIntent();
+    @Override
+    public void onDone() {
+        String description = mDescriptionEt.getText().toString();
+        int units = Integer.parseInt(mUnitsEt.getText().toString());
+        int exp_date = Integer.parseInt(mExpDateEt.getText().toString());
+
+        newDrugListener.addDrug(description, units, 0, exp_date, null);
     }
 
 }

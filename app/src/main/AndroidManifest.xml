@@ -35,7 +35,7 @@
             android:enabled="true" />
 
         <activity
-            android:name=".activities.NewDrugActivity"
+            android:name=".activities.AddDrugActivity"
             android:label="@string/title_activity_new_drug"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

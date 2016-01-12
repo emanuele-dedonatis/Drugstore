@@ -62,7 +62,7 @@ public class DrugDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DrugDetailActivity.this, NewDrugActivity.class);
+                Intent intent = new Intent(DrugDetailActivity.this, AddDrugActivity.class);
                 intent.putExtra(MESSAGE_DRUG_ID, mDrugId);
                 intent.putExtra(MESSAGE_DRUG_NAME, mDrugName);
                 intent.putExtra(MESSAGE_DRUG_API, mDrugApi);
