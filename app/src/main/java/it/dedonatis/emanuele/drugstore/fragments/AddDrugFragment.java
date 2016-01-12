@@ -106,7 +106,6 @@ public class AddDrugFragment extends Fragment implements OnMenuItemClickListener
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
     }
 
 }

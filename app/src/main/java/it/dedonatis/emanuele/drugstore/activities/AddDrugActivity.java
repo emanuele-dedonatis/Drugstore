@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -147,6 +148,9 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             e.printStackTrace();
         } finally {
             fos.close();
+            ImageView image = (ImageView) findViewById(R.id.package_image);
+            image.setImageURI(Uri.parse(mCurrentPhotoPath));
+            image.setVisibility(View.VISIBLE);
         }
     }
 

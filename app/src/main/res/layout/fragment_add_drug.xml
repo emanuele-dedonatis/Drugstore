@@ -11,6 +11,16 @@
         android:layout_marginRight="@dimen/screen_margin"
         android:layout_marginLeft="@dimen/screen_margin">
 
+
+        <ImageView
+            android:layout_marginTop="@dimen/screen_margin"
+            android:layout_width="match_parent"
+            android:layout_height="169dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/package_image"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,20 +29,29 @@
             android:layout_marginBottom="@dimen/screen_margin"
             android:hint="@string/package_description"/>
 
-        <EditText
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/units_et"
-            android:layout_marginBottom="@dimen/screen_margin"
-            android:inputType="numberDecimal"
-            android:hint="@string/package_units"/>
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/expiration_date_et"
-            android:layout_marginBottom="@dimen/screen_margin"
-            android:inputType="date"
-            android:hint="@string/package_expiration"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/units_et"
+                android:layout_marginBottom="@dimen/screen_margin"
+                android:inputType="numberDecimal"
+                android:hint="@string/package_units"
+                android:layout_weight="4" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/expiration_date_et"
+                android:layout_marginBottom="@dimen/screen_margin"
+                android:inputType="date"
+                android:hint="@string/package_expiration"
+                android:layout_weight="1" />
+        </LinearLayout>
+
     </LinearLayout>
 </FrameLayout>
