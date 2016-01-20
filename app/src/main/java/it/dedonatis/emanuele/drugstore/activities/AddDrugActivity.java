@@ -38,6 +38,10 @@ import it.dedonatis.emanuele.drugstore.interfaces.OnMenuItemClickListener;
 import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
+import static it.dedonatis.emanuele.drugstore.utils.Images.createImageFile;
+import static it.dedonatis.emanuele.drugstore.utils.Images.saveToInternalSorage;
+import static it.dedonatis.emanuele.drugstore.utils.Images.scaleDown;
+
 public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListener {
 
     private static final String LOG_TAG = AddDrugActivity.class.getSimpleName();
@@ -124,47 +128,20 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Uri uri = Uri.parse(mCurrentPhotoPath);
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                Uri photoPath = data.getData();
+                Log.v(LOG_TAG, photoPath.toString());
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoPath);
                 Bitmap thumb = scaleDown(bitmap, 600, true);
-                saveToInternalSorage(thumb);
+                saveToInternalSorage(thumb, photoPath);
+                ImageView image = (ImageView) findViewById(R.id.package_image);
+                image.setImageURI(photoPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.v(LOG_TAG, uri.toString());
-
         }
     }
 
-    private void saveToInternalSorage(Bitmap bitmapImage) throws IOException {
-        File mypath = new File(Uri.parse(mCurrentPhotoPath).getPath());
-        Log.v(LOG_TAG, "Resizing file " + mypath.toString());
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            fos.close();
-            ImageView image = (ImageView) findViewById(R.id.package_image);
-            image.setImageURI(Uri.parse(mCurrentPhotoPath));
-        }
-    }
-
-    public static Bitmap scaleDown(Bitmap realImage, float maxImageSize,
-                                   boolean filter) {
-        float ratio = Math.min(
-                (float) maxImageSize / realImage.getWidth(),
-                (float) maxImageSize / realImage.getHeight());
-        int width = Math.round((float) ratio * realImage.getWidth());
-        int height = Math.round((float) ratio * realImage.getHeight());
-
-        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
-                height, filter);
-        return newBitmap;
-    }
 
     @Override
     public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image) {
@@ -178,7 +155,7 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
                     drug
             );
             drugId = ContentUris.parseId(uri);
-            Log.v(LOG_TAG, "Insered new drug id " + drugId);
+            Log.v(LOG_TAG, "New drug id " + drugId);
         }
 
         if(drugId>=0) {
@@ -187,12 +164,9 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             pkg.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, description);
             pkg.put(DrugContract.PackageEntry.COLUMN_UNITS, units);
             pkg.put(DrugContract.PackageEntry.COLUMN_IS_PERCENTAGE, isPercentage);
-            pkg.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);/*
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] bitMapData = stream.toByteArray(); */
+            pkg.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);
             pkg.put(DrugContract.PackageEntry.COLUMN_IMAGE, mCurrentPhotoPath);
-            Log.v(LOG_TAG, "insert new pkg");
+            Log.v(LOG_TAG, "New pkg");
             AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {};
 
             queryHandler.startInsert(0, null,
@@ -204,38 +178,21 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
     }
 
     public void dispatchTakePictureIntent() {
-
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
+            Uri photoUri = null;
             try {
-                photoFile = createImageFile();
+                photoUri = createImageFile(this);
             } catch (IOException ex) {
                 Log.e(LOG_TAG, ex.toString());
             }
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
+            if (photoUri != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(null);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
 
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-
-        return image;
-    }
 
 }

@@ -1,6 +1,7 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -26,7 +27,6 @@ public class DrugDetailActivity extends AppCompatActivity {
     private String mDrugName;
     private String mDrugApi;
     private int mDrugColor;
-    ColorGenerator generator = ColorGenerator.MATERIAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class DrugDetailActivity extends AppCompatActivity {
         mDrugId = intent.getLongExtra(DrugsActivity.MESSAGE_DRUG_ID, -1);
         mDrugName = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_NAME);
         mDrugApi = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_API);
-        mDrugColor = generator.getColor(mDrugName);
+        mDrugColor = ColorUtils.getDrugColor(mDrugName, mDrugApi);
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

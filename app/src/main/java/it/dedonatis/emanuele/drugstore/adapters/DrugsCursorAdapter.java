@@ -15,6 +15,7 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
+import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
 public class DrugsCursorAdapter extends CursorAdapter {
     private static final String LOG_TAG = DrugsCursorAdapter.class.getSimpleName();
@@ -30,7 +31,6 @@ public class DrugsCursorAdapter extends CursorAdapter {
     public static final int COL_PKG_ID = 0;
     public static final int COL_PKG_UNITS = 1;
 
-    ColorGenerator generator = ColorGenerator.MATERIAL;
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -57,7 +57,7 @@ public class DrugsCursorAdapter extends CursorAdapter {
         }catch (StringIndexOutOfBoundsException e) {
 
         }
-        TextDrawable drawable = TextDrawable.builder().buildRound(letter, generator.getColor(name));
+        TextDrawable drawable = TextDrawable.builder().buildRound(letter, ColorUtils.getDrugColor(name, api));
         viewHolder.roundLetter.setImageDrawable(drawable);
 
     }
