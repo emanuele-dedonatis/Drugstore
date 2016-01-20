@@ -19,7 +19,7 @@
             android:scaleType="centerCrop"
             android:id="@+id/package_image"
             android:layout_gravity="center_horizontal"
-            android:visibility="gone"/>
+            android:src="@drawable/img_not_available"/>
 
         <EditText
             android:layout_width="match_parent"

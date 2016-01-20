@@ -150,7 +150,6 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             fos.close();
             ImageView image = (ImageView) findViewById(R.id.package_image);
             image.setImageURI(Uri.parse(mCurrentPhotoPath));
-            image.setVisibility(View.VISIBLE);
         }
     }
 
