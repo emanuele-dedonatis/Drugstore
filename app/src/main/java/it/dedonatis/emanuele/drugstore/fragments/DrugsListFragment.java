@@ -137,7 +137,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri drugsUri;
         if(mCursorFilter != null) {
-            drugsUri = DrugContract.DrugEntry.buildDrugFromName(mCursorFilter);
+            drugsUri = DrugContract.DrugEntry.buildDrugLikeNameOrApi(mCursorFilter);
         } else {
             drugsUri = DrugContract.DrugEntry.CONTENT_URI;
 

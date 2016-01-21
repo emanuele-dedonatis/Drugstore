@@ -54,13 +54,34 @@ public class DrugProvider extends ContentProvider{
         switch (sUriMatcher.match(uri)) {
             // "drug"
             // "drug?name=drugname"
+            // "drug?name_like=name"
+            // "drug?api_like=name"
+            // "drug?name_like=name"
             case DRUGS:
             {
+                Log.v(LOG_TAG, uri.toString());
                 String name = uri.getQueryParameter(DrugEntry.COLUMN_NAME);
-
                 if(name != null) {
                     selection = DrugEntry.TABLE_NAME + "." + DrugEntry.COLUMN_NAME + " = ?";
                     selectionArgs = new String[]{name};
+                }else {
+                    String name_like = uri.getQueryParameter(DrugEntry.FILTER_NAME_LIKE);
+                    String api_like = uri.getQueryParameter(DrugEntry.FILTER_API_LIKE);
+
+                    if(name_like != null && api_like != null) {
+                        selection = DrugEntry.TABLE_NAME + "." + DrugEntry.COLUMN_NAME + " LIKE ? OR " + DrugEntry.TABLE_NAME + "." + DrugEntry.COLUMN_API + " LIKE ?";
+                        selectionArgs = new String[]{"%" + name_like + "%", "%" + api_like + "%"};
+                    }else{
+                        if (name_like != null) {
+                            selection = DrugEntry.TABLE_NAME + "." + DrugEntry.COLUMN_NAME + " LIKE ?";
+                            selectionArgs = new String[]{"%" + name_like + "%"};
+                        }
+
+                        if (api_like != null) {
+                            selection = DrugEntry.TABLE_NAME + "." + DrugEntry.COLUMN_API + " LIKE ?";
+                            selectionArgs = new String[]{"%" + api_like + "%"};
+                        }
+                    }
                 }
 
 

@@ -20,6 +20,9 @@ public class DrugContract {
         public static final String COLUMN_API = "api";
         public static final String COLUMN_NEED_PRESCRIPTION = "need_prescription";
 
+        public static final String FILTER_NAME_LIKE = "name_like";
+        public static final String FILTER_API_LIKE = "api_like";
+
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_DRUG).build();
 
@@ -36,8 +39,21 @@ public class DrugContract {
             return  CONTENT_URI.buildUpon().appendQueryParameter(COLUMN_NAME, name).build();
         }
 
+        public static Uri buildDrugLikeName(String name) {
+            return  CONTENT_URI.buildUpon().appendQueryParameter(FILTER_NAME_LIKE, name).build();
+        }
+
         public static Uri buildDrugFromApi(String api) {
             return  CONTENT_URI.buildUpon().appendQueryParameter(COLUMN_API, api).build();
+        }
+
+        public static Uri buildDrugLikeApi(String api) {
+            return  CONTENT_URI.buildUpon().appendQueryParameter(FILTER_API_LIKE, api).build();
+        }
+
+
+        public static Uri buildDrugLikeNameOrApi(String name) {
+            return  CONTENT_URI.buildUpon().appendQueryParameter(FILTER_NAME_LIKE, name).appendQueryParameter(FILTER_API_LIKE, name).build();
         }
 
     }
