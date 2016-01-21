@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
@@ -42,6 +43,7 @@ import it.dedonatis.emanuele.drugstore.interfaces.OnMenuItemClickListener;
 import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
 import it.dedonatis.emanuele.drugstore.utils.Assets;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
+import it.dedonatis.emanuele.drugstore.utils.Images;
 
 import static it.dedonatis.emanuele.drugstore.utils.Images.createImageFile;
 import static it.dedonatis.emanuele.drugstore.utils.Images.saveToInternalSorage;
@@ -68,12 +70,11 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
         // Copy assets for OCR
-        Thread t = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             public void run() {
                 traineddataExist = Assets.copyToInternalStorage(getApplication(),"tessdata", "ita.traineddata");
             }
-        });
-        t.start();
+        }).start();
 
         // Fab
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -146,17 +147,26 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
 
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), mPhotoUri);
-                        Bitmap thumb = scaleDown(bitmap, 600, true);
+                        final Bitmap thumb = scaleDown(bitmap, 1024, true);
                         saveToInternalSorage(thumb, mPhotoUri);
                         ImageView image = (ImageView) findViewById(R.id.package_image);
                         image.setImageURI(mPhotoUri);
                         if (traineddataExist) {
-                            TessBaseAPI baseAPI = new TessBaseAPI();
-                            baseAPI.init(getExternalFilesDir(null).getPath(), "ita");
-                            baseAPI.setImage(thumb);
-                            String recognizedText = baseAPI.getUTF8Text();
-                            baseAPI.end();
-                            Log.v(LOG_TAG, recognizedText);
+                            new Thread(new Runnable() {
+                                public void run() {
+                                    TessBaseAPI baseAPI = new TessBaseAPI();
+                                    baseAPI.init(getExternalFilesDir(null).getPath(), "ita");
+                                    baseAPI.setImage(thumb);
+                                    Scanner scanner = new Scanner(baseAPI.getUTF8Text());
+                                    baseAPI.end();
+                                    while(scanner.hasNextLine()) {
+                                        String line = scanner.nextLine().replaceAll("[^A-Za-z\\s]+", "");
+                                        line = line.trim().replaceAll(" +", " ");
+                                        if(line.length() > 8)
+                                        Log.v(LOG_TAG, line + " -> " + line);
+                                    }
+                                }
+                            }).start();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
