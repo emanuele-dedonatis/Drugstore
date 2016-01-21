@@ -1,5 +1,6 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
+import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -33,7 +34,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import it.dedonatis.emanuele.drugstore.R;
@@ -144,33 +147,47 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            final ProgressDialog ringProgressDialog = ProgressDialog.show(AddDrugActivity.this, getString(R.string.please_wait),getString(R.string.processing_image), true);
+            ringProgressDialog.setCancelable(true);
 
+            ImageView image = (ImageView) findViewById(R.id.package_image);
+            image.setImageURI(mPhotoUri);
+            final EditText drugNameEditText = (EditText) findViewById(R.id.drug_name_et);
+
+            new Thread(new Runnable() {
+                public void run() {
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), mPhotoUri);
                         final Bitmap thumb = scaleDown(bitmap, 1024, true);
                         saveToInternalSorage(thumb, mPhotoUri);
-                        ImageView image = (ImageView) findViewById(R.id.package_image);
-                        image.setImageURI(mPhotoUri);
+                        final List<String> lines = new ArrayList<String>();
                         if (traineddataExist) {
-                            new Thread(new Runnable() {
-                                public void run() {
-                                    TessBaseAPI baseAPI = new TessBaseAPI();
-                                    baseAPI.init(getExternalFilesDir(null).getPath(), "ita");
-                                    baseAPI.setImage(thumb);
-                                    Scanner scanner = new Scanner(baseAPI.getUTF8Text());
-                                    baseAPI.end();
-                                    while(scanner.hasNextLine()) {
-                                        String line = scanner.nextLine().replaceAll("[^A-Za-z\\s]+", "");
-                                        line = line.trim().replaceAll(" +", " ");
-                                        if(line.length() > 8)
-                                        Log.v(LOG_TAG, line + " -> " + line);
-                                    }
-                                }
-                            }).start();
+                            TessBaseAPI baseAPI = new TessBaseAPI();
+                            baseAPI.init(getExternalFilesDir(null).getPath(), "ita");
+                            baseAPI.setImage(thumb);
+                            Scanner scanner = new Scanner(baseAPI.getUTF8Text());
+                            baseAPI.end();
+                            while (scanner.hasNextLine()) {
+                                String line = scanner.nextLine().replaceAll("[^A-Za-z\\s]+", "");
+                                line = line.trim().replaceAll(" +", " ");
+                                if (line.length() > 8)
+                                    lines.add(line);
+                                    Log.v(LOG_TAG, line + " -> " + line);
+                            }
                         }
+                        ringProgressDialog.dismiss();
+
+                        drugNameEditText.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                drugNameEditText.setText(lines.get(0));
+                            }
+                        });
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }
+            }).start();
 
         }
     }
