@@ -9,7 +9,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -41,6 +44,7 @@ public class DrugsActivity extends AppCompatActivity
     public final static String MESSAGE_DRUG_NAME = DrugsActivity.class.getSimpleName() + ".DRUG_NAME";
     public final static String MESSAGE_DRUG_API = DrugsActivity.class.getSimpleName() + ".DRUG_API";
 
+    DrugsListFragment mDrugsListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +65,8 @@ public class DrugsActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // Main Fragment
-        DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
+        mDrugsListFragment = DrugsListFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mDrugsListFragment).commit();
 
         // Populate database if empty
         Cursor cursor = getContentResolver().query(DrugContract.DrugEntry.CONTENT_URI,null,null,null,null);
@@ -81,6 +85,15 @@ public class DrugsActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_drugs, menu);
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(mDrugsListFragment);
+        return true;
+    }
 
     @Override
     public void onBackPressed() {

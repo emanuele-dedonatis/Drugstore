@@ -9,9 +9,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,13 +27,13 @@ import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.DrugsCursorAdapter;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
 
-public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemLongClickListener {
+public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemLongClickListener, SearchView.OnQueryTextListener {
     private static final String LOG_TAG = DrugsListFragment.class.getSimpleName();
     private static final int DRUG_LOADER = 0;
 
     private OnDrugSelectionListener mListener;
     private DrugsCursorAdapter drugsCursorAdapter;
-
+    private String mCursorFilter;
     private static final String[] DRUG_COLUMNS = {
             DrugContract.DrugEntry.TABLE_NAME + "." + DrugContract.DrugEntry._ID,
             DrugContract.DrugEntry.COLUMN_NAME,
@@ -93,6 +99,11 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
         Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
         if (cursor != null) {
@@ -121,8 +132,14 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     /***** CURSOR LOADER *****/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri drugsUri;
+        if(mCursorFilter != null) {
+            drugsUri = DrugContract.DrugEntry.buildDrugFromName(mCursorFilter);
+        } else {
+            drugsUri = DrugContract.DrugEntry.CONTENT_URI;
+
+        }
         String sortOrder = DrugContract.DrugEntry.COLUMN_NAME + " ASC";
-        Uri drugsUri = DrugContract.DrugEntry.CONTENT_URI;
         return new CursorLoader(getActivity(), drugsUri, DRUG_COLUMNS, null, null, sortOrder);
     }
 
@@ -134,6 +151,28 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         drugsCursorAdapter.swapCursor(null);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Log.v(LOG_TAG, query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
+        // Don't do anything if the filter hasn't actually changed.
+        // Prevents restarting the loader when restoring state.
+        if (mCursorFilter == null && newFilter == null) {
+            return true;
+        }
+        if (mCursorFilter != null && mCursorFilter.equals(newFilter)) {
+            return true;
+        }
+        mCursorFilter = newFilter;
+        getLoaderManager().restartLoader(0, null, this);
+        return false;
     }
 
     /***** FRAGMENT LISTENER *****/
