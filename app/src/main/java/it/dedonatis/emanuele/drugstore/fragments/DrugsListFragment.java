@@ -34,6 +34,8 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     private OnDrugSelectionListener mListener;
     private DrugsCursorAdapter drugsCursorAdapter;
     private String mCursorFilter;
+    private SearchView mSearchView;
+
     private static final String[] DRUG_COLUMNS = {
             DrugContract.DrugEntry.TABLE_NAME + "." + DrugContract.DrugEntry._ID,
             DrugContract.DrugEntry.COLUMN_NAME,
@@ -63,6 +65,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         getLoaderManager().initLoader(DRUG_LOADER, null, this);
     }
 
@@ -153,10 +156,19 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         drugsCursorAdapter.swapCursor(null);
     }
 
+
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.v(LOG_TAG, query);
         return false;
+    }
+
+    /***** SEARCHVIEW METHODS *****/
+    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_drugs, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        mSearchView.setOnQueryTextListener(this);
     }
 
     @Override

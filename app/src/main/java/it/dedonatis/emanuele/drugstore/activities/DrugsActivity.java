@@ -44,8 +44,6 @@ public class DrugsActivity extends AppCompatActivity
     public final static String MESSAGE_DRUG_NAME = DrugsActivity.class.getSimpleName() + ".DRUG_NAME";
     public final static String MESSAGE_DRUG_API = DrugsActivity.class.getSimpleName() + ".DRUG_API";
 
-    DrugsListFragment mDrugsListFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +63,8 @@ public class DrugsActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // Main Fragment
-        mDrugsListFragment = DrugsListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mDrugsListFragment).commit();
+        DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
 
         // Populate database if empty
         Cursor cursor = getContentResolver().query(DrugContract.DrugEntry.CONTENT_URI,null,null,null,null);
@@ -83,16 +81,6 @@ public class DrugsActivity extends AppCompatActivity
             }
         });
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_drugs, menu);
-        final MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(mDrugsListFragment);
-        return true;
     }
 
     @Override
