@@ -21,7 +21,7 @@
             android:layout_gravity="center_horizontal"
             android:src="@drawable/img_not_available"/>
 
-        <EditText
+        <AutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/description_et"

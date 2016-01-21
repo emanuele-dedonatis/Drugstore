@@ -21,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -150,15 +152,15 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             final ProgressDialog ringProgressDialog = ProgressDialog.show(AddDrugActivity.this, getString(R.string.please_wait),getString(R.string.processing_image), true);
             ringProgressDialog.setCancelable(true);
 
-            ImageView image = (ImageView) findViewById(R.id.package_image);
-            image.setImageURI(mPhotoUri);
-            final EditText drugNameEditText = (EditText) findViewById(R.id.drug_name_et);
+            final ImageView image = (ImageView) findViewById(R.id.package_image);
+            final AutoCompleteTextView drugNameEditText = (AutoCompleteTextView) findViewById(R.id.drug_name_et);
+            final AutoCompleteTextView drugApiEditText = (AutoCompleteTextView) findViewById(R.id.drug_api_et);
 
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), mPhotoUri);
-                        final Bitmap thumb = scaleDown(bitmap, 1024, true);
+                        final Bitmap thumb = scaleDown(bitmap, 512, true);
                         saveToInternalSorage(thumb, mPhotoUri);
                         final List<String> lines = new ArrayList<String>();
                         if (traineddataExist) {
@@ -171,6 +173,7 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
                                 String line = scanner.nextLine().replaceAll("[^A-Za-z\\s]+", "");
                                 line = line.trim().replaceAll(" +", " ");
                                 if (line.length() > 8)
+                                    line = Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
                                     lines.add(line);
                                     Log.v(LOG_TAG, line + " -> " + line);
                             }
@@ -180,7 +183,12 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
                         drugNameEditText.post(new Runnable() {
                             @Override
                             public void run() {
-                                drugNameEditText.setText(lines.get(0));
+                                image.setImageURI(mPhotoUri);
+                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplication(),
+                                        android.R.layout.simple_dropdown_item_1line, lines.toArray(new String[lines.size()]));
+                                drugNameEditText.setAdapter(adapter);
+                                drugApiEditText.setAdapter(adapter);
+                                mAddDrugFragment.getDescriptionEt().setAdapter(adapter);
                             }
                         });
                     } catch (IOException e) {

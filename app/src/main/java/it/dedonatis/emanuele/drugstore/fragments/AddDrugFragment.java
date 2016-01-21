@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -28,7 +29,9 @@ import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
 public class AddDrugFragment extends Fragment implements OnMenuItemClickListener {
 
     private OnNewDrugListener newDrugListener;
-    private EditText mDescriptionEt;
+
+
+    private AutoCompleteTextView mDescriptionEt;
     private EditText mUnitsEt;
     private EditText mExpDateEt;
 
@@ -44,7 +47,7 @@ public class AddDrugFragment extends Fragment implements OnMenuItemClickListener
                              Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_add_drug, container, false);
 
-        mDescriptionEt = (EditText) fragmentView.findViewById(R.id.description_et);
+        mDescriptionEt = (AutoCompleteTextView) fragmentView.findViewById(R.id.description_et);
         mUnitsEt = (EditText) fragmentView.findViewById(R.id.units_et);
         mExpDateEt = (EditText) fragmentView.findViewById(R.id.expiration_date_et);
         mExpDateEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -106,6 +109,11 @@ public class AddDrugFragment extends Fragment implements OnMenuItemClickListener
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public AutoCompleteTextView getDescriptionEt() {
+        return mDescriptionEt;
     }
 
 }

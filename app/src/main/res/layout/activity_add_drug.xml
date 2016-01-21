@@ -38,7 +38,7 @@
                         android:orientation="vertical"
                         android:id="@+id/toolbar_et">
 
-                        <EditText
+                        <AutoCompleteTextView
                             style="@style/Base.TextAppearance.AppCompat.Headline"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                             android:hint="@string/drug_name" />
 
 
-                        <EditText
+                        <AutoCompleteTextView
                             style="@style/Base.TextAppearance.AppCompat.Subhead"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
