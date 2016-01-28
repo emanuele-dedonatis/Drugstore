@@ -1,6 +1,8 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.CursorLoader;
@@ -24,6 +26,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
+import it.dedonatis.emanuele.drugstore.activities.MainActivity;
 import it.dedonatis.emanuele.drugstore.adapters.DrugsCursorAdapter;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
 
@@ -97,6 +101,15 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
         drugListView.setOnItemLongClickListener(this);
 
+        // Fab
+        FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), AddDrugActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return  fragmentView;
     }

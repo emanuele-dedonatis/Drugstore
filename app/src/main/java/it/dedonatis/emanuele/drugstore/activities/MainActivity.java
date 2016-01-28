@@ -11,13 +11,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
-
-import static it.dedonatis.emanuele.drugstore.utils.Images.createImageFile;
-import static it.dedonatis.emanuele.drugstore.utils.Images.saveToInternalSorage;
-import static it.dedonatis.emanuele.drugstore.utils.Images.scaleDown;
+import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
@@ -28,6 +26,7 @@ public class MainActivity extends AppCompatActivity
     public final static String MESSAGE_DRUG_NAME = MainActivity.class.getSimpleName() + ".DRUG_NAME";
     public final static String MESSAGE_DRUG_API = MainActivity.class.getSimpleName() + ".DRUG_API";
 
+    NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,22 +43,12 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
 
         // Main Fragment
         DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
-
-        // Fab
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddDrugActivity.class);
-                startActivity(intent);
-            }
-        });
 
     }
 
@@ -80,10 +69,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-
+        TextView title = (TextView) findViewById(R.id.MainTitle);
         if (id == R.id.nav_drugs) {
+            title.setText(getString(R.string.drugs));
+            DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
         } else if (id == R.id.nav_pharmacies) {
-
+            title.setText(getString(R.string.pharmacies));
+        } else if(id == R.id.nav_prescriptions) {
+            title.setText(getString(R.string.prescriptions));
+            PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

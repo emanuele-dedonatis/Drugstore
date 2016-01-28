@@ -11,6 +11,7 @@
     <string name="drugs">Drugs</string>
     <string name="my_drugs">My Drugs</string>
     <string name="pharmacies">Pharmacies</string>
+    <string name="prescriptions">Prescriptions</string>
 
     <string name="drug_name">Name</string>
     <string name="drug_api">Active ingredient</string>
