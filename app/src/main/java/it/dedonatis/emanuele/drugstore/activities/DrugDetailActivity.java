@@ -35,9 +35,9 @@ public class DrugDetailActivity extends AppCompatActivity {
 
         // Get extras from intent
         Intent intent = getIntent();
-        mDrugId = intent.getLongExtra(DrugsActivity.MESSAGE_DRUG_ID, -1);
-        mDrugName = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_NAME);
-        mDrugApi = intent.getStringExtra(DrugsActivity.MESSAGE_DRUG_API);
+        mDrugId = intent.getLongExtra(MainActivity.MESSAGE_DRUG_ID, -1);
+        mDrugName = intent.getStringExtra(MainActivity.MESSAGE_DRUG_NAME);
+        mDrugApi = intent.getStringExtra(MainActivity.MESSAGE_DRUG_API);
         mDrugColor = ColorUtils.getDrugColor(mDrugName, mDrugApi);
 
         // Toolbar

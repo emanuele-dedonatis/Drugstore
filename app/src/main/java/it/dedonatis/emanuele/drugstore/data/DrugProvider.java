@@ -24,27 +24,71 @@ public class DrugProvider extends ContentProvider{
     static final int DRUGS = 100;
     static final int DRUG = 101;
     static final int DRUG_PACKAGES = 102;
+    static final int DRUG_PRESCTIPIONS = 103;
     static final int PACKAGES = 200;
     static final int PACKAGE = 201;
+    static final int PRESCRIPTIONS = 300;
+    static final int PRESCRIPTION = 301;
 
-    static UriMatcher buildUriMatcher() {
-        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = DrugContract.CONTENT_AUTHORITY;
-
-        matcher.addURI(authority, DrugContract.PATH_DRUG, DRUGS);
-        matcher.addURI(authority, DrugContract.PATH_DRUG + "/#", DRUG);
-        matcher.addURI(authority, DrugContract.PATH_DRUG + "/#/" + DrugContract.PATH_PACKAGE, DRUG_PACKAGES);
-
-        matcher.addURI(authority, DrugContract.PATH_PACKAGE, PACKAGES);
-        matcher.addURI(authority, DrugContract.PATH_PACKAGE + "/#", PACKAGE);
-
-        return matcher;
-    }
 
     @Override
     public boolean onCreate() {
         mOpenHelper = new DrugDbHelper(getContext());
         return true;
+    }
+
+    static UriMatcher buildUriMatcher() {
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = DrugContract.CONTENT_AUTHORITY;
+
+        // content://it.drugstore.app/drug
+        matcher.addURI(authority, DrugContract.PATH_DRUG, DRUGS);
+        // content://it.drugstore.app/drug/#
+        matcher.addURI(authority, DrugContract.PATH_DRUG + "/#", DRUG);
+        // content://it.drugstore.app/drug/#/package
+        matcher.addURI(authority, DrugContract.PATH_DRUG + "/#/" + DrugContract.PATH_PACKAGE, DRUG_PACKAGES);
+        // content://it.drugstore.app/drug/#/prescription
+        matcher.addURI(authority, DrugContract.PATH_DRUG + "/#/" + DrugContract.PATH_PRESCRIPTION, DRUG_PRESCTIPIONS);
+
+        // content://it.drugstore.app/package
+        matcher.addURI(authority, DrugContract.PATH_PACKAGE, PACKAGES);
+        // content://it.drugstore.app/package/#
+        matcher.addURI(authority, DrugContract.PATH_PACKAGE + "/#", PACKAGE);
+
+        // content://it.drugstore.app/prescription
+        matcher.addURI(authority, DrugContract.PATH_PRESCRIPTION, PRESCRIPTIONS);
+        // content://it.drugstore.app/prescription/#
+        matcher.addURI(authority, DrugContract.PATH_PRESCRIPTION + "/#", PRESCRIPTION);
+
+        return matcher;
+    }
+
+
+    @Nullable
+    @Override
+    public String getType(Uri uri) {
+        final int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case DRUGS:
+                return DrugEntry.CONTENT_TYPE;
+            case DRUG:
+                return DrugEntry.CONTENT_ITEM_TYPE;
+            case DRUG_PACKAGES:
+                return PackageEntry.CONTENT_TYPE;
+            case DRUG_PRESCTIPIONS:
+                return PrescriptionEntry.CONTENT_TYPE;
+            case PACKAGES:
+                return PackageEntry.CONTENT_TYPE;
+            case PACKAGE:
+                return PackageEntry.CONTENT_ITEM_TYPE;
+            case PRESCRIPTIONS:
+                return PrescriptionEntry.CONTENT_TYPE;
+            case PRESCRIPTION:
+                return PrescriptionEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
     }
 
     @Nullable
@@ -122,6 +166,19 @@ public class DrugProvider extends ContentProvider{
                 );
                 break;
             }
+            // "drug/#/prescription"
+            case DRUG_PRESCTIPIONS: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        PrescriptionEntry.TABLE_NAME,
+                        projection,
+                        PrescriptionEntry.TABLE_NAME + "." + PrescriptionEntry.COLUMN_DRUG + " = ?",
+                        new String[]{uri.getPathSegments().get(1)},
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
             // "package"
             case PACKAGES: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -148,34 +205,38 @@ public class DrugProvider extends ContentProvider{
                 );
                 break;
             }
+            // "prescription"
+            case PRESCRIPTIONS: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        PrescriptionEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            // "prescription/#"
+            case PRESCRIPTION: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        PrescriptionEntry.TABLE_NAME,
+                        projection,
+                        PackageEntry.TABLE_NAME + "." + PackageEntry._ID + " = ?",
+                        new String[]{uri.getPathSegments().get(1)},
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;    }
-
-
-    @Nullable
-    @Override
-    public String getType(Uri uri) {
-        final int match = sUriMatcher.match(uri);
-
-        switch (match) {
-            case DRUGS:
-                return DrugEntry.CONTENT_TYPE;
-            case DRUG:
-                return DrugEntry.CONTENT_ITEM_TYPE;
-            case DRUG_PACKAGES:
-                return PackageEntry.CONTENT_TYPE;
-            case PACKAGES:
-                return PackageEntry.CONTENT_TYPE;
-            case PACKAGE:
-                return PackageEntry.CONTENT_ITEM_TYPE;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
-    }
 
     @Nullable
     @Override
@@ -211,6 +272,11 @@ public class DrugProvider extends ContentProvider{
             case PACKAGES: {
                 long _id = db.insertWithOnConflict(PackageEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 returnUri = PackageEntry.buildPackageUri(_id);
+                break;
+            }
+            case PRESCRIPTIONS: {
+                long _id = db.insertWithOnConflict(PrescriptionEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                returnUri = PrescriptionEntry.buildPrescriptionUri(_id);
                 break;
             }
             default:
@@ -250,6 +316,13 @@ public class DrugProvider extends ContentProvider{
                         new String[]{uri.getPathSegments().get(1)}
                 );
                 break;
+            // "package/#"
+            case PRESCRIPTION:
+                rowsDeleted = db.delete(PrescriptionEntry.TABLE_NAME,
+                        PrescriptionEntry.TABLE_NAME + "." + PrescriptionEntry._ID + " = ?",
+                        new String[]{uri.getPathSegments().get(1)}
+                );
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -283,6 +356,15 @@ public class DrugProvider extends ContentProvider{
             case PACKAGE:
                 rowsUpdated = db.update(PackageEntry.TABLE_NAME, values,
                         PackageEntry.TABLE_NAME + "." + PackageEntry._ID + " = ?",
+                        new String[]{uri.getPathSegments().get(1)});
+                break;
+            case PRESCRIPTIONS:
+                rowsUpdated = db.update(PrescriptionEntry.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            case PRESCRIPTION:
+                rowsUpdated = db.update(PrescriptionEntry.TABLE_NAME, values,
+                        PrescriptionEntry.TABLE_NAME + "." + PrescriptionEntry._ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)});
                 break;
             default:

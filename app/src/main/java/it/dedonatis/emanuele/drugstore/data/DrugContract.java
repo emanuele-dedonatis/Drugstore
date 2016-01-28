@@ -13,6 +13,7 @@ public class DrugContract {
 
     public static final String PATH_DRUG = "drug";
     public static final String PATH_PACKAGE = "package";
+    public static final String PATH_PRESCRIPTION = "prescription";
 
     public static final class DrugEntry implements BaseColumns {
         public static final String TABLE_NAME = "drugs";
@@ -82,6 +83,34 @@ public class DrugContract {
 
         public static Uri buildPackagesFromDrug(long drugId) {
             return  DrugEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(drugId)).appendPath(PATH_PACKAGE).build();
+        }
+    }
+
+    public static final class PrescriptionEntry implements BaseColumns {
+        public static final String TABLE_NAME = "prescription";
+        public static final String COLUMN_DRUG = "drug";
+        public static final String COLUMN_PACKAGE = "package";
+        public static final String COLUMN_HOW_MUCH = "how_much";
+        public static final String COLUMN_EVERY = "every";
+        public static final String COLUMN_HOUR = "hour";
+        public static final String COLUMN_UNTIL = "until";
+
+        public enum Every {DAY, WEEK}
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PRESCRIPTION).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PACKAGE;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PACKAGE;
+
+        public static Uri buildPrescriptionUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildPrescriptionFromDrug(long drugId) {
+            return  DrugEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(drugId)).appendPath(PATH_PRESCRIPTION).build();
         }
     }
 

@@ -24,7 +24,7 @@ public class Commons {
                 Drug drug = drugs.get(position);
 
                 AlertDialog.Builder alertDialogBuilder =
-                        new AlertDialog.Builder(DrugsActivity.this);
+                        new AlertDialog.Builder(MainActivity.this);
 
                 CharSequence message = Html.fromHtml(
                         String.format(getResources().getString(R.string.click_on_movie),
