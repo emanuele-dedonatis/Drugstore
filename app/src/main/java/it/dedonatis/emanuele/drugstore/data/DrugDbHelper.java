@@ -45,15 +45,16 @@ public class DrugDbHelper extends SQLiteOpenHelper {
                 PrescriptionEntry.COLUMN_PACKAGE + " INTEGER, " +
                 PrescriptionEntry.COLUMN_HOW_MUCH + " INTEGER NOT NULL, " +
                 PrescriptionEntry.COLUMN_EVERY + " INTEGER NOT NULL, " +
-                PrescriptionEntry.COLUMN_HOUR + " INTEGER NOT NULL" +
+                PrescriptionEntry.COLUMN_HOUR + " INTEGER NOT NULL, " +
                 PrescriptionEntry.COLUMN_UNTIL + " INTEGER, " +
 
                 " FOREIGN KEY (" + PrescriptionEntry.COLUMN_DRUG + ") REFERENCES " +
-                DrugEntry.TABLE_NAME + " (" + DrugEntry._ID + ") ON DELETE CASCADE), " +
+                DrugEntry.TABLE_NAME + " (" + DrugEntry._ID + ") ON DELETE CASCADE, " +
 
 
                 " FOREIGN KEY (" + PrescriptionEntry.COLUMN_PACKAGE + ") REFERENCES " +
                 PackageEntry.TABLE_NAME + " (" + PackageEntry._ID + ") ON DELETE SET NULL);";
+
         db.execSQL(SQL_CREATE_DRUG_TABLE);
         db.execSQL(SQL_CREATE_PACKAGE_TABLE);
         db.execSQL(SQL_CREATE_PRESCRIPTION_TABLE);
