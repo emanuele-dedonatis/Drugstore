@@ -1,5 +1,6 @@
 package it.dedonatis.emanuele.drugstore.AsyncTask;
 
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -37,11 +39,11 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
     // &types=food|cafe
     // &key=YOUR_API_KEY
     final String BASE_URL =
-            "https://maps.googleapis.com/maps/api/place/radarsearch/json?";
+            "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
     final String LOCATION_PARAM = "location";
     final String RADIUS_PARAM = "radius";
     final String TYPES_PARAM = "types";
-    final String RANKBY_PARAM = "rankby";
+    final String RANKBY_PARAM = "rankBy";
     final String KEY_PARAM = "key";
 
     /*
@@ -106,6 +108,7 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
 
     final String ITEM_GEOMETRY = "geometry";
     final String ITEM_PLACE_ID = "place_id";
+    final String ITEM_NAME = "name";
 
     final String GEOMETRY_LOCATION = "location";
     final String LOCATION_LAT = "lat";
@@ -221,6 +224,8 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
     @Override
     protected void onPostExecute(JSONArray resultsArray) {
         if(resultsArray != null) {
+            float max_distance = Float.MAX_VALUE;
+            LatLng nearest = new LatLng(mCurrentPosition.latitude, mCurrentPosition.longitude);
             for(int i=0; i < resultsArray.length(); i++) {
 
                 JSONObject jObject = null;
@@ -232,23 +237,36 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
                     JSONObject location = geometry.getJSONObject(GEOMETRY_LOCATION);
                     double lat = location.getDouble(LOCATION_LAT);
                     double lng = location.getDouble(LOCATION_LNG);
+                    String name = jObject.getString(ITEM_NAME);
                     LatLng marker = new LatLng(lat, lng);
                     mMap.addMarker(new MarkerOptions()
-                    .position(marker));
+                            .position(marker)
+                            .title(name)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pharmacy_marker)));
 
-                    /*
-                    if(i==0) {
-                        LatLngBounds nearest = new LatLngBounds(
-                                marker,
-                                mCurrentPosition
-                        );
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(nearest,0));
-                    }*/
+                    float [] distance = new float[1];
+                    Location.distanceBetween(mCurrentPosition.latitude,
+                            mCurrentPosition.longitude,
+                            lat,
+                            lng,
+                            distance);
+
+                    if(distance[0] < max_distance) {
+                        max_distance = distance[0];
+                        nearest = new LatLng(lat, lng);
+                    }
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
             }
+                        LatLngBounds bounds = new LatLngBounds(
+                                nearest,
+                                mCurrentPosition
+                        );
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,150));
         }
     }
 }
