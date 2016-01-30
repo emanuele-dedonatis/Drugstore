@@ -1,8 +1,15 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -11,21 +18,56 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 
 import it.dedonatis.emanuele.drugstore.AsyncTask.PharmacyJsonTask;
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.utils.LocationUtils;
 
-public class PharmaciesFragment extends Fragment implements OnMapReadyCallback {
+public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
+        LocationListener,
+        ResultCallback<LocationSettingsResult>, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     final static String LOG_TAG = PharmaciesFragment.class.getSimpleName();
-    final static String API_BASE_URL = "https://maps.googleapis.com";
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
+    public static final int REQUEST_LOCATION_SERVICES = 10;
+
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
     GoogleMap mMap;
     MapView mMapView;
+
+    Location mCurrentLocation;
+
+    GoogleApiClient mGoogleApiClient;
+    protected LocationRequest mLocationRequest;
+    protected LocationSettingsRequest mLocationSettingsRequest;
 
     public PharmaciesFragment() {
     }
@@ -38,7 +80,6 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        searchPharmacies();
     }
 
     @Override
@@ -71,14 +112,11 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback {
         mMapView.onLowMemory();
     }
 
-    private void searchPharmacies() {
-        PharmacyJsonTask pharmTask = new PharmacyJsonTask();
-        pharmTask.execute("45.4803", "9.2237");
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
@@ -86,5 +124,136 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback {
                     MY_PERMISSIONS_REQUEST_LOCATION);
         }
         mMap.setMyLocationEnabled(true);
+
+        if (mGoogleApiClient == null) {
+            buildGoogleApiClient();
+            createLocationRequest();
+            buildLocationSettingsRequest();
+            checkLocationSettings();
+        }
+    }
+
+    /**
+     * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
+     * LocationServices API.
+     */
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+    protected void createLocationRequest() {
+        Log.v(LOG_TAG, "createLocationRequest");
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void buildLocationSettingsRequest() {
+        Log.v(LOG_TAG, "buildLocationSettingsRequest");
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        mLocationSettingsRequest = builder.build();
+        builder.setAlwaysShow(true);
+    }
+
+    protected void checkLocationSettings() {
+        Log.v(LOG_TAG, "checkLocationSettings");
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(
+                        mGoogleApiClient,
+                        mLocationSettingsRequest
+                );
+        result.setResultCallback(this);
+    }
+
+    @Override
+    public void onResult(LocationSettingsResult locationSettingsResult) {
+        Log.v(LOG_TAG, "onResult");
+
+        final Status status = locationSettingsResult.getStatus();
+        switch (status.getStatusCode()) {
+            case LocationSettingsStatusCodes.SUCCESS:
+                Log.v(LOG_TAG, "SUCCESS");
+                startLocationUpdates();
+                break;
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                Log.v(LOG_TAG, "RESOLUTION_REQUIRED");
+                try {
+                    // Show the dialog by calling startResolutionForResult(), and check the result
+                    // in onActivityResult().
+                    status.startResolutionForResult(getActivity(), REQUEST_LOCATION_SERVICES);
+                } catch (IntentSender.SendIntentException e) {
+                }
+                break;
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                Log.v(LOG_TAG, "SETTINGS_CHANGE_UNAVAILABLE");
+                break;
+        }
+    }
+
+    public void startLocationUpdates() {
+        Log.v(LOG_TAG, "startLocationUpdates");
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient,
+                mLocationRequest,
+                this
+        );
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v(LOG_TAG, "onActivityResult");
+
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mCurrentLocation != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 15));
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+
+
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.v(LOG_TAG, "onLocationChanged");
+        mCurrentLocation = location;
+        PharmacyJsonTask pharmTask = new PharmacyJsonTask(mMap);
+        pharmTask.execute(location.getLatitude() + "", location.getLongitude() + "");
     }
 }

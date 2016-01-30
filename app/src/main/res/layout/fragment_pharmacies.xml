@@ -7,9 +7,6 @@
     <com.google.android.gms.maps.MapView android:id="@+id/mapview"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        map:cameraTargetLat="45.464211"
-        map:cameraTargetLng="9.191383"
-        map:cameraZoom="13"/>
+        android:layout_height="fill_parent"/>
 
 </LinearLayout>

@@ -1,7 +1,10 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView mNavigationView;
 
+    PharmaciesFragment mPharmaciesFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,8 +80,8 @@ public class MainActivity extends AppCompatActivity
                     getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
                 } else if (id == R.id.nav_pharmacies) {
                     title.setText(getString(R.string.pharmacies));
-                    PharmaciesFragment pharmaciesFragment = PharmaciesFragment.newInstance();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, pharmaciesFragment).commit();
+                    mPharmaciesFragment = PharmaciesFragment.newInstance();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mPharmaciesFragment).commit();
                 } else if (id == R.id.nav_prescriptions) {
                     title.setText(getString(R.string.prescriptions));
                     PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
@@ -102,4 +106,20 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        switch (requestCode) {
+            // Check for the integer request code originally supplied to startResolutionForResult().
+            case PharmaciesFragment.REQUEST_LOCATION_SERVICES:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Log.v(LOG_TAG, "User agreed to make required location settings changes.");
+                        mPharmaciesFragment.startLocationUpdates();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Log.v(LOG_TAG, "User chose not to make required location settings changes.");
+                        break;
+                }
+                break;
+        }    }
 }
