@@ -5,7 +5,6 @@ package it.dedonatis.emanuele.drugstore.utils;
  */
 public class Commons {
 
-    final static String API_BASE_URL = "http://opendatasalutedata.cloudapp.net";
 
         /*
     private void setupDrugsView() {
