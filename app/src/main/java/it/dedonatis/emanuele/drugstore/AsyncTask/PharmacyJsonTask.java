@@ -29,7 +29,7 @@ public class PharmacyJsonTask extends AsyncTask<String, String, Void> {
     // &types=food|cafe
     // &key=YOUR_API_KEY
     final String BASE_URL =
-            "https://maps.googleapis.com/maps/api/place/radarsearch/json?";
+            "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
     final String LOCATION_PARAM = "location";
     final String RADIUS_PARAM = "radius";
     final String TYPES_PARAM = "types";
