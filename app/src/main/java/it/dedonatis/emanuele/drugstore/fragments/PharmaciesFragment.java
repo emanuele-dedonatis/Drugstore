@@ -1,28 +1,23 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
-import android.app.ProgressDialog;
+import android.Manifest;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
+
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.models.Pharmacies;
@@ -33,14 +28,17 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 
-public class PharmaciesFragment extends Fragment  {
+public class PharmaciesFragment extends Fragment implements OnMapReadyCallback {
 
     final static String LOG_TAG = PharmaciesFragment.class.getSimpleName();
     final static String API_BASE_URL = "http://opendatasalutedata.cloudapp.net";
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
 
     GoogleMap mMap;
+    MapView mMapView;
 
-    public PharmaciesFragment() {}
+    public PharmaciesFragment() {
+    }
 
     public static PharmaciesFragment newInstance() {
         PharmaciesFragment fragment = new PharmaciesFragment();
@@ -57,9 +55,31 @@ public class PharmaciesFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_pharmacies, container, false);
+
+        mMapView = (MapView) fragmentView.findViewById(R.id.mapview);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.getMapAsync(this);
+
         return fragmentView;
     }
 
+    @Override
+    public void onResume() {
+        mMapView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mMapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mMapView.onLowMemory();
+    }
 
     private void setupPharmaciesView() {
 
@@ -98,4 +118,18 @@ public class PharmaciesFragment extends Fragment  {
 
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.READ_CONTACTS},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+        mMap.setMyLocationEnabled(true);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 10));
+    }
 }

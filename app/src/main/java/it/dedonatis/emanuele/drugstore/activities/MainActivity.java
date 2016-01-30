@@ -2,6 +2,8 @@ package it.dedonatis.emanuele.drugstore.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -20,13 +22,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.adapters.MapPharmAdapter;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PharmaciesFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
 import it.dedonatis.emanuele.drugstore.models.Pharmacies;
 
 public class MainActivity extends AppCompatActivity
-        implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
 
     final static String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -35,8 +38,6 @@ public class MainActivity extends AppCompatActivity
     public final static String MESSAGE_DRUG_API = MainActivity.class.getSimpleName() + ".DRUG_API";
 
     NavigationView mNavigationView;
-    FragmentManager mFragmentManager;
-    SupportMapFragment mMapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +60,6 @@ public class MainActivity extends AppCompatActivity
         // Main Fragment
         DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
-
-        // Prepare map fragment
-        mFragmentManager = getSupportFragmentManager();
-        mMapFragment = (SupportMapFragment) mFragmentManager.findFragmentById(R.id.activity_drugs_container);
-        if (mMapFragment == null) {
-            mMapFragment = SupportMapFragment.newInstance();
-            mMapFragment.getMapAsync(this);
-        }
     }
 
 
@@ -87,22 +80,28 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         TextView title = (TextView) findViewById(R.id.MainTitle);
-        if (id == R.id.nav_drugs) {
-            title.setText(getString(R.string.drugs));
-            DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
-        } else if (id == R.id.nav_pharmacies) {
-            title.setText(getString(R.string.pharmacies));
-            mFragmentManager.beginTransaction().replace(R.id.activity_drugs_container, mMapFragment).commit();
-        } else if(id == R.id.nav_prescriptions) {
-            title.setText(getString(R.string.prescriptions));
-            PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
-        }
+
+                if (id == R.id.nav_drugs) {
+                    title.setText(getString(R.string.drugs));
+                    DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
+                } else if (id == R.id.nav_pharmacies) {
+                    title.setText(getString(R.string.pharmacies));
+                    PharmaciesFragment pharmaciesFragment = PharmaciesFragment.newInstance();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, pharmaciesFragment).commit();
+                } else if (id == R.id.nav_prescriptions) {
+                    title.setText(getString(R.string.prescriptions));
+                    PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
+                }
+
+        getSupportFragmentManager().executePendingTransactions();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 
     /***** FRAGMENTS METHODS *****/
     @Override
@@ -114,9 +113,4 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        Log.v(LOG_TAG, "Map ready");
-    }
 }
