@@ -66,7 +66,7 @@ public class Commons {
                 .build();
 
 
-        PharmacyRestService restService = retrofit.create(PharmacyRestService.class);
+        PharmacyRestInterface restService = retrofit.create(PharmacyRestInterface.class);
 
         String descrizionecomune = "CHIETI";
         restService.getPharmacies("descrizionecomune eq '"+ descrizionecomune + "'","json").enqueue(
