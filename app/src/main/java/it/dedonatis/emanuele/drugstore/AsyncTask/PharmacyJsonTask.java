@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -232,7 +233,7 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
             float min_distance = Float.MAX_VALUE;
             float max_distance = 0;
 
-            LatLng nearest = null;
+            Marker nearest = null;
 
             for(int i=0; i < resultsArray.length(); i++) {
 
@@ -260,17 +261,16 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
                     else
                         snippetDistance = String.format("%.2f", distance[0]/1000) + " km";
 
-                    mMap.addMarker(new MarkerOptions()
+                    Marker current = mMap.addMarker(new MarkerOptions()
                             .position(marker)
                             .title(name)
                             .snippet(snippetDistance)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pharmacy_marker)));
 
 
-
                     if(distance[0] < min_distance) {
                         min_distance = distance[0];
-                        nearest = new LatLng(lat, lng);
+                        nearest = current;
                     }
 
                     if(distance[0] > max_distance) {
@@ -284,9 +284,10 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
             }
             if(nearest != null) {
                 LatLngBounds bounds = new LatLngBounds(
-                        nearest,
+                        nearest.getPosition(),
                         mCurrentPosition
                 );
+                nearest.showInfoWindow();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200));
             }
 

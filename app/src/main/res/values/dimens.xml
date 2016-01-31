@@ -17,4 +17,7 @@
     <dimen name="header_height">72dp</dimen>
     <dimen name="header_big_height">128dp</dimen>
 
+    <dimen name="image_height">180dp</dimen>
+    <dimen name="image_bottom_border">288dp</dimen>
+
 </resources>

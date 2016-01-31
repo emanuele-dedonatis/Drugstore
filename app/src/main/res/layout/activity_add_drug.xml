@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
         android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginTop="@dimen/fab_mini_margin_top"
+        android:layout_marginTop="@dimen/image_bottom_border"
         android:src="@drawable/ic_menu_camera"
         android:tint="@color/white"/>
 

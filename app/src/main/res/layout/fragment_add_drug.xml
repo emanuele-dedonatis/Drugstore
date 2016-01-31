@@ -7,50 +7,119 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/screen_margin"
-        android:layout_marginLeft="@dimen/screen_margin">
-
-
-        <ImageView
-            android:layout_marginTop="@dimen/screen_margin"
-            android:layout_width="match_parent"
-            android:layout_height="169dp"
-            android:scaleType="centerCrop"
-            android:id="@+id/package_image"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/img_not_available"/>
-
-        <AutoCompleteTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/description_et"
-            android:layout_marginTop="@dimen/screen_margin"
-            android:layout_marginBottom="@dimen/screen_margin"
-            android:hint="@string/package_description"/>
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/image_height">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:id="@+id/package_image"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/img_not_available"/>
 
-            <EditText
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="4dp"
+            android:background="@color/white"    >
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/units_et"
-                android:layout_marginBottom="@dimen/screen_margin"
-                android:inputType="numberDecimal"
-                android:hint="@string/package_units"
-                android:layout_weight="4" />
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/screen_margin">
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/expiration_date_et"
-                android:layout_marginBottom="@dimen/screen_margin"
-                android:inputType="date"
-                android:hint="@string/package_expiration"
-                android:layout_weight="1" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/screen_margin">
+
+                    <ImageView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:src="@drawable/ic_label_black_24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/screen_margin"
+                        android:layout_marginRight="@dimen/screen_margin"
+                        android:tint="@color/secondary_text"/>
+
+                    <AutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/description_et"
+                        android:layout_marginLeft="@dimen/screen_margin"
+                        android:layout_marginRight="@dimen/screen_margin"
+                        android:hint="@string/package_description"/>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/screen_margin">
+
+                    <ImageView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:src="@drawable/ic_event_note_black_24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/screen_margin"
+                        android:layout_marginRight="@dimen/screen_margin"
+                        android:tint="@color/secondary_text"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/expiration_date_et"
+                        android:layout_marginLeft="@dimen/screen_margin"
+                        android:layout_marginRight="@dimen/screen_margin"
+                        android:inputType="date"
+                        android:hint="@string/package_expiration" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/screen_margin">
+
+                    <ImageView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:src="@drawable/ic_view_comfy_black_24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/screen_margin"
+                        android:layout_marginRight="@dimen/screen_margin"
+                        android:tint="@color/secondary_text"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/units_et"
+                        android:layout_marginLeft="@dimen/screen_margin"
+                        android:layout_marginRight="@dimen/screen_margin"
+                        android:inputType="numberDecimal"
+                        android:hint="@string/package_units"/>
+
+
+                </LinearLayout>
+
+
+                </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
