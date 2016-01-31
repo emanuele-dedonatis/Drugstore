@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
 
         // Main Fragment
         DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
     }
 
 
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_drugs:
                 title.setText(getString(R.string.drugs));
                 DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
-                getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
+                getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
                 break;
 
             case R.id.nav_pharmacies:
