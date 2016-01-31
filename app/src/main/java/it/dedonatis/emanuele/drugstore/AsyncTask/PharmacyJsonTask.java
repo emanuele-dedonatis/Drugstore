@@ -288,7 +288,7 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
                         mCurrentPosition
                 );
                 nearest.showInfoWindow();
-                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
             }
 
             mMap.addCircle(new CircleOptions()

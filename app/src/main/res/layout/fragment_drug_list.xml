@@ -3,13 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment">
+    tools:context="it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment"
+    android:background="@color/ligth_gray">
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="#00000000"
         android:id="@+id/drugs_listview" />
+
+    <LinearLayout
+        android:id="@+id/empty_drug_list"
+        android:orientation="vertical"
+        android:paddingTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/empty_drug_list_img"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/img_not_available"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/empty_drugs"
+            android:textColor="@color/high_gray"/>
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -19,4 +41,5 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add" />
+
 </FrameLayout>

@@ -223,7 +223,7 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             pkg.put(DrugContract.PackageEntry.COLUMN_UNITS, units);
             pkg.put(DrugContract.PackageEntry.COLUMN_IS_PERCENTAGE, isPercentage);
             pkg.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);
-            pkg.put(DrugContract.PackageEntry.COLUMN_IMAGE, mPhotoUri.toString());
+            pkg.put(DrugContract.PackageEntry.COLUMN_IMAGE, (mPhotoUri!=null) ? mPhotoUri.toString() : null);
             Log.v(LOG_TAG, "New pkg");
             AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {};
 

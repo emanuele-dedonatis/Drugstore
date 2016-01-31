@@ -162,6 +162,13 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         drugsCursorAdapter.swapCursor(data);
+        if(data.getCount() == 0)  {
+            getActivity().findViewById(R.id.empty_drug_list).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.drugs_listview).setVisibility(View.GONE);
+        }else {
+            getActivity().findViewById(R.id.empty_drug_list).setVisibility(View.GONE);
+            getActivity().findViewById(R.id.drugs_listview).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

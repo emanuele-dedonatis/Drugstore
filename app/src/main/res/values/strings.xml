@@ -38,5 +38,7 @@
     <string name="title_activity_new_drug">NewDrugActivity</string>
     <string name="button_ok">Ok</string>
 
+    <string name="empty_drugs">No drugs</string>
+
     <string name="google_api_key">AIzaSyA1YtIDJpygHHGN9MD43opEM0Xx_e7mhhA</string>
 </resources>

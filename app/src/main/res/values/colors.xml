@@ -17,4 +17,7 @@
     <color name="map_circle_stroke">#FF009688</color>
     <color name="map_circle_fill">#55009688</color>
 
+    <color name="ligth_gray">#FAFAFA</color>
+    <color name="medium_gray">#F5F5F5</color>
+    <color name="high_gray">#E0E0E0</color>
 </resources>
