@@ -123,6 +123,14 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
             mPackages.add(pkg);
         }
         mAdapter.notifyDataSetChanged();
+
+        if(data.getCount() == 0)  {
+            getActivity().findViewById(R.id.empty_pack_list).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.package_list).setVisibility(View.GONE);
+        }else {
+            getActivity().findViewById(R.id.empty_pack_list).setVisibility(View.GONE);
+            getActivity().findViewById(R.id.package_list).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -2,10 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment">
+    tools:context="it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment"
+    android:background="@color/ligth_gray">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/pres_list"
+<android.support.v7.widget.RecyclerView
+        android:id="@+id/presc_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
