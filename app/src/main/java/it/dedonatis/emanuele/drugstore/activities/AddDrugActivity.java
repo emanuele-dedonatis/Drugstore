@@ -55,7 +55,7 @@ import static it.dedonatis.emanuele.drugstore.utils.Images.createImageFile;
 import static it.dedonatis.emanuele.drugstore.utils.Images.saveToInternalSorage;
 import static it.dedonatis.emanuele.drugstore.utils.Images.scaleDown;
 
-public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListener {
+public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListener, AddDrugFragment.OnChooseFotoListener {
 
     private static final String LOG_TAG = AddDrugActivity.class.getSimpleName();
     ColorGenerator generator = ColorGenerator.MATERIAL;
@@ -82,14 +82,7 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             }
         }).start();
 
-        // Fab
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchTakePictureIntent();
-            }
-        });
+
         // Header selection
         Intent intent = getIntent();
         drugId = intent.getLongExtra(DrugDetailActivity.MESSAGE_DRUG_ID, -1);
@@ -101,7 +94,7 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             tvName.setText(drugName);
             TextView tvApi = (TextView) findViewById(R.id.drug_api);
             tvApi.setText(drugApi);
-            int color = generator.getColor(drugName);
+            int color = ColorUtils.getDrugColor(drugName, drugApi);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
             getWindow().setStatusBarColor(ColorUtils.getDarkerColor(color));
 
@@ -109,15 +102,7 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
             // New drug
             ViewSwitcher viewSwitcher =   (ViewSwitcher)findViewById(R.id.toolbar_switcher);
             viewSwitcher.showNext();
-
-            ViewGroup.MarginLayoutParams fabParam = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
-            fabParam.setMargins(fabParam.leftMargin, fabParam.topMargin + 60, fabParam.rightMargin, fabParam.bottomMargin);
-            fab.setLayoutParams(fabParam);
         }
-
-
-
-
         mAddDrugFragment = AddDrugFragment.newInstance();
         getSupportFragmentManager().beginTransaction().add(R.id.activity_new_drug_container, mAddDrugFragment).commit();
     }

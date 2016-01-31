@@ -10,8 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.amulyakhare.textdrawable.util.ColorGenerator;
-
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.fragments.DrugDetailFragment;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;

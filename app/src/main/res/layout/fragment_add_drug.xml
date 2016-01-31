@@ -2,13 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.AddDrugFragment">
-
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        >
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -58,7 +65,10 @@
                         android:id="@+id/description_et"
                         android:layout_marginLeft="@dimen/screen_margin"
                         android:layout_marginRight="@dimen/screen_margin"
-                        android:hint="@string/package_description"/>
+                        android:hint="@string/package_description"
+                        android:singleLine="true"
+                        android:imeOptions="actionNext"
+                        />
 
 
                 </LinearLayout>
@@ -85,8 +95,11 @@
                         android:id="@+id/expiration_date_et"
                         android:layout_marginLeft="@dimen/screen_margin"
                         android:layout_marginRight="@dimen/screen_margin"
+                        android:singleLine="true"
                         android:inputType="date"
-                        android:hint="@string/package_expiration" />
+                        android:hint="@string/package_expiration"
+                        android:imeOptions="actionNext"
+                        />
 
 
                 </LinearLayout>
@@ -111,9 +124,12 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/units_et"
                         android:layout_marginLeft="@dimen/screen_margin"
+                        android:singleLine="true"
                         android:layout_marginRight="@dimen/screen_margin"
                         android:inputType="numberDecimal"
-                        android:hint="@string/package_units"/>
+                        android:hint="@string/package_units"
+                        android:imeOptions="actionNext"
+                        />
 
 
                 </LinearLayout>
@@ -121,6 +137,18 @@
 
                 </LinearLayout>
         </LinearLayout>
-
-    </LinearLayout>
+        </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            app:fabSize="mini"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/package_image"
+            app:layout_anchorGravity="bottom|right|end"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:src="@drawable/ic_menu_camera"
+            android:tint="@color/white"/>
+    </android.support.design.widget.CoordinatorLayout >
+    </ScrollView>
 </FrameLayout>

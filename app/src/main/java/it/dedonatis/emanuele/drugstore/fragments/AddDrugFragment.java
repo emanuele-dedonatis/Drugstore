@@ -3,9 +3,11 @@ package it.dedonatis.emanuele.drugstore.fragments;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Debug;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +32,7 @@ import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
 public class AddDrugFragment extends Fragment implements OnMenuItemClickListener {
 
     private OnNewDrugListener newDrugListener;
-
+    private OnChooseFotoListener chooseFotoListener;
 
     private AutoCompleteTextView mDescriptionEt;
     private EditText mUnitsEt;
@@ -74,25 +77,28 @@ public class AddDrugFragment extends Fragment implements OnMenuItemClickListener
                                             }
         );
 
+        // Fab
+        FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chooseFotoListener.dispatchTakePictureIntent();
+            }
+        });
+
         return fragmentView;
     }
 
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnNewDrugListener) {
-            newDrugListener = (OnNewDrugListener) context;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getActivity() instanceof OnNewDrugListener && getActivity() instanceof OnChooseFotoListener) {
+            newDrugListener = (OnNewDrugListener) getActivity();
+            chooseFotoListener = (OnChooseFotoListener) getActivity();
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(getActivity().toString()
+                    + " must implement OnNewDrugListener && OnChooseFotoListener");
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        newDrugListener = null;
     }
 
     @Override
@@ -116,4 +122,8 @@ public class AddDrugFragment extends Fragment implements OnMenuItemClickListener
         return mDescriptionEt;
     }
 
+    /***** FRAGMENT LISTENER *****/
+    public interface OnChooseFotoListener {
+        public void dispatchTakePictureIntent();
+    }
 }
