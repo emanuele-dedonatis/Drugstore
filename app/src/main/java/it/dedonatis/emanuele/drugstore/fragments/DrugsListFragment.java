@@ -28,7 +28,7 @@ import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
 import it.dedonatis.emanuele.drugstore.adapters.DrugsCursorAdapter;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
 
-public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemLongClickListener, SearchView.OnQueryTextListener {
+public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, SearchView.OnQueryTextListener {
     private static final String LOG_TAG = DrugsListFragment.class.getSimpleName();
     private static final int DRUG_LOADER = 0;
 
@@ -54,18 +54,15 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnDrugSelectionListener) {
-            mListener = (OnDrugSelectionListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement OnDrugSelectionListener");
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getActivity() instanceof OnDrugSelectionListener) {
+            mListener = (OnDrugSelectionListener) getActivity();
+        } else {
+            throw new RuntimeException(getActivity().toString() + " must implement OnDrugSelectionListener");
+        }
+
         setHasOptionsMenu(true);
         getLoaderManager().initLoader(DRUG_LOADER, null, this);
     }
@@ -77,25 +74,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         ListView drugListView = (ListView) fragmentView.findViewById(R.id.drugs_listview);
         drugsCursorAdapter = new DrugsCursorAdapter(getActivity());
         drugListView.setAdapter(drugsCursorAdapter);
-        drugListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-                if (cursor != null) {
-                    if (mListener != null) {
-                        mListener.onDrugSelected(
-                                view.findViewById(R.id.item_drug_name),
-                                view.findViewById(R.id.item_drug_api),
-                                view.findViewById(R.id.item_drug_letter),
-                                cursor.getLong(COL_DRUG_ID),
-                                cursor.getString(COL_DRUG_NAME),
-                                cursor.getString(COL_DRUG_API));
-                    }
-                }
-            }
-        });
-
+        drugListView.setOnItemClickListener(this);
         drugListView.setOnItemLongClickListener(this);
 
         // Fab
@@ -114,6 +93,24 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Log.v(LOG_TAG, "Click item " + position);
+        Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+        if (cursor != null) {
+            if (mListener != null) {
+                Log.v(LOG_TAG, "Ready to call listener");
+                mListener.onDrugSelected(
+                        view.findViewById(R.id.item_drug_name),
+                        view.findViewById(R.id.item_drug_api),
+                        view.findViewById(R.id.item_drug_letter),
+                        cursor.getLong(COL_DRUG_ID),
+                        cursor.getString(COL_DRUG_NAME),
+                        cursor.getString(COL_DRUG_API));
+            }
+        }
     }
 
     @Override

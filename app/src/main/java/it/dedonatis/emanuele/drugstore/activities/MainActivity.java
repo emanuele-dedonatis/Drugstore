@@ -90,13 +90,16 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_prescriptions:
                 title.setText(getString(R.string.prescriptions));
                 PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
-                getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
+                getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
                 break;
 
             case R.id.nav_settings:
+                /*
                 title.setText(getString(R.string.settings));
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, new SettingsFragment()).commit();
-
+        */
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
@@ -116,6 +119,7 @@ public class MainActivity extends AppCompatActivity
     /***** FRAGMENTS METHODS *****/
     @Override
     public void onDrugSelected(View nameView, View apiView, View colorView, long id, String name, String api) {
+        Log.v(LOG_TAG, "Called onDrugSelected " + name);
         Intent intent = new Intent(this, DrugDetailActivity.class);
         intent.putExtra(MESSAGE_DRUG_ID, id);
         intent.putExtra(MESSAGE_DRUG_NAME, name);
