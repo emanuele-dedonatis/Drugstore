@@ -148,7 +148,6 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
     }
 
     protected void createLocationRequest() {
-        Log.v(LOG_TAG, "createLocationRequest");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
@@ -157,7 +156,6 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
     }
 
     protected void buildLocationSettingsRequest() {
-        Log.v(LOG_TAG, "buildLocationSettingsRequest");
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
         mLocationSettingsRequest = builder.build();
@@ -165,8 +163,6 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
     }
 
     protected void checkLocationSettings() {
-        Log.v(LOG_TAG, "checkLocationSettings");
-
         PendingResult<LocationSettingsResult> result =
                 LocationServices.SettingsApi.checkLocationSettings(
                         mGoogleApiClient,
@@ -177,16 +173,12 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onResult(LocationSettingsResult locationSettingsResult) {
-        Log.v(LOG_TAG, "onResult");
-
         final Status status = locationSettingsResult.getStatus();
         switch (status.getStatusCode()) {
             case LocationSettingsStatusCodes.SUCCESS:
-                Log.v(LOG_TAG, "SUCCESS");
                 startLocationUpdates();
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                Log.v(LOG_TAG, "RESOLUTION_REQUIRED");
                 try {
                     // Show the dialog by calling startResolutionForResult(), and check the result
                     // in onActivityResult().
@@ -195,13 +187,11 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
                 }
                 break;
             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                Log.v(LOG_TAG, "SETTINGS_CHANGE_UNAVAILABLE");
                 break;
         }
     }
 
     public void startLocationUpdates() {
-        Log.v(LOG_TAG, "startLocationUpdates");
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -210,13 +200,6 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
                 mLocationRequest,
                 this
         );
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(LOG_TAG, "onActivityResult");
-
     }
 
     @Override
@@ -253,7 +236,6 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.v(LOG_TAG, "onLocationChanged");
         mCurrentLocation = location;
         PharmacyJsonTask pharmTask = new PharmacyJsonTask(mMap);
         pharmTask.execute(location.getLatitude() + "", location.getLongitude() + "");

@@ -14,4 +14,7 @@
     <color name="colorPrimaryDark">@color/primary_dark</color>
     <color name="colorAccent">@color/accent</color>
 
+    <color name="map_circle_stroke">#FF009688</color>
+    <color name="map_circle_fill">#55009688</color>
+
 </resources>

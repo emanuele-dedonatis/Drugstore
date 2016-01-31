@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -33,7 +35,7 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
 
     private static final String LOG_TAG = PharmacyJsonTask.class.getSimpleName();
 
-    // https://maps.googleapis.com/maps/api/place/radarsearch/json?
+    // https://maps.googleapis.com/maps/api/place/nearbysearch/json?
     // location=48.859294,2.347589
     // &radius=5000
     // &types=food|cafe
@@ -45,6 +47,8 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
     final String TYPES_PARAM = "types";
     final String RANKBY_PARAM = "rankBy";
     final String KEY_PARAM = "key";
+
+    final int RADIUS = 500;
 
     /*
 {
@@ -125,7 +129,6 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
     }
 
     protected void onPreExecute() {
-        Log.v("JSON", "Pre execute");
     }
 
     @Override
@@ -145,10 +148,15 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
         // Will contain the raw JSON response as a string.
         String resultJsonStr = null;
 
-        String radius = "1000";
+        String radius = RADIUS + "";
         String type = "pharmacy";
         String rankby = "distance";
         try {
+            // https://maps.googleapis.com/maps/api/place/nearbysearch/json?
+            // location=48.859294,2.347589
+            // &radius=5000
+            // &types=food|cafe
+            // &key=YOUR_API_KEY
             Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                     .appendQueryParameter(LOCATION_PARAM, params[0] + "," + params[1])
                     .appendQueryParameter(RADIUS_PARAM, radius)
@@ -159,7 +167,6 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
 
             URL url = new URL(builtUri.toString());
 
-            Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -189,7 +196,6 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
             }
             resultJsonStr = buffer.toString();
 
-            Log.v(LOG_TAG, "Result string: " + resultJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
@@ -211,7 +217,6 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
         try {
             JSONObject resultJson = new JSONObject(resultJsonStr);
             String status = resultJson.getString(ROOT_STATUS);
-            Log.v(LOG_TAG, "Status: " + status);
             if(status.equalsIgnoreCase("ok")) {
                 return resultJson.getJSONArray(ROOT_RESULTS);
             }
@@ -224,8 +229,11 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
     @Override
     protected void onPostExecute(JSONArray resultsArray) {
         if(resultsArray != null) {
-            float max_distance = Float.MAX_VALUE;
-            LatLng nearest = new LatLng(mCurrentPosition.latitude, mCurrentPosition.longitude);
+            float min_distance = Float.MAX_VALUE;
+            float max_distance = 0;
+
+            LatLng nearest = null;
+
             for(int i=0; i < resultsArray.length(); i++) {
 
                 JSONObject jObject = null;
@@ -239,11 +247,6 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
                     double lng = location.getDouble(LOCATION_LNG);
                     String name = jObject.getString(ITEM_NAME);
                     LatLng marker = new LatLng(lat, lng);
-                    mMap.addMarker(new MarkerOptions()
-                            .position(marker)
-                            .title(name)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pharmacy_marker)));
-
                     float [] distance = new float[1];
                     Location.distanceBetween(mCurrentPosition.latitude,
                             mCurrentPosition.longitude,
@@ -251,22 +254,47 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
                             lng,
                             distance);
 
-                    if(distance[0] < max_distance) {
-                        max_distance = distance[0];
+                    String snippetDistance;
+                    if(distance[0] < 1000)
+                        snippetDistance = String.format("%.0f", distance[0]) + " m";
+                    else
+                        snippetDistance = String.format("%.2f", distance[0]/1000) + " km";
+
+                    mMap.addMarker(new MarkerOptions()
+                            .position(marker)
+                            .title(name)
+                            .snippet(snippetDistance)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pharmacy_marker)));
+
+
+
+                    if(distance[0] < min_distance) {
+                        min_distance = distance[0];
                         nearest = new LatLng(lat, lng);
                     }
 
+                    if(distance[0] > max_distance) {
+                        max_distance = distance[0];
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
             }
-                        LatLngBounds bounds = new LatLngBounds(
-                                nearest,
-                                mCurrentPosition
-                        );
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,150));
+            if(nearest != null) {
+                LatLngBounds bounds = new LatLngBounds(
+                        nearest,
+                        mCurrentPosition
+                );
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200));
+            }
+
+            mMap.addCircle(new CircleOptions()
+                    .center(mCurrentPosition)
+                    .radius(((max_distance > 0) ? max_distance : RADIUS) + 50)
+                    .strokeColor(0x99009688)
+                    .fillColor(0x22009688)).setStrokeWidth(3);
         }
     }
 }
