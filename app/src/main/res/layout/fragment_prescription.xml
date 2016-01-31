@@ -4,10 +4,31 @@
     android:layout_height="match_parent"
     tools:context="it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:divider="#00000000"
+        android:id="@+id/prescriptions_listview" />
+
+    <LinearLayout
+        android:id="@+id/empty_prescriptions_list"
+        android:orientation="vertical"
+        android:paddingTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/empty_prescriptions_list_img"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/prescriptions_not_available"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/empty_prescriptions"
+            android:textColor="@color/high_gray"/>
+    </LinearLayout>
 
 </FrameLayout>

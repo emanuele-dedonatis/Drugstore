@@ -38,6 +38,7 @@
     <string name="button_ok">Ok</string>
 
     <string name="empty_drugs">No drugs</string>
+    <string name="empty_prescriptions">No prescriptions</string>
 
     <string name="settings">Settings</string>
     <string name="pref_OCR">OCR</string>

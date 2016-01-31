@@ -8,7 +8,7 @@ import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
 
 public class DrugDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     static final String DATABASE_NAME = "drugs.db";
 
@@ -42,7 +42,7 @@ public class DrugDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_PRESCRIPTION_TABLE = "CREATE TABLE " + PrescriptionEntry.TABLE_NAME + " (" +
                 PrescriptionEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 PrescriptionEntry.COLUMN_DRUG + " INTEGER NOT NULL, " +
-                PrescriptionEntry.COLUMN_PACKAGE + " INTEGER, " +
+                PrescriptionEntry.COLUMN_PACKAGE + " INTEGER NOT NULL, " +
                 PrescriptionEntry.COLUMN_HOW_MUCH + " INTEGER NOT NULL, " +
                 PrescriptionEntry.COLUMN_EVERY + " INTEGER NOT NULL, " +
                 PrescriptionEntry.COLUMN_HOUR + " INTEGER NOT NULL, " +
