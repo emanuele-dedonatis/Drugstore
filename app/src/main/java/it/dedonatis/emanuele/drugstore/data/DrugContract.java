@@ -95,8 +95,6 @@ public class DrugContract {
         public static final String COLUMN_HOUR = "hour";
         public static final String COLUMN_UNTIL = "until";
 
-        public enum Every {DAY, WEEK}
-
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_PRESCRIPTION).build();
 

@@ -47,4 +47,23 @@ public class DateUtils {
             return DATE_FORMAT.format(date);
         }
     }
+
+    public static String intToString(int yyyyMMdd) {
+        Date date = null;
+        try {
+            date = DATE_FORMAT.parse(yyyyMMdd + "");
+        } catch (ParseException e) {
+            date = null;
+        }
+        return formatDate(date);
+    }
+
+    public static String intToHour(int hhmm) {
+        String startTime = "00:00";
+        int minutes = 120;
+        int h = minutes / 60 + Integer.valueOf(startTime.substring(0,1));
+        int m = minutes % 60 + Integer.valueOf(startTime.substring(3,4));
+        String newtime = h+":"+m;
+        return newtime;
+    }
 }
