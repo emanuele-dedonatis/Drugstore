@@ -114,6 +114,7 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
     final String ITEM_GEOMETRY = "geometry";
     final String ITEM_PLACE_ID = "place_id";
     final String ITEM_NAME = "name";
+    final String ITEM_VICINITY = "vicinity";
 
     final String GEOMETRY_LOCATION = "location";
     final String LOCATION_LAT = "lat";
@@ -247,6 +248,7 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
                     double lat = location.getDouble(LOCATION_LAT);
                     double lng = location.getDouble(LOCATION_LNG);
                     String name = jObject.getString(ITEM_NAME);
+                    String vicinity = jObject.getString(ITEM_VICINITY);
                     LatLng marker = new LatLng(lat, lng);
                     float [] distance = new float[1];
                     Location.distanceBetween(mCurrentPosition.latitude,

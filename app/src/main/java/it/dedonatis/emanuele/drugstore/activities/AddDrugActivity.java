@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -162,38 +163,43 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), mPhotoUri);
                         final Bitmap thumb = scaleDown(bitmap, 512, true);
                         saveToInternalSorage(thumb, mPhotoUri);
+
+                        boolean ocrEnabled = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
+                                .getBoolean(getString(R.string.pref_OCR), false);
                         final List<String> lines = new ArrayList<String>();
-                        if (traineddataExist) {
-                            TessBaseAPI baseAPI = new TessBaseAPI();
-                            baseAPI.init(getExternalFilesDir(null).getPath(), "ita");
-                            baseAPI.setImage(thumb);
-                            Scanner scanner = new Scanner(baseAPI.getUTF8Text());
-                            baseAPI.end();
-                            while (scanner.hasNextLine()) {
-                                String line = scanner.nextLine().replaceAll("[^A-Za-z\\s]+", "");
-                                line = line.trim().replaceAll(" +", " ");
-                                if (line.length() > 8)
-                                    line = Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
+                        if(ocrEnabled) {
+                            if (traineddataExist) {
+                                TessBaseAPI baseAPI = new TessBaseAPI();
+                                baseAPI.init(getExternalFilesDir(null).getPath(), "ita");
+                                baseAPI.setImage(thumb);
+                                Scanner scanner = new Scanner(baseAPI.getUTF8Text());
+                                baseAPI.end();
+                                while (scanner.hasNextLine()) {
+                                    String line = scanner.nextLine().replaceAll("[^A-Za-z\\s]+", "");
+                                    line = line.trim().replaceAll(" +", " ");
+                                    if (line.length() > 8)
+                                        line = Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
                                     lines.add(line);
                                     Log.v(LOG_TAG, line + " -> " + line);
+                                }
                             }
                         }
-                        ringProgressDialog.dismiss();
+                            ringProgressDialog.dismiss();
 
-                        drugNameEditText.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                image.setImageURI(mPhotoUri);
-                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplication(),
-                                        android.R.layout.simple_dropdown_item_1line, lines.toArray(new String[lines.size()]));
-                                drugNameEditText.setAdapter(adapter);
-                                drugApiEditText.setAdapter(adapter);
-                                mAddDrugFragment.getDescriptionEt().setAdapter(adapter);
-                            }
-                        });
+                            drugNameEditText.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplication(),
+                                            android.R.layout.simple_dropdown_item_1line, lines.toArray(new String[lines.size()]));
+                                    drugNameEditText.setAdapter(adapter);
+                                    drugApiEditText.setAdapter(adapter);
+                                    mAddDrugFragment.getDescriptionEt().setAdapter(adapter);
+                                    image.setImageURI(mPhotoUri);
+                                }
+                            });
                     } catch (IOException e) {
                         e.printStackTrace();
-                    }
+                }
                 }
             }).start();
 

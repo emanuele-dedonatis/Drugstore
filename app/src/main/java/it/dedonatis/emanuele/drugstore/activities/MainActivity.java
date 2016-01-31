@@ -19,6 +19,7 @@ import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PharmaciesFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
+import it.dedonatis.emanuele.drugstore.fragments.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
@@ -73,20 +74,36 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         TextView title = (TextView) findViewById(R.id.MainTitle);
+        switch (id) {
+            case R.id.nav_drugs:
+                title.setText(getString(R.string.drugs));
+                DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
+                getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
+                break;
 
-                if (id == R.id.nav_drugs) {
-                    title.setText(getString(R.string.drugs));
-                    DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
-                } else if (id == R.id.nav_pharmacies) {
-                    title.setText(getString(R.string.pharmacies));
-                    mPharmaciesFragment = PharmaciesFragment.newInstance();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mPharmaciesFragment).commit();
-                } else if (id == R.id.nav_prescriptions) {
-                    title.setText(getString(R.string.prescriptions));
-                    PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
-                }
+            case R.id.nav_pharmacies:
+                title.setText(getString(R.string.pharmacies));
+                mPharmaciesFragment = PharmaciesFragment.newInstance();
+                getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mPharmaciesFragment).commit();
+                break;
+
+            case R.id.nav_prescriptions:
+                title.setText(getString(R.string.prescriptions));
+                PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
+                getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
+                break;
+
+            case R.id.nav_settings:
+                title.setText(getString(R.string.settings));
+                getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, new SettingsFragment()).commit();
+
+                break;
+            default:
+                break;
+        }
+                if (id == R.id.nav_drugs) {} else if (id == R.id.nav_pharmacies) {
+} else if (id == R.id.nav_prescriptions) {
+}
 
         getSupportFragmentManager().executePendingTransactions();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

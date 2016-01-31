@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <array name="drawer_menu">
-        <item>uno</item>
-        <item>due</item>
-        <item>tre</item>
-    </array>
-</resources>
