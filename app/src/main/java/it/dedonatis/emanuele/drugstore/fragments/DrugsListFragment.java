@@ -12,13 +12,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,7 +25,6 @@ import android.widget.SearchView;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
-import it.dedonatis.emanuele.drugstore.activities.MainActivity;
 import it.dedonatis.emanuele.drugstore.adapters.DrugsCursorAdapter;
 import it.dedonatis.emanuele.drugstore.data.DrugContract;
 
@@ -186,8 +183,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     /***** SEARCHVIEW METHODS *****/
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_drugs, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearchView.setOnQueryTextListener(this);
     }
 

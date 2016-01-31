@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_pharmacies:
                 title.setText(getString(R.string.pharmacies));
                 mPharmaciesFragment = PharmaciesFragment.newInstance();
-                getSupportFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mPharmaciesFragment).commit();
+                getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mPharmaciesFragment).commit();
                 break;
 
             case R.id.nav_prescriptions:

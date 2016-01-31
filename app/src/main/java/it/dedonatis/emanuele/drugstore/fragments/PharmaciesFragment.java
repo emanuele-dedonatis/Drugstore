@@ -1,18 +1,12 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.app.Fragment;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +22,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,7 +31,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import it.dedonatis.emanuele.drugstore.AsyncTask.PharmacyJsonTask;
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.utils.LocationUtils;
 
 public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
         LocationListener,
