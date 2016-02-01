@@ -3,7 +3,9 @@ package it.dedonatis.emanuele.drugstore.models;
 import android.net.Uri;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
@@ -14,8 +16,9 @@ public class DrugPackage {
     private int mDoses;
     private Uri mImageUri;
     private int mDrugColor;
+    private List<DrugSubpackage> mSubpackages = new ArrayList<DrugSubpackage>();
 
-    public DrugPackage(long id, long drugID, String description, int doses, String imageUri, int drugColor) {
+    public DrugPackage(long id, long drugID, String description, int doses, String imageUri, int drugColor, List<DrugSubpackage> subpackages) {
         this.mId = id;
         this.mDrugId = drugID;
         this.mDescription = description;
@@ -23,6 +26,8 @@ public class DrugPackage {
         if(imageUri != null)
             this.mImageUri = Uri.parse(imageUri);
         this.mDrugColor = drugColor;
+        if(subpackages!=null)
+            this.mSubpackages = subpackages;
     }
 
     public long getId() {
@@ -47,5 +52,9 @@ public class DrugPackage {
 
     public int getDrugColor() {
         return mDrugColor;
+    }
+
+    public List<DrugSubpackage> getSubpackages() {
+        return mSubpackages;
     }
 }

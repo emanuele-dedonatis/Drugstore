@@ -49,10 +49,11 @@ public class DrugRecyclerAdapter extends RecyclerView.Adapter<DrugRecyclerAdapte
             }
         });
 
-        drugViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        drugViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
                 mDrugClickListener.onDrugLongClick(drug.getId());
+                return true;
             }
         });
     }

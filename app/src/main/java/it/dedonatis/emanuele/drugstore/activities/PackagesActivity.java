@@ -40,25 +40,14 @@ public class PackagesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setTitle(mDrugName);
-        toolbar.setSubtitle(mDrugApi);
+        getSupportActionBar().setTitle(mDrugName);
+        getSupportActionBar().setSubtitle(mDrugApi);
 
         // Fragment
-        PackagesListFragment packagesListFragment = PackagesListFragment.newInstance(mDrugId, mDrugColor);
+        PackagesListFragment packagesListFragment = PackagesListFragment.newInstance(mDrugId, mDrugName, mDrugApi, mDrugColor);
         getSupportFragmentManager().beginTransaction().add(R.id.activity_packages_container, packagesListFragment).commit();
 
-        // Fab
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PackagesActivity.this, AddDrugActivity.class);
-                intent.putExtra(MESSAGE_DRUG_ID, mDrugId);
-                intent.putExtra(MESSAGE_DRUG_NAME, mDrugName);
-                intent.putExtra(MESSAGE_DRUG_API, mDrugApi);
-                startActivity(intent);
-            }
-        });
+
 
     }
 

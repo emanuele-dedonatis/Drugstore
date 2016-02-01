@@ -1,7 +1,14 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +21,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PharmaciesFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
@@ -23,6 +33,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     final static String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final int DRUG_LOADER = 1;
 
 
     NavigationView mNavigationView;
@@ -33,12 +44,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //populateDb();
-
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+
+        populateDb();
 
         // Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -49,6 +59,7 @@ public class MainActivity extends AppCompatActivity
         mNavigationView.setNavigationItemSelectedListener(this);
 
         // Main Fragment
+        getSupportActionBar().setTitle(getString(R.string.drugs));
         DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
         getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
     }
@@ -72,19 +83,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_drugs:
-                getActionBar().setTitle(getString(R.string.drugs));
+                getSupportActionBar().setTitle(getString(R.string.drugs));
                 DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
                 break;
 
             case R.id.nav_pharmacies:
-                getActionBar().setTitle(getString(R.string.pharmacies));
+                getSupportActionBar().setTitle(getString(R.string.pharmacies));
                 mPharmaciesFragment = PharmaciesFragment.newInstance();
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mPharmaciesFragment).commit();
                 break;
 
             case R.id.nav_prescriptions:
-                getActionBar().setTitle(getString(R.string.prescriptions));
+                getSupportActionBar().setTitle(getString(R.string.prescriptions));
                 PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
                 break;
@@ -100,9 +111,6 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
         }
-                if (id == R.id.nav_drugs) {} else if (id == R.id.nav_pharmacies) {
-} else if (id == R.id.nav_prescriptions) {
-}
 
         getSupportFragmentManager().executePendingTransactions();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -131,4 +139,72 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void populateDb() {
+        Cursor data = getContentResolver().query(
+                DataContract.AlarmEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        if(data.getCount()==0) {
+
+            ContentValues drug = new ContentValues();
+            drug.put(DataContract.DrugEntry.COLUMN_NAME, "Montelukast Teva");
+            drug.put(DataContract.DrugEntry.COLUMN_API, "Montelukast");
+            Uri uri = getContentResolver().insert(
+                    DataContract.DrugEntry.CONTENT_URI,
+                    drug
+            );
+            long drugId = ContentUris.parseId(uri);
+            Log.v(LOG_TAG, "New drug id " + drugId);
+
+            ContentValues pkg = new ContentValues();
+            pkg.put(DataContract.PackageEntry.COLUMN_DRUG_ID, drugId);
+            pkg.put(DataContract.PackageEntry.COLUMN_DESCRIPTION, "Compresse");
+            pkg.put(DataContract.PackageEntry.COLUMN_DOSES, "30");
+            uri = getContentResolver().insert(
+                    DataContract.PackageEntry.CONTENT_URI,
+                    pkg
+            );
+            long packId = ContentUris.parseId(uri);
+            Log.v(LOG_TAG, "New package id " + packId);
+
+            ContentValues subpack = new ContentValues();
+            subpack.put(DataContract.SubpackageEntry.COLUMN_DRUG_ID, drugId);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_PACKAGE_ID, packId);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, 22);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_EXP_DATE, 20161102);
+            uri = getContentResolver().insert(
+                    DataContract.SubpackageEntry.CONTENT_URI,
+                    subpack
+            );
+            long subId = ContentUris.parseId(uri);
+            Log.v(LOG_TAG, "New subpackage id " + subId);
+
+            ContentValues theraphy = new ContentValues();
+            theraphy.put(DataContract.TherapyEntry.COLUMN_DOSE, 1);
+            theraphy.put(DataContract.TherapyEntry.COLUMN_PACKAGE_ID, packId);
+            theraphy.put(DataContract.TherapyEntry.COLUMN_EXP_DATE, 20160302);
+            uri = getContentResolver().insert(
+                    DataContract.TherapyEntry.CONTENT_URI,
+                    theraphy
+            );
+            long therId = ContentUris.parseId(uri);
+            Log.v(LOG_TAG, "New therapy id " + therId);
+
+            ContentValues allarm = new ContentValues();
+            allarm.put(DataContract.AlarmEntry.COLUMN_THERAPY_ID, therId);
+            allarm.put(DataContract.AlarmEntry.COLUMN_DAY_OF_WEEK, Calendar.TUESDAY);
+            allarm.put(DataContract.AlarmEntry.COLUMN_HOUR_OF_DAY, 16);
+            allarm.put(DataContract.AlarmEntry.COLUMN_MINUTE, 25);
+            uri = getContentResolver().insert(
+                    DataContract.AlarmEntry.CONTENT_URI,
+                    allarm
+            );
+            long allarId = ContentUris.parseId(uri);
+            Log.v(LOG_TAG, "New allarm id " + allarId);
+        }
+
+    }
 }

@@ -53,6 +53,10 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
     private Uri mPhotoUri;
     private boolean traineddataExist = false;
 
+    public static final String MESSAGE_DRUG_ID = LOG_TAG + ".DRUG_ID";
+    public static final String MESSAGE_DRUG_NAME = LOG_TAG + ".DRUG_NAME";
+    public static final String MESSAGE_DRUG_API = LOG_TAG + ".DRUG_API";
+
     private AddDrugFragment mAddDrugFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +78,11 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
 
         // Header selection
         Intent intent = getIntent();
-        drugId = intent.getLongExtra(PackagesActivity.MESSAGE_DRUG_ID, -1);
+        drugId = intent.getLongExtra(MESSAGE_DRUG_ID, -1);
         if(drugId >= 0) {
             // Existing drug
-            String drugName = intent.getStringExtra(PackagesActivity.MESSAGE_DRUG_NAME);
-            String drugApi = intent.getStringExtra(PackagesActivity.MESSAGE_DRUG_API);
+            String drugName = intent.getStringExtra(MESSAGE_DRUG_NAME);
+            String drugApi = intent.getStringExtra(MESSAGE_DRUG_API);
             TextView tvName = (TextView) findViewById(R.id.drug_name);
             tvName.setText(drugName);
             TextView tvApi = (TextView) findViewById(R.id.drug_api);
@@ -183,6 +187,7 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
 
     @Override
     public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image) {
+        /*
         if (drugId < 0){
             ContentValues drug = new ContentValues();
             drug.put(DataContract.DrugEntry.COLUMN_NAME, ((EditText) findViewById(R.id.drug_name_et)).getText().toString());
@@ -212,7 +217,7 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
                     pkg
             );
         }
-        finish();
+        finish();*/
     }
 
     public void dispatchTakePictureIntent() {

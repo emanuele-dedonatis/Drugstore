@@ -27,14 +27,14 @@ public class PrescriptionFragment extends Fragment implements LoaderManager.Load
     private static final String LOG_TAG = PrescriptionFragment.class.getSimpleName();
 
     /***** CONTENT PROVIDER PROJECTION *****/
-    private static final String[] PRESC_COLUMNS = {
-            DataContract.PrescriptionEntry.TABLE_NAME + "." + DataContract.PrescriptionEntry._ID,
+    private static final String[] PRESC_COLUMNS = {/*
+            DataContract.TherapyEntry.TABLE_NAME + "." + DataContract.PrescriptionEntry._ID,
             DataContract.PrescriptionEntry.COLUMN_DRUG,
             DataContract.PrescriptionEntry.COLUMN_PACKAGE,
             DataContract.PrescriptionEntry.COLUMN_HOW_MUCH,
             DataContract.PrescriptionEntry.COLUMN_EVERY,
             DataContract.PrescriptionEntry.COLUMN_HOUR,
-            DataContract.PrescriptionEntry.COLUMN_UNTIL
+            DataContract.PrescriptionEntry.COLUMN_UNTIL*/
     };
     public static final int COL_PRESC_ID = 0;
     public static final int COL_DRUG_ID = 1;
@@ -93,7 +93,7 @@ public class PrescriptionFragment extends Fragment implements LoaderManager.Load
     /** CURSOR LOADER **/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), DataContract.PrescriptionEntry.CONTENT_URI, PRESC_COLUMNS, null, null, DataContract.PrescriptionEntry.COLUMN_UNTIL + " ASC");
+        return new CursorLoader(getActivity(), DataContract.TherapyEntry.CONTENT_URI, PRESC_COLUMNS, null, null, DataContract.TherapyEntry.COLUMN_EXP_DATE + " ASC");
     }
 
     @Override

@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
@@ -45,7 +46,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     public static final int COL_DRUG_NAME = 1;
     public static final int COL_DRUG_API = 2;
 
-    private List<Drug> mDrugs;
+    private List<Drug> mDrugs = new ArrayList<>();
     private DrugRecyclerAdapter mAdapter;
 
     private String mCursorFilter;
@@ -123,10 +124,10 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
         if(data.getCount() == 0)  {
             getActivity().findViewById(R.id.empty_drug_list).setVisibility(View.VISIBLE);
-            getActivity().findViewById(R.id.drugs_listview).setVisibility(View.GONE);
+            getActivity().findViewById(R.id.drugs_recyclerview).setVisibility(View.GONE);
         }else {
             getActivity().findViewById(R.id.empty_drug_list).setVisibility(View.GONE);
-            getActivity().findViewById(R.id.drugs_listview).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.drugs_recyclerview).setVisibility(View.VISIBLE);
         }
     }
 

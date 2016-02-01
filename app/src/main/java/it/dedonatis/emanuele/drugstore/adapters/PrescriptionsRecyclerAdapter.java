@@ -46,7 +46,7 @@ public class PrescriptionsRecyclerAdapter extends RecyclerView.Adapter<Prescript
         String whenString = mContext.getString(R.string.every) + " " + mContext.getString(R.string.day);
         prescriptionViewHolder.tvWhen.setText(whenString + " @ " + DateUtils.intToHour(presc.getEveryInHour()));
 
-        prescriptionViewHolder.tvUntil.setText(mContext.getString(R.string.until) + " " + DateUtils.intToString(presc.getUntil()));
+       //prescriptionViewHolder.tvUntil.setText(mContext.getString(R.string.until) + " " + DateUtils.intToString(presc.getUntil()));
 
         if(presc.getImageUri() != null)
             prescriptionViewHolder.imageView.setImageURI(presc.getImageUri());

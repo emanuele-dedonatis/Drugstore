@@ -23,7 +23,10 @@ public class DateUtils {
 
     public static Date fromDbStringToDate(String yyyyMMdd) {
         try {
-            return DB_DATE_FORMAT.parse(yyyyMMdd);
+            if(yyyyMMdd != null)
+                return DB_DATE_FORMAT.parse(yyyyMMdd);
+            else
+                return null;
         } catch (ParseException e) {
             return null;
         }
