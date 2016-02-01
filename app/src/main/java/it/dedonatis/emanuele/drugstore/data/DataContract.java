@@ -42,6 +42,11 @@ public class DataContract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_API = "api";
 
+        public static final String PARAM_NAME = "name";
+        public static final String PARAM_API = "api";
+        public static final String PARAM_NAME_LIKE = "name_like";
+        public static final String PARAM_API_LIKE = "api_like";
+
 
         /*
             content://it.drugstore.app/drugs
@@ -55,21 +60,11 @@ public class DataContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_DRUGS;
 
-
-        public static final String FILTER_NAME_LIKE = "name_like";
-        public static final String FILTER_API_LIKE = "api_like";
         /*
             content://it.drugstore.app/drugs/<id>
         */
         public static Uri buildDrugUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
-
-        /*
-            content://it.drugstore.app/drugs?name=<name>
-        */
-        public static Uri buildDrugFromName(String name) {
-            return  CONTENT_URI.buildUpon().appendQueryParameter(COLUMN_NAME, name).build();
         }
 
         public static Uri buildAlarmFromPackage(long packageId) {
@@ -80,28 +75,35 @@ public class DataContract {
             content://it.drugstore.app/drugs?name_like=<name>
         */
         public static Uri buildDrugLikeName(String name) {
-            return  CONTENT_URI.buildUpon().appendQueryParameter(FILTER_NAME_LIKE, name).build();
+            return  CONTENT_URI.buildUpon().appendQueryParameter(PARAM_NAME_LIKE, name).build();
+        }
+
+        /*
+            content://it.drugstore.app/drugs?name=<name>
+        */
+        public static Uri buildDrugFromName(String name) {
+            return  CONTENT_URI.buildUpon().appendQueryParameter(PARAM_NAME, name).build();
         }
 
         /*
             content://it.drugstore.app/drugs?api=<name>
         */
         public static Uri buildDrugFromApi(String api) {
-            return  CONTENT_URI.buildUpon().appendQueryParameter(COLUMN_API, api).build();
+            return  CONTENT_URI.buildUpon().appendQueryParameter(PARAM_API, api).build();
         }
 
         /*
             content://it.drugstore.app/drugs?api_like=<name>
         */
         public static Uri buildDrugLikeApi(String api) {
-            return  CONTENT_URI.buildUpon().appendQueryParameter(FILTER_API_LIKE, api).build();
+            return  CONTENT_URI.buildUpon().appendQueryParameter(PARAM_API_LIKE, api).build();
         }
 
         /*
             content://it.drugstore.app/drugs?name_like=<name>&api_like=<api>
         */
         public static Uri buildDrugLikeNameOrApi(String nameOrApi) {
-            return  CONTENT_URI.buildUpon().appendQueryParameter(FILTER_NAME_LIKE, nameOrApi).appendQueryParameter(FILTER_API_LIKE, nameOrApi).build();
+            return  CONTENT_URI.buildUpon().appendQueryParameter(PARAM_NAME_LIKE, nameOrApi).appendQueryParameter(PARAM_API_LIKE, nameOrApi).build();
         }
 
     }
@@ -123,6 +125,8 @@ public class DataContract {
         public static final String COLUMN_DOSES = "doses";
         public static final String COLUMN_IMAGE_URI = "image_uri";
 
+        public static final String PARAM_DESCRIPTION = "description";
+        public static final String PARAM_DESCRIPTION_LIKE = "description_like";
         /*
             content://it.drugstore.app/packages
             content://it.drugstore.app/packages/#
@@ -136,7 +140,6 @@ public class DataContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PACKAGES;
 
-        public static final String FILTER_DESCRIPTION_LIKE = "description_like";
 
         /*
             content://it.drugstore.app/packages/<id>
@@ -149,14 +152,14 @@ public class DataContract {
             content://it.drugstore.app/packages?description=<description>
         */
         public static Uri buildPackageFromDescription(String description) {
-            return  CONTENT_URI.buildUpon().appendQueryParameter(COLUMN_DESCRIPTION, description).build();
+            return  CONTENT_URI.buildUpon().appendQueryParameter(PARAM_DESCRIPTION, description).build();
         }
 
         /*
             content://it.drugstore.app/packages?description_like=<description>
         */
         public static Uri buildDrugLikeName(String description) {
-            return  CONTENT_URI.buildUpon().appendQueryParameter(FILTER_DESCRIPTION_LIKE, description).build();
+            return  CONTENT_URI.buildUpon().appendQueryParameter(PARAM_DESCRIPTION_LIKE, description).build();
         }
 
         /*
