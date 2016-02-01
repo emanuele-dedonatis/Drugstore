@@ -20,13 +20,10 @@ import it.dedonatis.emanuele.drugstore.fragments.PharmaciesFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     final static String LOG_TAG = MainActivity.class.getSimpleName();
 
-    public final static String MESSAGE_DRUG_ID = MainActivity.class.getSimpleName() + ".DRUG_ID";
-    public final static String MESSAGE_DRUG_NAME = MainActivity.class.getSimpleName() + ".DRUG_NAME";
-    public final static String MESSAGE_DRUG_API = MainActivity.class.getSimpleName() + ".DRUG_API";
 
     NavigationView mNavigationView;
 
@@ -73,22 +70,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        TextView title = (TextView) findViewById(R.id.MainTitle);
         switch (id) {
             case R.id.nav_drugs:
-                title.setText(getString(R.string.drugs));
+                getActionBar().setTitle(getString(R.string.drugs));
                 DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
                 break;
 
             case R.id.nav_pharmacies:
-                title.setText(getString(R.string.pharmacies));
+                getActionBar().setTitle(getString(R.string.pharmacies));
                 mPharmaciesFragment = PharmaciesFragment.newInstance();
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mPharmaciesFragment).commit();
                 break;
 
             case R.id.nav_prescriptions:
-                title.setText(getString(R.string.prescriptions));
+                getActionBar().setTitle(getString(R.string.prescriptions));
                 PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
                 break;
@@ -117,16 +113,6 @@ public class MainActivity extends AppCompatActivity
 
 
     /***** FRAGMENTS METHODS *****/
-    @Override
-    public void onDrugSelected(View nameView, View apiView, View colorView, long id, String name, String api) {
-        Log.v(LOG_TAG, "Called onDrugSelected " + name);
-        Intent intent = new Intent(this, DrugDetailActivity.class);
-        intent.putExtra(MESSAGE_DRUG_ID, id);
-        intent.putExtra(MESSAGE_DRUG_NAME, name);
-        intent.putExtra(MESSAGE_DRUG_API, api);
-        startActivity(intent);
-    }
-
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         switch (requestCode) {

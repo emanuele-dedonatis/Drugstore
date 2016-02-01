@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.DrugDetailActivity"
+            android:name=".activities.PackagesActivity"
             android:label="@string/title_activity_drug_detail"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />

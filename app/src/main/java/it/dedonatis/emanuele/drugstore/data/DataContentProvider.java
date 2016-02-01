@@ -21,6 +21,7 @@ public class DataContentProvider extends ContentProvider{
     static final int DRUGS = 100;                   //  /drugs
     static final int DRUGS_ID = 101;                //  /drugs/#
     static final int DRUGS_PACKAGES = 102;          //  /drugs/#/packages
+    static final int DRUGS_SUBPACKAGES = 103;       //  /drugs/#/subpackages
 
     static final int PACKAGES = 200;                //  /packages
     static final int PACKAGES_ID = 201;             //  /packages/#
@@ -54,6 +55,8 @@ public class DataContentProvider extends ContentProvider{
         matcher.addURI(authority, DataContract.PATH_DRUGS + "/#", DRUGS_ID);
         // content://it.drugstore.app/drugs/#/packages
         matcher.addURI(authority, DataContract.PATH_DRUGS + "/#/" + DataContract.PATH_PACKAGES, DRUGS_PACKAGES);
+        // content://it.drugstore.app/drugs/#/subpackages
+        matcher.addURI(authority, DataContract.PATH_DRUGS + "/#/" + DataContract.PATH_SUBPACKAGES, DRUGS_SUBPACKAGES);
 
         // content://it.drugstore.app/packages
         matcher.addURI(authority, DataContract.PATH_PACKAGES, PACKAGES);
@@ -96,6 +99,8 @@ public class DataContentProvider extends ContentProvider{
             case DRUGS_ID:                //  /drugs/#
                 return DrugEntry.CONTENT_ITEM_TYPE;
             case DRUGS_PACKAGES:          //  /drugs/#/packages
+                return PackageEntry.CONTENT_TYPE;
+            case DRUGS_SUBPACKAGES:          //  /drugs/#/subpackages
                 return PackageEntry.CONTENT_TYPE;
             case PACKAGES:                //  /packages
                 return PackageEntry.CONTENT_TYPE;
@@ -200,6 +205,22 @@ public class DataContentProvider extends ContentProvider{
                         PackageEntry.TABLE_NAME,
                         projection,
                         PackageEntry.TABLE_NAME + "." + PackageEntry.COLUMN_DRUG_ID + " = ?",
+                        new String[]{uri.getPathSegments().get(1)},
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
+            /*
+                content://it.drugstore.app/drugs/#/subpackages
+            */
+            case DRUGS_SUBPACKAGES: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        SubpackageEntry.TABLE_NAME,
+                        projection,
+                        SubpackageEntry.TABLE_NAME + "." + SubpackageEntry.COLUMN_DRUG_ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)},
                         null,
                         null,

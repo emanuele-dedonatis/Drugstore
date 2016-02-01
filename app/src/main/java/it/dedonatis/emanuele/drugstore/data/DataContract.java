@@ -174,6 +174,7 @@ public class DataContract {
             |   SUBPACKAGES             |
             ----------------------------
             |   long id                 |
+            |   long drug_id            |
             |   long package_id         |
             |   int doses_left          |
             |   int exp_date (yyyyMMdd) |
@@ -181,6 +182,7 @@ public class DataContract {
     */
     public static final class SubpackageEntry implements BaseColumns {
         public static final String TABLE_NAME = PATH_SUBPACKAGES;
+        public static final String COLUMN_DRUG_ID = PARAM_DRUG_ID;
         public static final String COLUMN_PACKAGE_ID = PARAM_PACKAGE_ID;
         public static final String COLUMN_DOSES_LEFT = "doses_left";
         public static final String COLUMN_EXP_DATE = "exp_date";
@@ -192,7 +194,8 @@ public class DataContract {
         /*
             content://it.drugstore.app/subpackages
             content://it.drugstore.app/subpackages/#
-            content://it.drugstore.app/package/#/subpackages
+            content://it.drugstore.app/drugs/#/subpackages
+            content://it.drugstore.app/packages/#/subpackages
             ?dose_left_under ?exp_before
 
         */
@@ -223,6 +226,13 @@ public class DataContract {
         */
         public static Uri buildSubpackagesWithExpBefore(Date maxDate) {
             return  CONTENT_URI.buildUpon().appendQueryParameter(PARAM_EXP_BEFORE, DateUtils.fromDateToDbString(maxDate)).build();
+        }
+
+        /*
+            content://it.drugstore.app/drugs/#/subpackages
+        */
+        public static Uri buildSubackagesFromDrug(long drugId) {
+            return  DrugEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(drugId)).appendPath(PATH_SUBPACKAGES).build();
         }
 
         /*

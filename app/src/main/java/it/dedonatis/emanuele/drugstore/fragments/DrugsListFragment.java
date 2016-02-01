@@ -11,30 +11,31 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.SearchView;
+
+import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
+import it.dedonatis.emanuele.drugstore.activities.PackagesActivity;
+import it.dedonatis.emanuele.drugstore.adapters.DrugRecyclerAdapter;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
+import it.dedonatis.emanuele.drugstore.models.Drug;
 
-public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, SearchView.OnQueryTextListener {
+public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, DrugRecyclerAdapter.DrugClickListener, SearchView.OnQueryTextListener{
     private static final String LOG_TAG = DrugsListFragment.class.getSimpleName();
     private static final int DRUG_LOADER = 0;
 
-    private OnDrugSelectionListener mListener;
-    private DrugsCursorAdapter drugsCursorAdapter;
-    private String mCursorFilter;
-    private SearchView mSearchView;
-
+    /** CONTENT PROVIDER PROJECTION **/
     private static final String[] DRUG_COLUMNS = {
             DataContract.DrugEntry.TABLE_NAME + "." + DataContract.DrugEntry._ID,
             DataContract.DrugEntry.COLUMN_NAME,
@@ -43,6 +44,12 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     public static final int COL_DRUG_ID = 0;
     public static final int COL_DRUG_NAME = 1;
     public static final int COL_DRUG_API = 2;
+
+    private List<Drug> mDrugs;
+    private DrugRecyclerAdapter mAdapter;
+
+    private String mCursorFilter;
+    private SearchView mSearchView;
 
     public DrugsListFragment() {}
 
@@ -54,13 +61,6 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getActivity() instanceof OnDrugSelectionListener) {
-            mListener = (OnDrugSelectionListener) getActivity();
-        } else {
-            throw new RuntimeException(getActivity().toString() + " must implement OnDrugSelectionListener");
-        }
-
         setHasOptionsMenu(true);
         getLoaderManager().initLoader(DRUG_LOADER, null, this);
     }
@@ -69,11 +69,12 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_drugs_list, container, false);
 
-        ListView drugListView = (ListView) fragmentView.findViewById(R.id.drugs_listview);
-        drugsCursorAdapter = new DrugsCursorAdapter(getActivity());
-        drugListView.setAdapter(drugsCursorAdapter);
-        drugListView.setOnItemClickListener(this);
-        drugListView.setOnItemLongClickListener(this);
+        // Recycler view
+        RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.drugs_recyclerview);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter = new DrugRecyclerAdapter(getActivity(), mDrugs, this);
+        mRecyclerView.setAdapter(mAdapter);
 
         // Fab
         FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
@@ -84,57 +85,13 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
                 startActivity(intent);
             }
         });
-
         return  fragmentView;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Log.v(LOG_TAG, "Click item " + position);
-        Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-        if (cursor != null) {
-            if (mListener != null) {
-                Log.v(LOG_TAG, "Ready to call listener");
-                mListener.onDrugSelected(
-                        view.findViewById(R.id.item_drug_name),
-                        view.findViewById(R.id.item_drug_api),
-                        view.findViewById(R.id.item_drug_letter),
-                        cursor.getLong(COL_DRUG_ID),
-                        cursor.getString(COL_DRUG_NAME),
-                        cursor.getString(COL_DRUG_API));
-            }
-        }
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-        Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-        if (cursor != null) {
-            final long drugId = cursor.getLong(COL_DRUG_ID);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
-            builder.setMessage(R.string.delete_question);
-            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    getActivity().getContentResolver().delete(DataContract.DrugEntry.buildDrugUri(drugId), null, null);
-                    getLoaderManager().restartLoader(DRUG_LOADER, null, DrugsListFragment.this);
-                }
-            });
-            builder.setNegativeButton(R.string.cancel, null);
-            builder.show();
-        }
-        return true;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(DRUG_LOADER, null, this);
     }
 
     /***** CURSOR LOADER *****/
@@ -153,7 +110,17 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        drugsCursorAdapter.swapCursor(data);
+        mDrugs.clear();
+        while(data.moveToNext()) {
+            Drug drug = new Drug(
+                    data.getLong(COL_DRUG_ID),
+                    data.getString(COL_DRUG_NAME),
+                    data.getString(COL_DRUG_API)
+            );
+            mDrugs.add(drug);
+        }
+        mAdapter.notifyDataSetChanged();
+
         if(data.getCount() == 0)  {
             getActivity().findViewById(R.id.empty_drug_list).setVisibility(View.VISIBLE);
             getActivity().findViewById(R.id.drugs_listview).setVisibility(View.GONE);
@@ -165,21 +132,20 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        drugsCursorAdapter.swapCursor(null);
+
     }
 
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        Log.v(LOG_TAG, query);
-        return false;
-    }
 
     /***** SEARCHVIEW METHODS *****/
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_drugs, menu);
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearchView.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
     }
 
     @Override
@@ -198,9 +164,30 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         return false;
     }
 
-    /***** FRAGMENT LISTENER *****/
-    public interface OnDrugSelectionListener {
-        void onDrugSelected(View nameView, View apiView, View colorView, long id, String name, String api);
+    /** RECYCLER LISTENER **/
+    @Override
+    public void onDrugClick(long drugId, String name, String api, int color) {
+        Intent intent = new Intent(getActivity(), PackagesActivity.class);
+        intent.putExtra(PackagesActivity.MESSAGE_DRUG_ID, drugId);
+        intent.putExtra(PackagesActivity.MESSAGE_DRUG_NAME, name);
+        intent.putExtra(PackagesActivity.MESSAGE_DRUG_API, api);
+        intent.putExtra(PackagesActivity.MESSAGE_DRUG_COLOR, color);
+        startActivity(intent);
     }
 
-}
+    @Override
+    public void onDrugLongClick(final long drugId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+        builder.setMessage(R.string.delete_question);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+               @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    getActivity().getContentResolver().delete(DataContract.DrugEntry.buildDrugUri(drugId), null, null);
+                    getLoaderManager().restartLoader(DRUG_LOADER, null, DrugsListFragment.this);
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.show();
+        }
+    }
+

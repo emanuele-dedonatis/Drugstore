@@ -56,6 +56,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
             |   SUBPACKAGES             |
             ----------------------------
             |   long id                 |
+            |   long drug_id            |
             |   long package_id         |
             |   int doses_left          |
             |   int exp_date (yyyyMMdd) |
@@ -63,6 +64,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
     */
         final String SQL_CREATE_SUBPACKAGES_TABLE = "CREATE TABLE " + SubpackageEntry.TABLE_NAME + " (" +
                 SubpackageEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SubpackageEntry.COLUMN_DRUG_ID + " INTEGER NOT NULL, " +
                 SubpackageEntry.COLUMN_PACKAGE_ID + " INTEGER NOT NULL, " +
                 SubpackageEntry.COLUMN_DOSES_LEFT + " INTEGER NOT NULL, " +
                 SubpackageEntry.COLUMN_EXP_DATE + " INTEGER NOT NULL, " +

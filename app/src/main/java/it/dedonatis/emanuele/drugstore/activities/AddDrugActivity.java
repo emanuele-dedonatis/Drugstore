@@ -74,11 +74,11 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
 
         // Header selection
         Intent intent = getIntent();
-        drugId = intent.getLongExtra(DrugDetailActivity.MESSAGE_DRUG_ID, -1);
+        drugId = intent.getLongExtra(PackagesActivity.MESSAGE_DRUG_ID, -1);
         if(drugId >= 0) {
             // Existing drug
-            String drugName = intent.getStringExtra(DrugDetailActivity.MESSAGE_DRUG_NAME);
-            String drugApi = intent.getStringExtra(DrugDetailActivity.MESSAGE_DRUG_API);
+            String drugName = intent.getStringExtra(PackagesActivity.MESSAGE_DRUG_NAME);
+            String drugApi = intent.getStringExtra(PackagesActivity.MESSAGE_DRUG_API);
             TextView tvName = (TextView) findViewById(R.id.drug_name);
             tvName.setText(drugName);
             TextView tvApi = (TextView) findViewById(R.id.drug_api);

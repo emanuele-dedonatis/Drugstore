@@ -28,24 +28,6 @@
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
             </android.support.v7.widget.Toolbar>
-
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/header_height"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="72dp"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/Base.TextAppearance.AppCompat.Display1"
-                    android:textColor="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/MainTitle"
-                    android:transitionName="drugName"
-                    android:text="@string/drugs" />
-
-            </LinearLayout>
         </android.support.design.widget.AppBarLayout>
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

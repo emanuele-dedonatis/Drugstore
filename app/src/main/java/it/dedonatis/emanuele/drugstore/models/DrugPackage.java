@@ -8,74 +8,44 @@ import java.util.Date;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
 public class DrugPackage {
-    private long packageID;
-    private long drugID;
-    private String description;
-    private int units;
-    private boolean isPercentage;
-    private int expiration_date;
-    private int drugColor;
-    private Uri imageUri;
+    private long mId;
+    private long mDrugId;
+    private String mDescription;
+    private int mDoses;
+    private Uri mImageUri;
+    private int mDrugColor;
 
-    public DrugPackage(long packageID, long drugID, String description, int units, boolean isPercentage, int expiration_date, String imageUri, int drugColor) {
-        this.packageID = packageID;
-        this.drugID = drugID;
-        this.description = description;
-        this.units = units;
-        this.isPercentage = isPercentage;
-        this.expiration_date = expiration_date;
+    public DrugPackage(long id, long drugID, String description, int doses, String imageUri, int drugColor) {
+        this.mId = id;
+        this.mDrugId = drugID;
+        this.mDescription = description;
+        this.mDoses = doses;
         if(imageUri != null)
-            this.imageUri = Uri.parse(imageUri);
-        this.drugColor = drugColor;
+            this.mImageUri = Uri.parse(imageUri);
+        this.mDrugColor = drugColor;
     }
 
-    public long getPackageID() {
-        return packageID;
+    public long getId() {
+        return mId;
     }
 
     public long getDrugID() {
-        return drugID;
+        return mDrugId;
     }
 
     public String getDescription() {
-        return description;
+        return mDescription;
     }
 
-    public int getUnits() {
-        return units;
-    }
-
-    public boolean isPercentage() {
-        return isPercentage;
+    public int getDoses() {
+        return mDoses;
     }
 
     public Uri getImageUri() {
-        return imageUri;
-    }
-
-    public int getExpiration_date() {
-        return expiration_date;
-    }
-
-    public Date getParsedExpriartion_date() {
-        return DateUtils.fromDbStringToDate(expiration_date + "");
-    }
-
-    public String getStringExpriartion_date() {
-        SimpleDateFormat simpleDate =  new SimpleDateFormat("dd/MM/yyyy");
-        return "EXP" + " " + simpleDate.format(getParsedExpriartion_date());
+        return mImageUri;
     }
 
     public int getDrugColor() {
-        return drugColor;
-    }
-    @Override
-    public String toString() {
-        String unitString = units + "";
-        if(isPercentage)
-            unitString += " %";
-
-        return drugID + " - " + description + " - " + unitString +  " exp." + expiration_date;
-
+        return mDrugColor;
     }
 }

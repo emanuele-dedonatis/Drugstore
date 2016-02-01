@@ -42,7 +42,10 @@ public class DrugRecyclerAdapter extends RecyclerView.Adapter<DrugRecyclerAdapte
         drugViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrugClickListener.onDrugClick(drug.getId());
+                mDrugClickListener.onDrugClick(drug.getId(),
+                        drug.getName(),
+                        drug.getApi(),
+                        drug.getColor());
             }
         });
 
@@ -79,7 +82,7 @@ public class DrugRecyclerAdapter extends RecyclerView.Adapter<DrugRecyclerAdapte
     }
 
     public interface DrugClickListener {
-        public void onDrugClick(long drugId);
+        public void onDrugClick(long drugId, String name, String api, int color);
         public void onDrugLongClick(long drugId);
     }
 }

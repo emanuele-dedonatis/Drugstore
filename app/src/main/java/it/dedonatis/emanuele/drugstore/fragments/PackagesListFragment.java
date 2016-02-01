@@ -27,39 +27,36 @@ import it.dedonatis.emanuele.drugstore.data.DataContract.*;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 
 
-public class DrugDetailFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>, PackageRecyclerAdapter.PackageClickListener{
+public class PackagesListFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>, PackageRecyclerAdapter.PackageClickListener{
     private static final String ARG_DRUG_ID = "id";
     private static final String ARG_DRUG_COLOR = "color";
     private static final int PACKAGE_LOADER = 1;
-    private static final String LOG_TAG = DrugDetailFragment.class.getSimpleName();
+    private static final String LOG_TAG = PackagesListFragment.class.getSimpleName();
 
     /***** CONTENT PROVIDER PROJECTION *****/
     private static final String[] PACKAGE_COLUMNS = {
             PackageEntry.TABLE_NAME + "." + PackageEntry._ID,
-            PackageEntry.COLUMN_DRUG,
+            PackageEntry.COLUMN_DRUG_ID,
             PackageEntry.COLUMN_DESCRIPTION,
-            PackageEntry.COLUMN_UNITS,
-            PackageEntry.COLUMN_IS_PERCENTAGE,
-            PackageEntry.COLUMN_EXPIRATION_DATE,
-            PackageEntry.COLUMN_IMAGE
+            PackageEntry.COLUMN_DOSES,
+            PackageEntry.COLUMN_IMAGE_URI
     };
+
     public static final int COL_PACKAGE_ID = 0;
-    public static final int COL_DRUG = 1;
+    public static final int COL_DRUG_ID = 1;
     public static final int COL_PACKAGE_DESCRIPTION = 2;
-    public static final int COL_PACKAGE_UNITS = 3;
-    public static final int COL_PACKAGE_IS_PERECENTAGE = 4;
-    public static final int COL_PACKAGE_EXPIRATION_DATE = 5;
-    public static final int COL_PACKAGE_IMAGE = 6;
+    public static final int COL_PACKAGE_DOSES = 3;
+    public static final int COL_PACKAGE_IMAGE_URI = 4;
 
     private long mDrugId;
     private int mDrugColor;
     private List<DrugPackage> mPackages = new ArrayList<DrugPackage>();
     private PackageRecyclerAdapter mAdapter;
 
-    public DrugDetailFragment() {}
+    public PackagesListFragment() {}
 
-    public static DrugDetailFragment newInstance(long id, int drugColor) {
-        DrugDetailFragment fragment = new DrugDetailFragment();
+    public static PackagesListFragment newInstance(long id, int drugColor) {
+        PackagesListFragment fragment = new PackagesListFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_DRUG_ID, id);
         args.putInt(ARG_DRUG_COLOR, drugColor);
@@ -96,7 +93,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
     /***** LOADER CALLBACKS *****/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), PackageEntry.buildPackagesFromDrug(mDrugId), PACKAGE_COLUMNS, null, null, PackageEntry.COLUMN_EXPIRATION_DATE + " ASC");
+        return new CursorLoader(getActivity(), PackageEntry.buildPackagesFromDrug(mDrugId), PACKAGE_COLUMNS, null, null, PackageEntry.COLUMN_DESCRIPTION + " ASC");
     }
 
     @Override
@@ -105,12 +102,10 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
         while(data.moveToNext()) {
             DrugPackage pkg = new DrugPackage(
                     data.getLong(COL_PACKAGE_ID),
-                    data.getLong(COL_DRUG),
+                    data.getLong(COL_DRUG_ID),
                     data.getString(COL_PACKAGE_DESCRIPTION),
-                    data.getInt(COL_PACKAGE_UNITS),
-                    data.getInt(COL_PACKAGE_IS_PERECENTAGE) != 0,
-                    data.getInt(COL_PACKAGE_EXPIRATION_DATE),
-                    data.getString(COL_PACKAGE_IMAGE),
+                    data.getInt(COL_PACKAGE_DOSES),
+                    data.getString(COL_PACKAGE_IMAGE_URI),
                     mDrugColor
             );
             mPackages.add(pkg);
@@ -152,7 +147,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
                     public void onClick(DialogInterface dialog, int which) {
                         getActivity().getContentResolver().delete(PackageEntry.buildPackageUri(packageId), null, null);
                         Log.v(LOG_TAG, "Package " + packageId + " deleted");
-                        getLoaderManager().restartLoader(PACKAGE_LOADER, null, DrugDetailFragment.this);
+                        getLoaderManager().restartLoader(PACKAGE_LOADER, null, PackagesListFragment.this);
                     }
                 });
         builder.setNegativeButton(R.string.cancel, null);
