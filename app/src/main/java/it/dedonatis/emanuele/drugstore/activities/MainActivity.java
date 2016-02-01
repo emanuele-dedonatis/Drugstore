@@ -2,7 +2,11 @@ package it.dedonatis.emanuele.drugstore.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.AsyncQueryHandler;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,13 +17,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.data.DrugContract;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PharmaciesFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
 import it.dedonatis.emanuele.drugstore.fragments.SettingsFragment;
+import it.dedonatis.emanuele.drugstore.models.Prescription;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
@@ -37,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drugs);
+
+        //populateDb();
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -143,4 +152,46 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
         }    }
+
+    void populateDb() {
+        ContentValues drug = new ContentValues();
+        drug.put(DrugContract.DrugEntry.COLUMN_NAME, "Tachipirina");
+        drug.put(DrugContract.DrugEntry.COLUMN_API, "Paracetamolo");
+        drug.put(DrugContract.DrugEntry.COLUMN_NEED_PRESCRIPTION, 0);
+        Uri uri = getContentResolver().insert(
+                DrugContract.DrugEntry.CONTENT_URI,
+                drug
+        );
+        long drugId = ContentUris.parseId(uri);
+        Log.v(LOG_TAG, "New drug id " + drugId);
+
+            ContentValues pkg = new ContentValues();
+            pkg.put(DrugContract.PackageEntry.COLUMN_DRUG, drugId);
+            pkg.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, "Compresse");
+            pkg.put(DrugContract.PackageEntry.COLUMN_UNITS, 50);
+            pkg.put(DrugContract.PackageEntry.COLUMN_IS_PERCENTAGE, false);
+            pkg.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, 22082016);
+        Uri pkgUri = getContentResolver().insert(
+                DrugContract.PackageEntry.CONTENT_URI,
+                pkg
+        );
+        long pkgId = ContentUris.parseId(pkgUri);
+        Log.v(LOG_TAG, "New pkg id " + pkgUri);
+
+        ContentValues presc = new ContentValues();
+        presc.put(DrugContract.PrescriptionEntry.COLUMN_DRUG, drugId);
+        presc.put(DrugContract.PrescriptionEntry.COLUMN_PACKAGE, pkgId);
+        presc.put(DrugContract.PrescriptionEntry.COLUMN_HOW_MUCH, 1);
+        presc.put(DrugContract.PrescriptionEntry.COLUMN_EVERY, Prescription.EVERY_DAY);
+        presc.put(DrugContract.PrescriptionEntry.COLUMN_HOUR, "0930");
+        presc.put(DrugContract.PrescriptionEntry.COLUMN_UNTIL, "20160809");
+
+        Uri prescUri = getContentResolver().insert(
+                DrugContract.PrescriptionEntry.CONTENT_URI,
+                presc
+        );
+        long prescId = ContentUris.parseId(prescUri);
+        Log.v(LOG_TAG, "New presc id " + prescUri);
+
+    }
 }
