@@ -19,9 +19,8 @@ import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.PrescriptionsRecyclerAdapter;
-import it.dedonatis.emanuele.drugstore.data.DrugContract;
+import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.models.Prescription;
-import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
 public class PrescriptionFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,PrescriptionsRecyclerAdapter.PrescriptionClickListener {
     private static final int PRESC_LOADER = 1;
@@ -29,13 +28,13 @@ public class PrescriptionFragment extends Fragment implements LoaderManager.Load
 
     /***** CONTENT PROVIDER PROJECTION *****/
     private static final String[] PRESC_COLUMNS = {
-            DrugContract.PrescriptionEntry.TABLE_NAME + "." + DrugContract.PrescriptionEntry._ID,
-            DrugContract.PrescriptionEntry.COLUMN_DRUG,
-            DrugContract.PrescriptionEntry.COLUMN_PACKAGE,
-            DrugContract.PrescriptionEntry.COLUMN_HOW_MUCH,
-            DrugContract.PrescriptionEntry.COLUMN_EVERY,
-            DrugContract.PrescriptionEntry.COLUMN_HOUR,
-            DrugContract.PrescriptionEntry.COLUMN_UNTIL
+            DataContract.PrescriptionEntry.TABLE_NAME + "." + DataContract.PrescriptionEntry._ID,
+            DataContract.PrescriptionEntry.COLUMN_DRUG,
+            DataContract.PrescriptionEntry.COLUMN_PACKAGE,
+            DataContract.PrescriptionEntry.COLUMN_HOW_MUCH,
+            DataContract.PrescriptionEntry.COLUMN_EVERY,
+            DataContract.PrescriptionEntry.COLUMN_HOUR,
+            DataContract.PrescriptionEntry.COLUMN_UNTIL
     };
     public static final int COL_PRESC_ID = 0;
     public static final int COL_DRUG_ID = 1;
@@ -94,7 +93,7 @@ public class PrescriptionFragment extends Fragment implements LoaderManager.Load
     /** CURSOR LOADER **/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), DrugContract.PrescriptionEntry.CONTENT_URI, PRESC_COLUMNS, null, null, DrugContract.PrescriptionEntry.COLUMN_UNTIL + " ASC");
+        return new CursorLoader(getActivity(), DataContract.PrescriptionEntry.CONTENT_URI, PRESC_COLUMNS, null, null, DataContract.PrescriptionEntry.COLUMN_UNTIL + " ASC");
     }
 
     @Override

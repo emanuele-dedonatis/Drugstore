@@ -1,9 +1,7 @@
 package it.dedonatis.emanuele.drugstore.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.data.DrugContract;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
-import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
 public class PackageRecyclerAdapter extends RecyclerView.Adapter<PackageRecyclerAdapter.PackageViewHolder>{
 

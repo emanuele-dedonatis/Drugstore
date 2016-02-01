@@ -14,8 +14,6 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.data.DrugContract;
-import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.Prescription;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 

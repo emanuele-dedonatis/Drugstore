@@ -3,16 +3,16 @@ package it.dedonatis.emanuele.drugstore.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
+import it.dedonatis.emanuele.drugstore.data.DataContract.*;
 
 
-public class DrugDbHelper extends SQLiteOpenHelper {
+public class DataDbHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 7;
 
     static final String DATABASE_NAME = "drugs.db";
 
-    public DrugDbHelper(Context context) {
+    public DataDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

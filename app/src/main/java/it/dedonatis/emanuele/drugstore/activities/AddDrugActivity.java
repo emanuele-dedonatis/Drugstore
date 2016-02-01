@@ -5,23 +5,18 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -32,24 +27,18 @@ import android.widget.ViewSwitcher;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.data.DrugContract;
+import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.fragments.AddDrugFragment;
 import it.dedonatis.emanuele.drugstore.interfaces.OnMenuItemClickListener;
 import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
 import it.dedonatis.emanuele.drugstore.utils.Assets;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
-import it.dedonatis.emanuele.drugstore.utils.Images;
 
 import static it.dedonatis.emanuele.drugstore.utils.Images.createImageFile;
 import static it.dedonatis.emanuele.drugstore.utils.Images.saveToInternalSorage;
@@ -196,11 +185,11 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
     public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image) {
         if (drugId < 0){
             ContentValues drug = new ContentValues();
-            drug.put(DrugContract.DrugEntry.COLUMN_NAME, ((EditText) findViewById(R.id.drug_name_et)).getText().toString());
-            drug.put(DrugContract.DrugEntry.COLUMN_API, ((EditText) findViewById(R.id.drug_api_et)).getText().toString());
-            drug.put(DrugContract.DrugEntry.COLUMN_NEED_PRESCRIPTION, 0);
+            drug.put(DataContract.DrugEntry.COLUMN_NAME, ((EditText) findViewById(R.id.drug_name_et)).getText().toString());
+            drug.put(DataContract.DrugEntry.COLUMN_API, ((EditText) findViewById(R.id.drug_api_et)).getText().toString());
+            drug.put(DataContract.DrugEntry.COLUMN_NEED_PRESCRIPTION, 0);
             Uri uri = getContentResolver().insert(
-                    DrugContract.DrugEntry.CONTENT_URI,
+                    DataContract.DrugEntry.CONTENT_URI,
                     drug
             );
             drugId = ContentUris.parseId(uri);
@@ -209,17 +198,17 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
 
         if(drugId>=0) {
             ContentValues pkg = new ContentValues();
-            pkg.put(DrugContract.PackageEntry.COLUMN_DRUG, drugId);
-            pkg.put(DrugContract.PackageEntry.COLUMN_DESCRIPTION, description);
-            pkg.put(DrugContract.PackageEntry.COLUMN_UNITS, units);
-            pkg.put(DrugContract.PackageEntry.COLUMN_IS_PERCENTAGE, isPercentage);
-            pkg.put(DrugContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);
-            pkg.put(DrugContract.PackageEntry.COLUMN_IMAGE, (mPhotoUri!=null) ? mPhotoUri.toString() : null);
+            pkg.put(DataContract.PackageEntry.COLUMN_DRUG, drugId);
+            pkg.put(DataContract.PackageEntry.COLUMN_DESCRIPTION, description);
+            pkg.put(DataContract.PackageEntry.COLUMN_UNITS, units);
+            pkg.put(DataContract.PackageEntry.COLUMN_IS_PERCENTAGE, isPercentage);
+            pkg.put(DataContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);
+            pkg.put(DataContract.PackageEntry.COLUMN_IMAGE, (mPhotoUri!=null) ? mPhotoUri.toString() : null);
             Log.v(LOG_TAG, "New pkg");
             AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {};
 
             queryHandler.startInsert(0, null,
-                    DrugContract.PackageEntry.CONTENT_URI,
+                    DataContract.PackageEntry.CONTENT_URI,
                     pkg
             );
         }

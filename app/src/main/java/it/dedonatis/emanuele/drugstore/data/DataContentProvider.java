@@ -4,22 +4,19 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
-import java.sql.SQLException;
 
-import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
-import it.dedonatis.emanuele.drugstore.models.Drug;
+import it.dedonatis.emanuele.drugstore.data.DataContract.*;
 
-public class DrugProvider extends ContentProvider{
-    private static final String LOG_TAG = DrugProvider.class.getSimpleName();
+public class DataContentProvider extends ContentProvider{
+    private static final String LOG_TAG = DataContentProvider.class.getSimpleName();
     private static final UriMatcher sUriMatcher = buildUriMatcher();
-    private DrugDbHelper mOpenHelper;
+    private DataDbHelper mOpenHelper;
 
     static final int DRUGS = 100;
     static final int DRUG = 101;
@@ -33,32 +30,32 @@ public class DrugProvider extends ContentProvider{
 
     @Override
     public boolean onCreate() {
-        mOpenHelper = new DrugDbHelper(getContext());
+        mOpenHelper = new DataDbHelper(getContext());
         return true;
     }
 
     static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = DrugContract.CONTENT_AUTHORITY;
+        final String authority = DataContract.CONTENT_AUTHORITY;
 
         // content://it.drugstore.app/drug
-        matcher.addURI(authority, DrugContract.PATH_DRUG, DRUGS);
+        matcher.addURI(authority, DataContract.PATH_DRUG, DRUGS);
         // content://it.drugstore.app/drug/#
-        matcher.addURI(authority, DrugContract.PATH_DRUG + "/#", DRUG);
+        matcher.addURI(authority, DataContract.PATH_DRUG + "/#", DRUG);
         // content://it.drugstore.app/drug/#/package
-        matcher.addURI(authority, DrugContract.PATH_DRUG + "/#/" + DrugContract.PATH_PACKAGE, DRUG_PACKAGES);
+        matcher.addURI(authority, DataContract.PATH_DRUG + "/#/" + DataContract.PATH_PACKAGE, DRUG_PACKAGES);
         // content://it.drugstore.app/drug/#/prescription
-        matcher.addURI(authority, DrugContract.PATH_DRUG + "/#/" + DrugContract.PATH_PRESCRIPTION, DRUG_PRESCTIPIONS);
+        matcher.addURI(authority, DataContract.PATH_DRUG + "/#/" + DataContract.PATH_PRESCRIPTION, DRUG_PRESCTIPIONS);
 
         // content://it.drugstore.app/package
-        matcher.addURI(authority, DrugContract.PATH_PACKAGE, PACKAGES);
+        matcher.addURI(authority, DataContract.PATH_PACKAGE, PACKAGES);
         // content://it.drugstore.app/package/#
-        matcher.addURI(authority, DrugContract.PATH_PACKAGE + "/#", PACKAGE);
+        matcher.addURI(authority, DataContract.PATH_PACKAGE + "/#", PACKAGE);
 
         // content://it.drugstore.app/prescription
-        matcher.addURI(authority, DrugContract.PATH_PRESCRIPTION, PRESCRIPTIONS);
+        matcher.addURI(authority, DataContract.PATH_PRESCRIPTION, PRESCRIPTIONS);
         // content://it.drugstore.app/prescription/#
-        matcher.addURI(authority, DrugContract.PATH_PRESCRIPTION + "/#", PRESCRIPTION);
+        matcher.addURI(authority, DataContract.PATH_PRESCRIPTION + "/#", PRESCRIPTION);
 
         return matcher;
     }
@@ -249,7 +246,7 @@ public class DrugProvider extends ContentProvider{
                 long _id = db.insertWithOnConflict(DrugEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 if(_id < 0) {
                     String selection = DrugEntry.TABLE_NAME + "." + DrugEntry.COLUMN_NAME + " = ?";
-                    String[] selectionArgs = new String[]{values.getAsString(DrugContract.DrugEntry.COLUMN_NAME)};
+                    String[] selectionArgs = new String[]{values.getAsString(DataContract.DrugEntry.COLUMN_NAME)};
 
                     Cursor cursor = mOpenHelper.getReadableDatabase().query(
                             DrugEntry.TABLE_NAME,

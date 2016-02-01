@@ -2,7 +2,6 @@ package it.dedonatis.emanuele.drugstore.models;
 
 import android.net.Uri;
 
-import it.dedonatis.emanuele.drugstore.data.DrugContract;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
 public class Prescription {

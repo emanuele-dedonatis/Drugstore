@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.support.design.widget.FloatingActionButton;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +25,7 @@ import android.widget.SearchView;
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
 import it.dedonatis.emanuele.drugstore.adapters.DrugsCursorAdapter;
-import it.dedonatis.emanuele.drugstore.data.DrugContract;
+import it.dedonatis.emanuele.drugstore.data.DataContract;
 
 public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, SearchView.OnQueryTextListener {
     private static final String LOG_TAG = DrugsListFragment.class.getSimpleName();
@@ -38,9 +37,9 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     private SearchView mSearchView;
 
     private static final String[] DRUG_COLUMNS = {
-            DrugContract.DrugEntry.TABLE_NAME + "." + DrugContract.DrugEntry._ID,
-            DrugContract.DrugEntry.COLUMN_NAME,
-            DrugContract.DrugEntry.COLUMN_API
+            DataContract.DrugEntry.TABLE_NAME + "." + DataContract.DrugEntry._ID,
+            DataContract.DrugEntry.COLUMN_NAME,
+            DataContract.DrugEntry.COLUMN_API
     };
     public static final int COL_DRUG_ID = 0;
     public static final int COL_DRUG_NAME = 1;
@@ -123,7 +122,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
             builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    getActivity().getContentResolver().delete(DrugContract.DrugEntry.buildDrugUri(drugId), null, null);
+                    getActivity().getContentResolver().delete(DataContract.DrugEntry.buildDrugUri(drugId), null, null);
                     getLoaderManager().restartLoader(DRUG_LOADER, null, DrugsListFragment.this);
                 }
             });
@@ -144,12 +143,12 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri drugsUri;
         if(mCursorFilter != null) {
-            drugsUri = DrugContract.DrugEntry.buildDrugLikeNameOrApi(mCursorFilter);
+            drugsUri = DataContract.DrugEntry.buildDrugLikeNameOrApi(mCursorFilter);
         } else {
-            drugsUri = DrugContract.DrugEntry.CONTENT_URI;
+            drugsUri = DataContract.DrugEntry.CONTENT_URI;
 
         }
-        String sortOrder = DrugContract.DrugEntry.COLUMN_NAME + " ASC";
+        String sortOrder = DataContract.DrugEntry.COLUMN_NAME + " ASC";
         return new CursorLoader(getActivity(), drugsUri, DRUG_COLUMNS, null, null, sortOrder);
     }
 

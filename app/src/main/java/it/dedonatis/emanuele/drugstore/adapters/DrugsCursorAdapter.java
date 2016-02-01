@@ -10,10 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.amulyakhare.textdrawable.util.ColorGenerator;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.data.DrugContract;
+import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
@@ -25,8 +24,8 @@ public class DrugsCursorAdapter extends CursorAdapter {
     }
 
     private static final String[] PKG_COLUMNS = {
-            DrugContract.PackageEntry.TABLE_NAME + "." + DrugContract.PackageEntry._ID,
-            DrugContract.PackageEntry.COLUMN_UNITS
+            DataContract.PackageEntry.TABLE_NAME + "." + DataContract.PackageEntry._ID,
+            DataContract.PackageEntry.COLUMN_UNITS
     };
     public static final int COL_PKG_ID = 0;
     public static final int COL_PKG_UNITS = 1;

@@ -1,8 +1,6 @@
 package it.dedonatis.emanuele.drugstore.models;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -60,7 +58,7 @@ public class DrugPackage {
     }
 
     public Date getParsedExpriartion_date() {
-        return DateUtils.parseDate(expiration_date + "");
+        return DateUtils.fromDbStringToDate(expiration_date + "");
     }
 
     public String getStringExpriartion_date() {

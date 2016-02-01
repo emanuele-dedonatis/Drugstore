@@ -3,35 +3,28 @@ package it.dedonatis.emanuele.drugstore.fragments;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.PackageRecyclerAdapter;
-import it.dedonatis.emanuele.drugstore.data.DrugContract;
-import it.dedonatis.emanuele.drugstore.data.DrugContract.*;
-import it.dedonatis.emanuele.drugstore.models.Drug;
+import it.dedonatis.emanuele.drugstore.data.DataContract;
+import it.dedonatis.emanuele.drugstore.data.DataContract.*;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
-import me.drakeet.materialdialog.MaterialDialog;
 
 
 public class DrugDetailFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>, PackageRecyclerAdapter.PackageClickListener{
@@ -144,7 +137,7 @@ public class DrugDetailFragment extends DialogFragment  implements LoaderManager
         if(newUnits >= 0) {
             ContentValues values = new ContentValues();
             values.put(PackageEntry.COLUMN_UNITS, newUnits);
-            getActivity().getContentResolver().update(DrugContract.PackageEntry.buildPackageUri(packageId), values, null, null);
+            getActivity().getContentResolver().update(DataContract.PackageEntry.buildPackageUri(packageId), values, null, null);
             getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
         }
     }
