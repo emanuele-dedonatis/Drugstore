@@ -1,42 +1,34 @@
 package it.dedonatis.emanuele.drugstore.models;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
+import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
+
 public class Drug {
-    private String name;
-    private List<Package> packages;
+    private long mId;
+    private String mName;
+    private String mApi;
+    private int mColor;
 
-    public Drug(String name) {
-        this.name = name;
-        packages = new ArrayList<Package>();
+    public Drug(long id, String name, String api) {
+        this.mId = id;
+        this.mName = name;
+        this.mApi = api;
+        this.mColor = ColorUtils.getDrugColor(name, api);
     }
 
+    public long getId() {
+        return mId;
+    }
     public String getName() {
-        return name;
+        return mName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getApi() {
+        return mApi;
     }
 
-    public List<Package> getPackages() {
-        return packages;
-    }
-
-    public List<Package> setPackages(List<Package> packages) {
-        this.packages = packages;
-        return this.packages;
-    }
-
-    public List<Package> addPackage(Package pack) {
-        packages.add(pack);
-        return packages;
-    }
-
-    @Override
-    public String toString() {
-        return name + " " + packages.size() + " packages";
+    public int getColor() {
+        return mColor;
     }
 }

@@ -24,7 +24,6 @@ import android.widget.SearchView;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
-import it.dedonatis.emanuele.drugstore.adapters.DrugsCursorAdapter;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
 
 public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, SearchView.OnQueryTextListener {
@@ -68,7 +67,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_drug_list, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_drugs_list, container, false);
 
         ListView drugListView = (ListView) fragmentView.findViewById(R.id.drugs_listview);
         drugsCursorAdapter = new DrugsCursorAdapter(getActivity());

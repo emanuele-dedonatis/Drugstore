@@ -1,10 +1,7 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
 import android.app.Activity;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,11 +15,9 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PharmaciesFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
-import it.dedonatis.emanuele.drugstore.models.Prescription;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DrugsListFragment.OnDrugSelectionListener {
@@ -39,7 +34,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drugs);
+        setContentView(R.layout.activity_main);
 
         //populateDb();
 
@@ -147,47 +142,7 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
                 break;
-        }    }
-
-    void populateDb() {
-        ContentValues drug = new ContentValues();
-        drug.put(DataContract.DrugEntry.COLUMN_NAME, "Tachipirina");
-        drug.put(DataContract.DrugEntry.COLUMN_API, "Paracetamolo");
-        drug.put(DataContract.DrugEntry.COLUMN_NEED_PRESCRIPTION, 0);
-        Uri uri = getContentResolver().insert(
-                DataContract.DrugEntry.CONTENT_URI,
-                drug
-        );
-        long drugId = ContentUris.parseId(uri);
-        Log.v(LOG_TAG, "New drug id " + drugId);
-
-            ContentValues pkg = new ContentValues();
-            pkg.put(DataContract.PackageEntry.COLUMN_DRUG, drugId);
-            pkg.put(DataContract.PackageEntry.COLUMN_DESCRIPTION, "Compresse");
-            pkg.put(DataContract.PackageEntry.COLUMN_UNITS, 50);
-            pkg.put(DataContract.PackageEntry.COLUMN_IS_PERCENTAGE, false);
-            pkg.put(DataContract.PackageEntry.COLUMN_EXPIRATION_DATE, 22082016);
-        Uri pkgUri = getContentResolver().insert(
-                DataContract.PackageEntry.CONTENT_URI,
-                pkg
-        );
-        long pkgId = ContentUris.parseId(pkgUri);
-        Log.v(LOG_TAG, "New pkg id " + pkgUri);
-
-        ContentValues presc = new ContentValues();
-        presc.put(DataContract.PrescriptionEntry.COLUMN_DRUG, drugId);
-        presc.put(DataContract.PrescriptionEntry.COLUMN_PACKAGE, pkgId);
-        presc.put(DataContract.PrescriptionEntry.COLUMN_HOW_MUCH, 1);
-        presc.put(DataContract.PrescriptionEntry.COLUMN_EVERY, Prescription.EVERY_DAY);
-        presc.put(DataContract.PrescriptionEntry.COLUMN_HOUR, "0930");
-        presc.put(DataContract.PrescriptionEntry.COLUMN_UNTIL, "20160809");
-
-        Uri prescUri = getContentResolver().insert(
-                DataContract.PrescriptionEntry.CONTENT_URI,
-                presc
-        );
-        long prescId = ContentUris.parseId(prescUri);
-        Log.v(LOG_TAG, "New presc id " + prescUri);
-
+        }
     }
+
 }

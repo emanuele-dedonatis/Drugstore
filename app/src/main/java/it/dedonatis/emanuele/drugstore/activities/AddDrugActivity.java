@@ -40,9 +40,9 @@ import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
 import it.dedonatis.emanuele.drugstore.utils.Assets;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
-import static it.dedonatis.emanuele.drugstore.utils.Images.createImageFile;
-import static it.dedonatis.emanuele.drugstore.utils.Images.saveToInternalSorage;
-import static it.dedonatis.emanuele.drugstore.utils.Images.scaleDown;
+import static it.dedonatis.emanuele.drugstore.utils.ImageUtils.createImageFile;
+import static it.dedonatis.emanuele.drugstore.utils.ImageUtils.saveToInternalSorage;
+import static it.dedonatis.emanuele.drugstore.utils.ImageUtils.scaleDown;
 
 public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListener, AddDrugFragment.OnChooseFotoListener {
 

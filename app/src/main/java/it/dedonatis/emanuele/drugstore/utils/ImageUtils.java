@@ -7,9 +7,12 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
+
+import com.amulyakhare.textdrawable.TextDrawable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,7 +20,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Images {
+public class ImageUtils {
 
     public static Uri createImageFile(Context context) throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -95,6 +98,14 @@ public class Images {
             }
         }
         return bmpBinary;
+    }
+
+    public static Drawable generateRoundLetter(String title, int color) {
+        String letter = "";
+        if(title != null) {
+            letter = String.valueOf(title.charAt(0)).toUpperCase();
+        }
+        return TextDrawable.builder().buildRound(letter, color);
     }
 
 }
