@@ -18,14 +18,24 @@ public class DataContentProvider extends ContentProvider{
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private DataDbHelper mOpenHelper;
 
-    static final int DRUGS = 100;
-    static final int DRUG = 101;
-    static final int DRUG_PACKAGES = 102;
-    static final int DRUG_PRESCTIPIONS = 103;
-    static final int PACKAGES = 200;
-    static final int PACKAGE = 201;
-    static final int PRESCRIPTIONS = 300;
-    static final int PRESCRIPTION = 301;
+    static final int DRUGS = 100;                   //  /drugs
+    static final int DRUGS_ID = 101;                //  /drugs/#
+    static final int DRUGS_PACKAGES = 102;          //  /drugs/#/packages
+
+    static final int PACKAGES = 200;                //  /packages
+    static final int PACKAGES_ID = 201;             //  /packages/#
+    static final int PACKAGES_SUBPACKAGES = 202;    //  /packages/#/subpackages
+    static final int PACKAGES_THERAPIES = 203;      //  /packages/#/therapies
+
+    static final int SUBPACKAGES = 300;             //  /subpackages
+    static final int SUBPACKAGES_ID = 301;          //  /subpackages/#
+
+    static final int THERAPIES = 400;               //  /therapies
+    static final int THERAPIES_ID = 401;            //  /therapies/#
+    static final int THERAPIES_ALARMS = 402;        //  /therpies/#/alarms
+
+    static final int ALARMS = 500;                  //  /alarms
+    static final int ALARMS_ID = 501;               //  /alarms/#
 
 
     @Override

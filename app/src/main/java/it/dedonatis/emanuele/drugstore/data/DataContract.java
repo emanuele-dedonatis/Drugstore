@@ -176,7 +176,7 @@ public class DataContract {
             |   int exp_date (yyyyMMdd) |
             ----------------------------
     */
-    public static final class SubackageEntry implements BaseColumns {
+    public static final class SubpackageEntry implements BaseColumns {
         public static final String TABLE_NAME = PATH_SUBPACKAGES;
         public static final String COLUMN_PACKAGE_ID = PARAM_PACKAGE_ID;
         public static final String COLUMN_DOSES_LEFT = "doses_left";
