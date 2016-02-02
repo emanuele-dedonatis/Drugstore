@@ -17,7 +17,8 @@
     <string name="package_description">Package description</string>
     <string name="package_units">Units</string>
     <string name="package_expiration">Expiration date</string>
-
+    <string name="dose">dose</string>
+    <string name="doses">Doses</string>
 
     <string name="wait">Wait</string>
     <string name="loading_pharmacies">Loading pharmacies ...</string>

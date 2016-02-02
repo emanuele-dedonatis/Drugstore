@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/ligth_gray">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/item_package_label"
+            android:layout_margin="@dimen/screen_margin"
+            android:src="@drawable/ic_label_black_24dp"
+            android:tint="@color/high_gray" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/item_package_label"
+            android:layout_marginBottom="@dimen/screen_margin"
+            android:layout_marginTop="@dimen/screen_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/item_subpackage_exp"
+                style="@style/Base.TextAppearance.AppCompat.Body2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="EXP 17/02/2016"
+                android:textColor="@color/primary_text" />
+
+            <TextView
+                android:id="@+id/item_subpackage_doses"
+                style="@style/Base.TextAppearance.AppCompat.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="12 doses"
+                android:textColor="@color/secondary_text" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/item_subpackage_button_use"
+            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/content_margin"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/img_not_available"
+            android:text="@string/use" />
+</RelativeLayout>

@@ -5,6 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="fab_mini_margin_top">108dp</dimen>
     <dimen name="toolbar">56dp</dimen>
+    <dimen name="list_subitem">48dp</dimen>
     <dimen name="list_item">72dp</dimen>
 
     <dimen name="screen_margin">16dp</dimen>

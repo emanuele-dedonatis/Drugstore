@@ -34,7 +34,7 @@ import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
 
-public class PackagesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class PackagesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SubpackageTreeHolder.OnSubpackageClickListener {
     private static final String ARG_DRUG_ID = "id";
     private static final String ARG_DRUG_NAME = "name";
     private static final String ARG_DRUG_API = "api";
@@ -115,18 +115,6 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
         View fragmentView = inflater.inflate(R.layout.fragment_drug_packages, container, false);
         mContainerView = (ViewGroup) fragmentView.findViewById(R.id.drug_packages_list);
 
-        // Fab
-        FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), AddDrugActivity.class);
-                intent.putExtra(AddDrugActivity.MESSAGE_DRUG_ID, mDrugId);
-                intent.putExtra(AddDrugActivity.MESSAGE_DRUG_NAME, mDrugName);
-                intent.putExtra(AddDrugActivity.MESSAGE_DRUG_API, mDrugApi);
-                startActivity(intent);
-            }
-        });
         return fragmentView;
     }
 
@@ -176,7 +164,7 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
                     SUBPACKAGE_COLUMNS,
                     null,
                     null,
-                    DataContract.SubpackageEntry.COLUMN_PACKAGE_ID + " ASC"
+                    DataContract.SubpackageEntry.COLUMN_EXP_DATE + " ASC"
             );
 
             List<DrugSubpackage> packageSubpackages = new ArrayList<DrugSubpackage>();
@@ -189,7 +177,7 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
                         subpackageCursor.getInt(COL_SUBPACKAGE_DOSES_LEFT),
                         DateUtils.fromDbStringToDate(subpackageCursor.getString(COL_SUBPACKAGE_EXP_DATE))
                 );
-                subpackageNodes.add(new TreeNode(subpackage).setViewHolder(new SubpackageTreeHolder(getActivity())));
+                subpackageNodes.add(new TreeNode(subpackage).setViewHolder(new SubpackageTreeHolder(getActivity(), this)));
                 packageSubpackages.add(subpackage);
             }
 
@@ -232,6 +220,11 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void onClickButtonUse(long subpackageId) {
+        Log.v(LOG_TAG, "USE " + subpackageId);
     }
     /***** PackageRecyclerAdapter METHODS ****
      @Override public void onClickPackageUse(long packageId, int units) {
