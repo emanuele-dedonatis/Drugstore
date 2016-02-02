@@ -7,11 +7,11 @@
     android:background="@color/medium_gray">
 
 
-<android.support.v7.widget.RecyclerView
-        android:id="@+id/package_list"
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:id="@+id/drug_packages_list"></RelativeLayout>
 
     <LinearLayout
         android:id="@+id/empty_pack_list"

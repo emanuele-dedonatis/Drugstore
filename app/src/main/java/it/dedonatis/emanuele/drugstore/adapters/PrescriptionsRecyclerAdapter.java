@@ -19,7 +19,7 @@ import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
 public class PrescriptionsRecyclerAdapter extends RecyclerView.Adapter<PrescriptionsRecyclerAdapter.PrescriptionViewHolder>{
 
-    private static final String LOG_TAG = PackageRecyclerAdapter.class.getSimpleName();
+    private static final String LOG_TAG = PrescriptionsRecyclerAdapter.class.getSimpleName();
     private List<Prescription> mPrescriptions;
     private PrescriptionClickListener mPrescriptionClickListener;
     private Context mContext;
@@ -44,7 +44,7 @@ public class PrescriptionsRecyclerAdapter extends RecyclerView.Adapter<Prescript
         prescriptionViewHolder.tvWhat.setText(presc.getHow_much() + " x " + presc.getPackageDescription());
 
         String whenString = mContext.getString(R.string.every) + " " + mContext.getString(R.string.day);
-        prescriptionViewHolder.tvWhen.setText(whenString + " @ " + DateUtils.intToHour(presc.getEveryInHour()));
+        //prescriptionViewHolder.tvWhen.setText(whenString + " @ " + DateUtils.intToHour(presc.getEveryInHour()));
 
        //prescriptionViewHolder.tvUntil.setText(mContext.getString(R.string.until) + " " + DateUtils.intToString(presc.getUntil()));
 

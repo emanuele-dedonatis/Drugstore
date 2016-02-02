@@ -33,9 +33,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     final static String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final int DRUG_LOADER = 1;
-
-
     NavigationView mNavigationView;
 
     PharmaciesFragment mPharmaciesFragment;
@@ -204,6 +201,42 @@ public class MainActivity extends AppCompatActivity
             );
             long allarId = ContentUris.parseId(uri);
             Log.v(LOG_TAG, "New allarm id " + allarId);
+
+            // second package
+            pkg = new ContentValues();
+            pkg.put(DataContract.PackageEntry.COLUMN_DRUG_ID, drugId);
+            pkg.put(DataContract.PackageEntry.COLUMN_DESCRIPTION, "Bustine effervescenti");
+            pkg.put(DataContract.PackageEntry.COLUMN_DOSES, "30");
+            uri = getContentResolver().insert(
+                    DataContract.PackageEntry.CONTENT_URI,
+                    pkg
+            );
+            packId = ContentUris.parseId(uri);
+            Log.v(LOG_TAG, "New package id " + packId);
+
+            subpack = new ContentValues();
+            subpack.put(DataContract.SubpackageEntry.COLUMN_DRUG_ID, drugId);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_PACKAGE_ID, packId);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, 10);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_EXP_DATE, 20160811);
+            uri = getContentResolver().insert(
+                    DataContract.SubpackageEntry.CONTENT_URI,
+                    subpack
+            );
+            subId = ContentUris.parseId(uri);
+            Log.v(LOG_TAG, "New subpackage id " + subId);
+
+            subpack = new ContentValues();
+            subpack.put(DataContract.SubpackageEntry.COLUMN_DRUG_ID, drugId);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_PACKAGE_ID, packId);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, 28);
+            subpack.put(DataContract.SubpackageEntry.COLUMN_EXP_DATE, 20160316);
+            uri = getContentResolver().insert(
+                    DataContract.SubpackageEntry.CONTENT_URI,
+                    subpack
+            );
+            subId = ContentUris.parseId(uri);
+            Log.v(LOG_TAG, "New subpackage id " + subId);
         }
 
     }

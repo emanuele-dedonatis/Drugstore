@@ -1,48 +1,56 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.AsyncQueryHandler;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.unnamed.b.atv.model.TreeNode;
+import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
-import it.dedonatis.emanuele.drugstore.adapters.PackageRecyclerAdapter;
-import it.dedonatis.emanuele.drugstore.data.DataContract.*;
+import it.dedonatis.emanuele.drugstore.adapters.PackageTreeHolder;
+import it.dedonatis.emanuele.drugstore.adapters.SubpackageTreeHolder;
+import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
 
-public class PackagesListFragment extends DialogFragment  implements LoaderManager.LoaderCallbacks<Cursor>, PackageRecyclerAdapter.PackageClickListener{
+public class PackagesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String ARG_DRUG_ID = "id";
     private static final String ARG_DRUG_NAME = "name";
     private static final String ARG_DRUG_API = "api";
     private static final String ARG_DRUG_COLOR = "color";
-    private static final int PACKAGE_LOADER = 1;
-    private static final int SUBPACKAGE_LOADER = 2;
     private static final String LOG_TAG = PackagesListFragment.class.getSimpleName();
+    private static final int PACKAGE_LOADER = 1;
 
-    /***** CONTENT PROVIDER PROJECTION *****/
+    /*****
+     * CONTENT PROVIDER PROJECTION
+     *****/
     private static final String[] PACKAGE_COLUMNS = {
-            PackageEntry.TABLE_NAME + "." + PackageEntry._ID,
-            PackageEntry.COLUMN_DRUG_ID,
-            PackageEntry.COLUMN_DESCRIPTION,
-            PackageEntry.COLUMN_DOSES,
-            PackageEntry.COLUMN_IMAGE_URI
+            DataContract.PackageEntry.TABLE_NAME + "." + DataContract.PackageEntry._ID,
+            DataContract.PackageEntry.COLUMN_DRUG_ID,
+            DataContract.PackageEntry.COLUMN_DESCRIPTION,
+            DataContract.PackageEntry.COLUMN_DOSES,
+            DataContract.PackageEntry.COLUMN_IMAGE_URI
     };
 
     public static final int COL_PACKAGE_ID = 0;
@@ -52,11 +60,11 @@ public class PackagesListFragment extends DialogFragment  implements LoaderManag
     public static final int COL_PACKAGE_IMAGE_URI = 4;
 
     private static final String[] SUBPACKAGE_COLUMNS = {
-            SubpackageEntry.TABLE_NAME + "." + SubpackageEntry._ID,
-            SubpackageEntry.COLUMN_DRUG_ID,
-            SubpackageEntry.COLUMN_PACKAGE_ID,
-            SubpackageEntry.COLUMN_DOSES_LEFT,
-            SubpackageEntry.COLUMN_EXP_DATE
+            DataContract.SubpackageEntry.TABLE_NAME + "." + DataContract.SubpackageEntry._ID,
+            DataContract.SubpackageEntry.COLUMN_DRUG_ID,
+            DataContract.SubpackageEntry.COLUMN_PACKAGE_ID,
+            DataContract.SubpackageEntry.COLUMN_DOSES_LEFT,
+            DataContract.SubpackageEntry.COLUMN_EXP_DATE
     };
 
     public static final int COL_SUBPACKAGE_ID = 0;
@@ -69,12 +77,11 @@ public class PackagesListFragment extends DialogFragment  implements LoaderManag
     private int mDrugColor;
     private String mDrugName;
     private String mDrugApi;
-    private List<DrugPackage> mPackages = new ArrayList<DrugPackage>();
-    private PackageRecyclerAdapter mAdapter;
-    private Cursor cursorPackage = null;
-    private Cursor cursorSubpackage = null;
 
-    public PackagesListFragment() {}
+    ViewGroup mContainerView;
+
+    public PackagesListFragment() {
+    }
 
     public static PackagesListFragment newInstance(long id, String name, String api, int drugColor) {
         PackagesListFragment fragment = new PackagesListFragment();
@@ -88,28 +95,27 @@ public class PackagesListFragment extends DialogFragment  implements LoaderManag
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDrugId = getArguments().getLong(ARG_DRUG_ID);
         mDrugColor = getArguments().getInt(ARG_DRUG_COLOR);
         mDrugName = getArguments().getString(ARG_DRUG_NAME);
         mDrugApi = getArguments().getString(ARG_DRUG_API);
-        getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
-        getLoaderManager().initLoader(SUBPACKAGE_LOADER, null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_drug_packages, container, false);
-        RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.package_list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new PackageRecyclerAdapter(getActivity(), mPackages, this);
-        mRecyclerView.setAdapter(mAdapter);
+        mContainerView = (ViewGroup) fragmentView.findViewById(R.id.drug_packages_list);
 
-
-// Fab
+        // Fab
         FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,123 +127,137 @@ public class PackagesListFragment extends DialogFragment  implements LoaderManag
                 startActivity(intent);
             }
         });
-        return  fragmentView;
+        return fragmentView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
-    }
-
-    /***** LOADER CALLBACKS *****/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        switch(id) {
+        Log.v(LOG_TAG, "onCreateLoader");
+        switch (id) {
             case PACKAGE_LOADER:
+                Log.v(LOG_TAG, "onCreateLoader: PACKAGE_LOADER");
                 return new CursorLoader(getActivity(),
-                        PackageEntry.buildPackagesFromDrug(mDrugId),
+                        DataContract.PackageEntry.buildPackagesFromDrug(mDrugId),
                         PACKAGE_COLUMNS,
                         null,
                         null,
-                        PackageEntry._ID + " ASC");
-            case SUBPACKAGE_LOADER:
-                return new CursorLoader(getActivity(),
-                        SubpackageEntry.buildSubackagesFromDrug(mDrugId),
-                        SUBPACKAGE_COLUMNS,
-                        null,
-                        null,
-                        SubpackageEntry.COLUMN_PACKAGE_ID + " ASC");
-            default: return null;
+                        DataContract.PackageEntry._ID + " ASC");
+            default:
+                return null;
         }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v(LOG_TAG, "onLoadFinished");
         switch (loader.getId()) {
             case PACKAGE_LOADER:
-                cursorPackage = data;
-                joinCursors();
-            case SUBPACKAGE_LOADER:
-                cursorSubpackage = data;
-                joinCursors();
-                default: return;
+                Log.v(LOG_TAG, "onLoadFinished: PACKAGE_LOADER " + data.getCount());
+                createTree(data);
+            default:
+                return;
         }
     }
 
-    private void joinCursors() {
-        if(cursorPackage != null && cursorSubpackage != null) {
-            List<DrugSubpackage> subpackages = new ArrayList<DrugSubpackage>();
-            while(cursorSubpackage.moveToNext()) {
-                subpackages.add(new DrugSubpackage(
-                        cursorSubpackage.getLong(COL_SUBPACKAGE_ID),
-                        cursorSubpackage.getLong(COL_SUBPACKAGE_DRUG_ID),
-                        cursorSubpackage.getLong(COL_SUBPACKAGE_PACKAGE_ID),
-                        cursorSubpackage.getInt(COL_SUBPACKAGE_DOSES_LEFT),
-                        DateUtils.fromDbStringToDate(cursorSubpackage.getString(COL_SUBPACKAGE_EXP_DATE))
-                ));
-            }
 
-            mPackages.clear();
-            while(cursorPackage.moveToNext()) {
-                long packageId = cursorPackage.getLong(COL_PACKAGE_ID);
-                List<DrugSubpackage> packageSubpackages = new ArrayList<DrugSubpackage>();
-                for(DrugSubpackage subpackage : subpackages) {
-                    if(subpackage.getPackageId() == packageId)
-                        packageSubpackages.add(subpackage);
-                }
-                DrugPackage pkg = new DrugPackage(
-                        cursorPackage.getLong(COL_PACKAGE_ID),
-                        cursorPackage.getLong(COL_PACKAGE_DRUG_ID),
-                        cursorPackage.getString(COL_PACKAGE_DESCRIPTION),
-                        cursorPackage.getInt(COL_PACKAGE_DOSES),
-                        cursorPackage.getString(COL_PACKAGE_IMAGE_URI),
-                        mDrugColor,
-                        packageSubpackages
+    private void createTree(final Cursor packageCursor) {
+        Log.v(LOG_TAG, "creatingTree");
+
+        // Create root node
+        final TreeNode root = TreeNode.root();
+
+        // Get all packages
+        final List<DrugPackage> packages = new ArrayList<DrugPackage>();
+        while (packageCursor.moveToNext()) {
+            long packageId = packageCursor.getLong(COL_PACKAGE_ID);
+
+            Cursor subpackageCursor = getActivity().getContentResolver().query(
+                    DataContract.SubpackageEntry.buildSubackagesFromPackage(packageId),
+                    SUBPACKAGE_COLUMNS,
+                    null,
+                    null,
+                    DataContract.SubpackageEntry.COLUMN_PACKAGE_ID + " ASC"
+            );
+
+            List<DrugSubpackage> packageSubpackages = new ArrayList<DrugSubpackage>();
+            List<TreeNode> subpackageNodes = new ArrayList<TreeNode>();
+            while (subpackageCursor.moveToNext()) {
+                DrugSubpackage subpackage = new DrugSubpackage(
+                        subpackageCursor.getLong(COL_SUBPACKAGE_ID),
+                        subpackageCursor.getLong(COL_SUBPACKAGE_DRUG_ID),
+                        subpackageCursor.getLong(COL_SUBPACKAGE_PACKAGE_ID),
+                        subpackageCursor.getInt(COL_SUBPACKAGE_DOSES_LEFT),
+                        DateUtils.fromDbStringToDate(subpackageCursor.getString(COL_SUBPACKAGE_EXP_DATE))
                 );
-                mPackages.add(pkg);
+                subpackageNodes.add(new TreeNode(subpackage).setViewHolder(new SubpackageTreeHolder(getActivity())));
+                packageSubpackages.add(subpackage);
             }
-            mAdapter.notifyDataSetChanged();
 
-            if(mPackages.size() == 0)  {
-                getActivity().findViewById(R.id.empty_pack_list).setVisibility(View.VISIBLE);
-                getActivity().findViewById(R.id.package_list).setVisibility(View.GONE);
-            }else {
-                getActivity().findViewById(R.id.empty_pack_list).setVisibility(View.GONE);
-                getActivity().findViewById(R.id.package_list).setVisibility(View.VISIBLE);
-            }
+            DrugPackage pkg = new DrugPackage(
+                    packageCursor.getLong(COL_PACKAGE_ID),
+                    packageCursor.getLong(COL_PACKAGE_DRUG_ID),
+                    packageCursor.getString(COL_PACKAGE_DESCRIPTION),
+                    packageCursor.getInt(COL_PACKAGE_DOSES),
+                    packageCursor.getString(COL_PACKAGE_IMAGE_URI),
+                    mDrugColor,
+                    packageSubpackages
+            );
+            TreeNode pkgNode = new TreeNode(pkg).setViewHolder(new PackageTreeHolder(getActivity()));
+            pkgNode.addChildren(subpackageNodes);
+            root.addChild(pkgNode);
+            packages.add(pkg);
         }
+
+        // Add treeview to view
+        AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
+        tView.setDefaultAnimation(true);
+        tView.setDefaultContainerStyle(R.style.TreeNodeStyleDivided, true);
+        mContainerView.addView(tView.getView());
+
+
+        // Destroy loaders
+        getLoaderManager().destroyLoader(PACKAGE_LOADER);
+
+
+            /* If empty show empty image
+            if (packages.size() == 0) {
+                findViewById(R.id.empty_pack_list).setVisibility(View.VISIBLE);
+                findViewById(R.id.packages_recycleview).setVisibility(View.GONE);
+            } else {
+                findViewById(R.id.empty_pack_list).setVisibility(View.GONE);
+                findViewById(R.id.packages_recycleview).setVisibility(View.VISIBLE);
+            }*/
     }
+
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-    }
 
+    }
     /***** PackageRecyclerAdapter METHODS ****
-    @Override
-    public void onClickPackageUse(long packageId, int units) {
-        int newUnits = units-1;
-        if(newUnits >= 0) {
-            ContentValues values = new ContentValues();
-            values.put(PackageEntry.COLUMN_UNITS, newUnits);
-            getActivity().getContentResolver().update(DataContract.PackageEntry.buildPackageUri(packageId), values, null, null);
-            getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
-        }
-    }
+     @Override public void onClickPackageUse(long packageId, int units) {
+     int newUnits = units-1;
+     if(newUnits >= 0) {
+     ContentValues values = new ContentValues();
+     values.put(PackageEntry.COLUMN_UNITS, newUnits);
+     getActivity().getContentResolver().update(DataContract.PackageEntry.buildPackageUri(packageId), values, null, null);
+     getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
+     }
+     }
 
-    @Override
-    public void onClickPackageDelete(final long packageId) {
-        Log.v(LOG_TAG, "Request deleting package " + packageId);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
-        builder.setMessage(R.string.delete_question);
-                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        getActivity().getContentResolver().delete(PackageEntry.buildPackageUri(packageId), null, null);
-                        Log.v(LOG_TAG, "Package " + packageId + " deleted");
-                        getLoaderManager().restartLoader(PACKAGE_LOADER, null, PackagesListFragment.this);
-                    }
-                });
-        builder.setNegativeButton(R.string.cancel, null);
-        builder.show();
-    }*/
+     @Override public void onClickPackageDelete(final long packageId) {
+     Log.v(LOG_TAG, "Request deleting package " + packageId);
+     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+     builder.setMessage(R.string.delete_question);
+     builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+     @Override public void onClick(DialogInterface dialog, int which) {
+     getActivity().getContentResolver().delete(PackageEntry.buildPackageUri(packageId), null, null);
+     Log.v(LOG_TAG, "Package " + packageId + " deleted");
+     getLoaderManager().restartLoader(PACKAGE_LOADER, null, PackagesListFragment.this);
+     }
+     });
+     builder.setNegativeButton(R.string.cancel, null);
+     builder.show();
+     }*/
+
+
 }
