@@ -5,6 +5,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -53,6 +54,10 @@ public class PackagesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(mDrugName);
         getSupportActionBar().setSubtitle(mDrugApi);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(mDrugColor));
+        getWindow().setStatusBarColor(ColorUtils.getDarkerColor(mDrugColor));
+
 
         // Fragment
         PackagesListFragment packagesListFragment = PackagesListFragment.newInstance(mDrugId, mDrugName, mDrugApi, mDrugColor);

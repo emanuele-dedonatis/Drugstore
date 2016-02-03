@@ -18,11 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.adapters.PrescriptionsRecyclerAdapter;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.models.Prescription;
 
-public class PrescriptionFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,PrescriptionsRecyclerAdapter.PrescriptionClickListener {
+public class PrescriptionFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>   {
     private static final int PRESC_LOADER = 1;
     private static final String LOG_TAG = PrescriptionFragment.class.getSimpleName();
 
@@ -45,7 +44,6 @@ public class PrescriptionFragment extends Fragment implements LoaderManager.Load
     public static final int COL_PRESC_UNTIL = 6;
 
     private List<Prescription> mPrescriptions = new ArrayList<Prescription>();
-    private PrescriptionsRecyclerAdapter mAdapter;
     public PrescriptionFragment() {}
 
 
@@ -67,8 +65,6 @@ public class PrescriptionFragment extends Fragment implements LoaderManager.Load
         RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.presc_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new PrescriptionsRecyclerAdapter(getActivity(), mPrescriptions, this);
-        mRecyclerView.setAdapter(mAdapter);
         return  fragmentView;
     }
 
@@ -78,17 +74,6 @@ public class PrescriptionFragment extends Fragment implements LoaderManager.Load
         getLoaderManager().restartLoader(PRESC_LOADER, null, this);
     }
 
-    /** PACKAGE LISTNER **/
-    @Override
-    public void onClickPackageDelete(long prescId) {
-        Log.v(LOG_TAG, "Delete " + prescId);
-    }
-
-    @Override
-    public void onClickPackageEdit(long prescId) {
-        Log.v(LOG_TAG, "Edit " + prescId);
-
-    }
 
     /** CURSOR LOADER **/
     @Override
@@ -115,7 +100,6 @@ public class PrescriptionFragment extends Fragment implements LoaderManager.Load
             );
             mPrescriptions.add(prescription);
         }
-        mAdapter.notifyDataSetChanged();
 
         if(data.getCount() == 0)  {
             getActivity().findViewById(R.id.empty_prescriptions_list).setVisibility(View.VISIBLE);

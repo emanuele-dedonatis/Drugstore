@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     >
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:paddingLeft="16dp"
@@ -16,41 +15,58 @@
             android:layout_height="40dp"
             android:id="@+id/item_package_letter"
             android:layout_gravity="center"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:layout_marginRight="16dp" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical" android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/item_package_letter"
             android:layout_gravity="center_vertical">
 
             <TextView
                 style="@style/Base.TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Name"
+                android:text="Compresse"
                 android:id="@+id/item_package_description"
                 android:transitionName="drugName"
                 android:layout_weight="1"
                 android:textColor="@color/primary_text" />
 
-            <TextView
-                style="@style/Base.TextAppearance.AppCompat.Body1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Api"
-                android:id="@+id/item_package_total_doses"
-                android:transitionName="drugApi"
-                android:layout_weight="1"
-                android:textColor="@color/secondary_text" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="22"
+                    android:id="@+id/item_package_total_doses_number"
+                    android:textColor="@color/secondary_text" />
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="doses"
+                    android:layout_marginLeft="3dp"
+                    android:id="@+id/item_package_total_doses_string"
+                    android:textColor="@color/secondary_text" />
+
+
+            </LinearLayout>
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="match_parent"
         android:scaleType="centerCrop"
         android:layout_height="@dimen/nav_header_height"
-        android:id="@+id/item_drug_letter"
+        android:id="@+id/item_package_image"
         android:src="@drawable/img_not_available"
         android:layout_gravity="center"
         android:layout_marginRight="@dimen/content_margin"

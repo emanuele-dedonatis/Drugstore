@@ -29,6 +29,7 @@ import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
 import it.dedonatis.emanuele.drugstore.adapters.PackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.adapters.SubpackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
+import it.dedonatis.emanuele.drugstore.models.Drug;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
@@ -129,7 +130,7 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
                         PACKAGE_COLUMNS,
                         null,
                         null,
-                        DataContract.PackageEntry._ID + " ASC");
+                        DataContract.PackageEntry.COLUMN_DESCRIPTION + " ASC");
             default:
                 return null;
         }
@@ -159,27 +160,9 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
         while (packageCursor.moveToNext()) {
             long packageId = packageCursor.getLong(COL_PACKAGE_ID);
 
-            Cursor subpackageCursor = getActivity().getContentResolver().query(
-                    DataContract.SubpackageEntry.buildSubackagesFromPackage(packageId),
-                    SUBPACKAGE_COLUMNS,
-                    null,
-                    null,
-                    DataContract.SubpackageEntry.COLUMN_EXP_DATE + " ASC"
-            );
 
             List<DrugSubpackage> packageSubpackages = new ArrayList<DrugSubpackage>();
             List<TreeNode> subpackageNodes = new ArrayList<TreeNode>();
-            while (subpackageCursor.moveToNext()) {
-                DrugSubpackage subpackage = new DrugSubpackage(
-                        subpackageCursor.getLong(COL_SUBPACKAGE_ID),
-                        subpackageCursor.getLong(COL_SUBPACKAGE_DRUG_ID),
-                        subpackageCursor.getLong(COL_SUBPACKAGE_PACKAGE_ID),
-                        subpackageCursor.getInt(COL_SUBPACKAGE_DOSES_LEFT),
-                        DateUtils.fromDbStringToDate(subpackageCursor.getString(COL_SUBPACKAGE_EXP_DATE))
-                );
-                subpackageNodes.add(new TreeNode(subpackage).setViewHolder(new SubpackageTreeHolder(getActivity(), this)));
-                packageSubpackages.add(subpackage);
-            }
 
             DrugPackage pkg = new DrugPackage(
                     packageCursor.getLong(COL_PACKAGE_ID),
@@ -190,7 +173,27 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
                     mDrugColor,
                     packageSubpackages
             );
+
             TreeNode pkgNode = new TreeNode(pkg).setViewHolder(new PackageTreeHolder(getActivity()));
+
+            Cursor subpackageCursor = getActivity().getContentResolver().query(
+                    DataContract.SubpackageEntry.buildSubackagesFromPackage(packageId),
+                    SUBPACKAGE_COLUMNS,
+                    null,
+                    null,
+                    DataContract.SubpackageEntry.COLUMN_EXP_DATE + " ASC"
+            );
+            while (subpackageCursor.moveToNext()) {
+                DrugSubpackage subpackage = new DrugSubpackage(
+                        subpackageCursor.getLong(COL_SUBPACKAGE_ID),
+                        subpackageCursor.getLong(COL_SUBPACKAGE_DRUG_ID),
+                        subpackageCursor.getLong(COL_SUBPACKAGE_PACKAGE_ID),
+                        subpackageCursor.getInt(COL_SUBPACKAGE_DOSES_LEFT),
+                        DateUtils.fromDbStringToDate(subpackageCursor.getString(COL_SUBPACKAGE_EXP_DATE))
+                );
+                subpackageNodes.add(new TreeNode(subpackage).setViewHolder(new SubpackageTreeHolder(getActivity(), this, pkgNode )));
+                packageSubpackages.add(subpackage);
+            }
             pkgNode.addChildren(subpackageNodes);
             root.addChild(pkgNode);
             packages.add(pkg);
@@ -223,8 +226,11 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onClickButtonUse(long subpackageId) {
-        Log.v(LOG_TAG, "USE " + subpackageId);
+    public void onClickButtonUse(TreeNode node, DrugSubpackage subpackage) {
+        Log.v(LOG_TAG, "USE " + subpackage.getId());
+        ((SubpackageTreeHolder)node.getViewHolder()).removeDosesLeft(1);
+        ((PackageTreeHolder)node.getParent().getViewHolder()).removeDosesLeft(1);
+
     }
     /***** PackageRecyclerAdapter METHODS ****
      @Override public void onClickPackageUse(long packageId, int units) {

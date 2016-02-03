@@ -45,7 +45,15 @@ public class DrugPackage {
     public int getDoses() {
         return mDoses;
     }
+    public int setDosesLeft(int dosesLeft) {
+        mDoses = dosesLeft;
+        return mDoses;
+    }
 
+    public int removeDosesLeft(int dosesToRemove) {
+        mDoses -= dosesToRemove;
+        return mDoses;
+    }
     public Uri getImageUri() {
         return mImageUri;
     }

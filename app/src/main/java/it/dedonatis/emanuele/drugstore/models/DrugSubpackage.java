@@ -33,6 +33,16 @@ public class DrugSubpackage {
         return mDosesLeft;
     }
 
+    public int setDosesLeft(int dosesLeft) {
+        mDosesLeft = dosesLeft;
+        return mDosesLeft;
+    }
+
+    public int removeDosesLeft(int dosesToRemove) {
+        mDosesLeft -= dosesToRemove;
+        return mDosesLeft;
+    }
+
     public Date getExpirationDate() {
         return mExpirationDate;
     }
