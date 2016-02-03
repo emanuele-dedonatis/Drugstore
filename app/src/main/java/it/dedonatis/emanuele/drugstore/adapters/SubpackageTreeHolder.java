@@ -42,12 +42,16 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
         mTvDoses.setText(doses + " " + ((doses == 1) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase()));
 
         mBtnUse = (Button) view.findViewById(R.id.item_subpackage_button_use);
+        if(doses <= 0) {
+            mBtnUse.setEnabled(false);
+        }
         mBtnUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onClickButtonUse(mNode, mSubpackage);
             }
-        });        return view;
+        });
+        return view;
     }
 
 
@@ -56,7 +60,7 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
         mTvDoses.setText(doses + " " + ((doses == 1) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase()));
 
         if(doses <= 0) {
-            mBtnUse.setClickable(false);
+            mBtnUse.setEnabled(false);
         }
 }
 

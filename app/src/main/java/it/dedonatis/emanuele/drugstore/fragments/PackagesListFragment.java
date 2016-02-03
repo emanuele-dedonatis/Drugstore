@@ -230,8 +230,9 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
     public void onClickButtonUse(TreeNode node, DrugSubpackage subpackage) {
         Log.v(LOG_TAG, "USE " + subpackage.getId());
         int dosesToRemove = 1;
-        subpackage.removeDosesLeft(dosesToRemove);
-        int doses = subpackage.getDosesLeft();
+        if(subpackage.getDosesLeft()-dosesToRemove>=0) {
+            subpackage.removeDosesLeft(dosesToRemove);
+            int doses = subpackage.getDosesLeft();
             ContentValues values = new ContentValues();
             values.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, doses);
             getActivity().getContentResolver().update(
@@ -240,9 +241,9 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
                     null,
                     null
             );
-            ((SubpackageTreeHolder)node.getViewHolder()).updateDosesLeft();
-            ((PackageTreeHolder)node.getParent().getViewHolder()).removeDosesLeft(dosesToRemove);
-
+            ((SubpackageTreeHolder) node.getViewHolder()).updateDosesLeft();
+            ((PackageTreeHolder) node.getParent().getViewHolder()).removeDosesLeft(dosesToRemove);
+        }
 
     }
     /***** PackageRecyclerAdapter METHODS ****
