@@ -1,19 +1,12 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.AsyncQueryHandler;
 import android.content.ContentValues;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,11 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
-import it.dedonatis.emanuele.drugstore.adapters.PackageTreeHolder;
-import it.dedonatis.emanuele.drugstore.adapters.SubpackageTreeHolder;
+import it.dedonatis.emanuele.drugstore.holders.PackageTreeHolder;
+import it.dedonatis.emanuele.drugstore.holders.SubpackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
-import it.dedonatis.emanuele.drugstore.models.Drug;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;

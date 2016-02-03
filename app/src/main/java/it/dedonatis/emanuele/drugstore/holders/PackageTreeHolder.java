@@ -1,4 +1,4 @@
-package it.dedonatis.emanuele.drugstore.adapters;
+package it.dedonatis.emanuele.drugstore.holders;
 
 import android.content.Context;
 import android.media.Image;
@@ -21,8 +21,9 @@ import it.dedonatis.emanuele.drugstore.utils.ImageUtils;
 public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> {
 
     private DrugPackage mPkg;
-
+    private ImageView mArrow;
     private TextView mTvDoses;
+
     public PackageTreeHolder(Context context) {
 
         super(context);
@@ -54,7 +55,17 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
             image.setVisibility(View.GONE);
         }
 
+        mArrow = (ImageView) view.findViewById(R.id.item_package_arrow);
+
         return view;
+    }
+
+    @Override
+    public void toggle(boolean active) {
+        if(active)
+            mArrow.animate().rotation(180).start();
+        else
+            mArrow.animate().rotation(0).start();
     }
 
     public void removeDosesLeft(int dosesToRemove) {

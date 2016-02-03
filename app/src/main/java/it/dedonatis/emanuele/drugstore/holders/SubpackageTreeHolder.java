@@ -1,4 +1,4 @@
-package it.dedonatis.emanuele.drugstore.adapters;
+package it.dedonatis.emanuele.drugstore.holders;
 
 import android.content.Context;
 import android.view.LayoutInflater;
