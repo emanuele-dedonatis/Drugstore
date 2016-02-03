@@ -8,11 +8,11 @@
         android:id="@+id/item_subpackage_button_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_margin="@dimen/content_margin"
         android:clickable="true"
-        android:tint="@color/accent"
-        android:src="@drawable/ic_add_circle_outline_black_24dp" />
+        android:src="@drawable/ic_add_circle_outline_black_24dp"
+        android:tint="@color/accent" />
 
 </RelativeLayout>

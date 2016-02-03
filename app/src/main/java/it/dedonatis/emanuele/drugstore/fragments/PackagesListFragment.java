@@ -9,11 +9,18 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.BaseAdapter;
+import android.widget.Toast;
 
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ListHolder;
+import com.orhanobut.dialogplus.OnItemClickListener;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
@@ -32,7 +39,11 @@ import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
 
-public class PackagesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SubpackageTreeHolder.OnSubpackageClickListener, AddSubpackageTreeHolder.OnAddSubpackageClickListener {
+public class PackagesListFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor>,
+        SubpackageTreeHolder.OnSubpackageClickListener,
+        AddSubpackageTreeHolder.OnAddSubpackageClickListener{
+
     private static final String ARG_DRUG_ID = "id";
     private static final String ARG_DRUG_NAME = "name";
     private static final String ARG_DRUG_API = "api";
@@ -77,6 +88,7 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
     private String mDrugApi;
 
     ViewGroup mContainerView;
+    View mFragmentView;
 
     public PackagesListFragment() {
     }
@@ -90,6 +102,12 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
         args.putInt(ARG_DRUG_COLOR, drugColor);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
     }
 
     @Override
@@ -110,10 +128,10 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_drug_packages, container, false);
-        mContainerView = (ViewGroup) fragmentView.findViewById(R.id.drug_packages_list);
+        mFragmentView = inflater.inflate(R.layout.fragment_drug_packages, container, false);
+        mContainerView = (ViewGroup) mFragmentView.findViewById(R.id.drug_packages_list);
 
-        return fragmentView;
+        return mFragmentView;
     }
 
     @Override
@@ -147,7 +165,6 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
         final TreeNode root = TreeNode.root();
 
         // Get all packages
-        final List<DrugPackage> packages = new ArrayList<DrugPackage>();
         while (packageCursor.moveToNext()) {
             long packageId = packageCursor.getLong(COL_PACKAGE_ID);
 
@@ -188,28 +205,30 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
             pkgNode.addChildren(subpackageNodes);
             pkgNode.addChild(new TreeNode(null).setViewHolder(new AddSubpackageTreeHolder(getActivity(), this)));
             root.addChild(pkgNode);
-            packages.add(pkg);
         }
-
-        // Add treeview to view
-        AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
-        tView.setDefaultAnimation(true);
-        tView.setDefaultContainerStyle(R.style.TreeNodeStyleDivided, true);
-        mContainerView.addView(tView.getView());
-
 
         // Destroy loaders
         getLoaderManager().destroyLoader(PACKAGE_LOADER);
 
+        // Add treeview to view
+        AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
+        tView.setDefaultAnimation(false);
+        tView.setDefaultContainerStyle(R.style.TreeNodeStyleDivided, true);
+        tView.setDefaultNodeLongClickListener(nodeLongClickListener);
+        mContainerView.removeAllViews();
+        mContainerView.addView(tView.getView());
+        if (root.getChildren().size() == 1)
+            tView.expandAll();
 
-            /* If empty show empty image
-            if (packages.size() == 0) {
-                findViewById(R.id.empty_pack_list).setVisibility(View.VISIBLE);
-                findViewById(R.id.packages_recycleview).setVisibility(View.GONE);
+
+        // If empty show empty image
+            if (root.getChildren().size() == 0) {
+                mFragmentView.findViewById(R.id.empty_pack_list).setVisibility(View.VISIBLE);
+                mFragmentView.findViewById(R.id.drug_packages_list).setVisibility(View.GONE);
             } else {
-                findViewById(R.id.empty_pack_list).setVisibility(View.GONE);
-                findViewById(R.id.packages_recycleview).setVisibility(View.VISIBLE);
-            }*/
+                mFragmentView.findViewById(R.id.empty_pack_list).setVisibility(View.GONE);
+                mFragmentView.findViewById(R.id.drug_packages_list).setVisibility(View.VISIBLE);
+            }
     }
 
     @Override
@@ -281,6 +300,53 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
         datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePicker.setTitle(getString(R.string.select_exp_date));
         datePicker.show();
+    }
+
+    private TreeNode.TreeNodeLongClickListener nodeLongClickListener = new TreeNode.TreeNodeLongClickListener() {
+        @Override
+        public boolean onLongClick(TreeNode node, Object value) {
+            if(value instanceof DrugPackage) {
+                //Toast.makeText(getActivity(), "Package long click: " + ((DrugPackage)value).getId(), Toast.LENGTH_SHORT).show();
+                showPackageDialog();
+            }
+            if(value instanceof DrugSubpackage) {
+                Toast.makeText(getActivity(), "Subpackage long click: " + ((DrugSubpackage) value).getId(), Toast.LENGTH_SHORT).show();
+                showPackageDialog();
+            }
+            return true;
+        }
+    };
+
+    private void showPackageDialog() {
+        final String optionEdit = getString(R.string.edit);
+        final String optionDelete = getString(R.string.delete);
+        ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new String[]{optionEdit, optionDelete});
+        DialogPlus dialog = DialogPlus.newDialog(getActivity())
+                .setContentHolder(new ListHolder())
+                .setCancelable(true)
+                .setAdapter(adapter)
+                .setGravity(Gravity.BOTTOM)
+                .setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                        String optionSelected = (String)item;
+                        if(optionSelected.equals(optionEdit)) {
+                            Log.d(LOG_TAG, "EDIT");
+                            dialog.dismiss();
+                        }
+                        else if (optionSelected.equals(optionDelete)) {
+                            Log.d(LOG_TAG, "DELETE");
+                            dialog.dismiss();
+                        }
+                    }
+                })
+                .setExpanded(true)
+//        .setContentWidth(800)
+                .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+//        .setContentBackgroundResource(R.drawable.corner_background)
+                        //                .setOutMostMargin(0, 100, 0, 0)
+                .create();
+        dialog.show();
     }
 
     /***** PackageRecyclerAdapter METHODS ****

@@ -73,6 +73,7 @@ public class PackagesActivity extends AppCompatActivity {
         finish();
         return false;
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

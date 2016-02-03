@@ -49,7 +49,7 @@ public class AddDrugActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
         // If drug already exists
-        if(mDrugId >= 0) {
+        if (mDrugId >= 0) {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(mDrugColor));
             getWindow().setStatusBarColor(ColorUtils.getDarkerColor(mDrugColor));
         }
@@ -60,7 +60,7 @@ public class AddDrugActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        ((OnMenuItemClickListener)mAddDrugFragment).onCancel();
+        ((OnMenuItemClickListener) mAddDrugFragment).onCancel();
         return false;
     }
 
@@ -76,7 +76,7 @@ public class AddDrugActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.save:
-                ((OnMenuItemClickListener)mAddDrugFragment).onSave();
+                ((OnMenuItemClickListener) mAddDrugFragment).onSave();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -85,6 +85,7 @@ public class AddDrugActivity extends AppCompatActivity {
 
     public interface OnMenuItemClickListener {
         public void onSave();
+
         public void onCancel();
     }
 

@@ -18,8 +18,8 @@ public class ColorUtils {
         return Color.HSVToColor(hsv);
     }
 
-    public static int getDrugColor(String name, String api) {
-        return generator.getColor(name + api);
+    public static int getDrugColor(String drugName, String drugApi) {
+        return generator.getColor(drugApi);
     }
 
 

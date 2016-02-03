@@ -26,7 +26,6 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
     private TextView mTvDoses;
 
     public PackageTreeHolder(Context context) {
-
         super(context);
     }
 
@@ -39,7 +38,7 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
         tvDescription.setText(pkg.getDescription());
         mTvDoses = (TextView) view.findViewById(R.id.item_package_total_doses_number);
         int doses = 0;
-        for (DrugSubpackage subpackage: pkg.getSubpackages() ) {
+        for (DrugSubpackage subpackage : pkg.getSubpackages()) {
             doses += subpackage.getDosesLeft();
         }
         mTvDoses.setText(doses + "");
@@ -50,31 +49,25 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
         letter.setImageDrawable(ImageUtils.generateRoundLetter(pkg.getDescription(), pkg.getDrugColor()));
 
         ImageView image = (ImageView) view.findViewById(R.id.item_package_image);
-        if(pkg.getImageUri() != null) {
+        if (pkg.getImageUri() != null) {
             Log.v("PACKAGE TREE HOLDER", "set image uri " + pkg.getImageUri().toString());
             image.setImageURI(Uri.parse(pkg.getImageUri().toString()));
-        }else {
+        } else {
             Log.v("PACKAGE TREE HOLDER", "image uri null");
             image.setVisibility(View.GONE);
         }
-
         mArrow = (ImageView) view.findViewById(R.id.item_package_arrow);
-
         return view;
     }
 
+
+
     @Override
     public void toggle(boolean active) {
-        if(active)
+        if (active)
             mArrow.animate().rotation(180).start();
         else
             mArrow.animate().rotation(0).start();
-    }
-
-    public void removeDosesLeft(int dosesToRemove) {
-        int doses = Integer.valueOf(mTvDoses.getText().toString());
-        doses -= dosesToRemove;
-        mTvDoses.setText(doses + "");
     }
 
     public DrugPackage getPackage() {
@@ -84,4 +77,5 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
     public void updateDosesLeft() {
         mTvDoses.setText(mPkg.getAllDosesLeft() + "");
     }
+
 }

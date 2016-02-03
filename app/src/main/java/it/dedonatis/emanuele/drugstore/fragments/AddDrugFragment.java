@@ -97,7 +97,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
         mOcrEnabled = PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .getBoolean(getString(R.string.pref_OCR), false);
 
-        if(mOcrEnabled) {
+        if (mOcrEnabled) {
             Log.v(LOG_TAG, "OCR enabled");
             // Copy assets for OCR
             new Thread(new Runnable() {
@@ -105,7 +105,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                     traineddataExist = Assets.copyToInternalStorage(getActivity(), "tessdata", "ita.traineddata");
                 }
             }).start();
-        }else
+        } else
             Log.v(LOG_TAG, "OCR not enabled");
     }
 
@@ -134,13 +134,13 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
         // Set EXP DATE edit text
         mPackageExpDateEt.setInputType(InputType.TYPE_NULL);
         mPackageExpDateEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                                                @Override
-                                                public void onFocusChange(View v, boolean hasFocus) {
-                                                    if (hasFocus) {
-                                                        showDateDialog();
-                                                    }
-                                                }
-                                            }
+                                                       @Override
+                                                       public void onFocusChange(View v, boolean hasFocus) {
+                                                           if (hasFocus) {
+                                                               showDateDialog();
+                                                           }
+                                                       }
+                                                   }
         );
         mPackageExpDateEt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +150,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
         });
 
         // If drug already exists
-        if(mDrugId >= 0) {
+        if (mDrugId >= 0) {
             mDrugNameEt.setText(mDrugName);
             mDrugNameEt.setEnabled(false);
             mDrugApiEt.setText(mDrugApi);
@@ -176,7 +176,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                        mPackageExpDateEt.setText(String.format("%2d", dayOfMonth) + "/" + String.format("%2d", monthOfYear) + "/" + year);
+                        mPackageExpDateEt.setText(String.format("%02d", dayOfMonth) + "/" + String.format("%02d", monthOfYear) + "/" + year);
                     }
                 },
                 Calendar.getInstance().get(Calendar.YEAR),
@@ -206,7 +206,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == getActivity().RESULT_OK) {
-            final ProgressDialog ringProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait),getString(R.string.processing_image), true);
+            final ProgressDialog ringProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.please_wait), getString(R.string.processing_image), true);
             ringProgressDialog.setCancelable(true);
 
             new Thread(new Runnable() {
@@ -217,7 +217,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                         saveToInternalSorage(thumb, mPhotoUri);
 
                         final List<String> lines = new ArrayList<String>();
-                        if(mOcrEnabled) {
+                        if (mOcrEnabled) {
                             if (traineddataExist) {
                                 TessBaseAPI baseAPI = new TessBaseAPI();
                                 baseAPI.init(getActivity().getExternalFilesDir(null).getPath(), "ita");
@@ -259,7 +259,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
     @Override
     public void onSave() {
         // TODO Check if no empty fields and no existing values
-        if(mDrugId < 0) {
+        if (mDrugId < 0) {
             // ADD DRUG + PACKAGE
             String drugName = mDrugNameEt.getText().toString();
             String drugApi = mDrugApiEt.getText().toString();
@@ -308,7 +308,8 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
     @Override
     public void onCancel() {
         // TODO delete temp image
-        new File(mPhotoUri.toString()).delete();
+        if(mPhotoUri != null)
+            new File(mPhotoUri.toString()).delete();
         getActivity().finish();
     }
 }

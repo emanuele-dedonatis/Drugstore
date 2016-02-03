@@ -7,17 +7,6 @@
     android:elevation="3dp"
     >
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:scaleType="centerCrop"
-        android:layout_height="@dimen/nav_header_height"
-        android:id="@+id/item_package_image"
-        android:src="@drawable/img_not_available"
-        android:layout_gravity="center"
-        android:layout_marginRight="@dimen/content_margin"
-        android:layout_marginLeft="@dimen/content_margin"
-        android:layout_marginTop="@dimen/content_margin" />
-
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="72dp"
@@ -85,6 +74,17 @@
             android:tint="@color/high_gray"  />
 
     </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:scaleType="centerCrop"
+        android:layout_height="@dimen/nav_header_height"
+        android:id="@+id/item_package_image"
+        android:src="@drawable/img_not_available"
+        android:layout_gravity="center"
+        android:layout_marginRight="@dimen/content_margin"
+        android:layout_marginLeft="@dimen/content_margin"
+        android:layout_marginBottom="@dimen/content_margin" />
 
 
 </LinearLayout>

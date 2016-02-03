@@ -42,7 +42,7 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
         mTvDoses.setText(doses + " " + ((doses == 1) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase()));
 
         mBtnUse = (Button) view.findViewById(R.id.item_subpackage_button_use);
-        if(doses <= 0) {
+        if (doses <= 0) {
             mBtnUse.setEnabled(false);
         }
         mBtnUse.setOnClickListener(new View.OnClickListener() {
@@ -59,10 +59,10 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
         int doses = mSubpackage.getDosesLeft();
         mTvDoses.setText(doses + " " + ((doses == 1) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase()));
 
-        if(doses <= 0) {
+        if (doses <= 0) {
             mBtnUse.setEnabled(false);
         }
-}
+    }
 
     public interface OnSubpackageClickListener {
         public void onClickButtonUse(TreeNode node, DrugSubpackage subpackageId);

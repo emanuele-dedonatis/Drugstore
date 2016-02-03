@@ -4,7 +4,7 @@
     tools:context=".activities.AddDrugActivity">
     <item
         android:id="@+id/save"
-        app:showAsAction="always"
+        android:icon="@drawable/ic_done_white_24dp"
         android:title="@string/save"
-        android:icon="@drawable/ic_done_white_24dp"/>
+        app:showAsAction="always" />
 </menu>

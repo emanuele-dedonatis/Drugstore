@@ -15,9 +15,6 @@ import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.ImageUtils;
 
-/**
- * Created by mumu on 03/02/16.
- */
 public class AddSubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<Void> {
 
     private OnAddSubpackageClickListener mListener;
