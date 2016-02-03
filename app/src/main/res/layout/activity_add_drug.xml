@@ -21,51 +21,6 @@
             android:elevation="4dp"
             android:minHeight="56dp">
 
-                <ViewSwitcher
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:measureAllChildren="false"
-
-                    android:id="@+id/toolbar_switcher">
-
-                    <include layout="@layout/header_drug"/>
-
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/toolbar"
-                        android:layout_marginRight="16dp"
-                        android:orientation="vertical"
-                        android:descendantFocusability="beforeDescendants"
-                        android:focusableInTouchMode="true"
-                        android:id="@+id/toolbar_et">
-
-                        <AutoCompleteTextView
-                            style="@style/Base.TextAppearance.AppCompat.Headline"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/drug_name_et"
-                            android:hint="@string/drug_name"
-                            android:singleLine="true"
-                            android:imeOptions="actionNext"
-                            />
-
-
-                        <AutoCompleteTextView
-                            style="@style/Base.TextAppearance.AppCompat.Subhead"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:id="@+id/drug_api_et"
-                            android:singleLine="true"
-                            android:hint="@string/drug_api"
-                            android:imeOptions="actionNext"
-                            />
-
-
-                    </LinearLayout>
-                </ViewSwitcher>
-
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 

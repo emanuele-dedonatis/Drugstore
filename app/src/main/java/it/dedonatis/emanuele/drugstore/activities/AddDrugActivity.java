@@ -1,102 +1,60 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
-import android.app.ProgressDialog;
-import android.content.AsyncQueryHandler;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ViewSwitcher;
-
-import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.googlecode.tesseract.android.TessBaseAPI;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.fragments.AddDrugFragment;
-import it.dedonatis.emanuele.drugstore.interfaces.OnMenuItemClickListener;
-import it.dedonatis.emanuele.drugstore.interfaces.OnNewDrugListener;
-import it.dedonatis.emanuele.drugstore.utils.Assets;
 import it.dedonatis.emanuele.drugstore.utils.ColorUtils;
 
-import static it.dedonatis.emanuele.drugstore.utils.ImageUtils.createImageFile;
-import static it.dedonatis.emanuele.drugstore.utils.ImageUtils.saveToInternalSorage;
-import static it.dedonatis.emanuele.drugstore.utils.ImageUtils.scaleDown;
-
-public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListener, AddDrugFragment.OnChooseFotoListener {
+public class AddDrugActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = AddDrugActivity.class.getSimpleName();
-    ColorGenerator generator = ColorGenerator.MATERIAL;
-    static final int REQUEST_TAKE_PHOTO = 1;
-    private long drugId = -1;
-    private Uri mPhotoUri;
-    private boolean traineddataExist = false;
+
+    private AddDrugFragment mAddDrugFragment;
 
     public static final String MESSAGE_DRUG_ID = LOG_TAG + ".DRUG_ID";
     public static final String MESSAGE_DRUG_NAME = LOG_TAG + ".DRUG_NAME";
     public static final String MESSAGE_DRUG_API = LOG_TAG + ".DRUG_API";
+    public final static String MESSAGE_DRUG_COLOR = LOG_TAG + ".DRUG_COLOR";
 
-    private AddDrugFragment mAddDrugFragment;
+    private long mDrugId = -1;
+    private String mDrugName;
+    private String mDrugApi;
+    private int mDrugColor = getResources().getColor(R.color.primary);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_drug);
 
+        // Get extras from intent
+        Intent intent = getIntent();
+        mDrugId = intent.getLongExtra(MESSAGE_DRUG_ID, -1);
+        mDrugName = intent.getStringExtra(MESSAGE_DRUG_NAME);
+        mDrugApi = intent.getStringExtra(MESSAGE_DRUG_API);
+        mDrugColor = intent.getIntExtra(MESSAGE_DRUG_COLOR, ColorUtils.getDrugColor(mDrugName, mDrugApi));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
-        // Copy assets for OCR
-        new Thread(new Runnable() {
-            public void run() {
-                traineddataExist = Assets.copyToInternalStorage(getApplication(),"tessdata", "ita.traineddata");
-            }
-        }).start();
-
-
-        // Header selection
-        Intent intent = getIntent();
-        drugId = intent.getLongExtra(MESSAGE_DRUG_ID, -1);
-        if(drugId >= 0) {
-            // Existing drug
-            String drugName = intent.getStringExtra(MESSAGE_DRUG_NAME);
-            String drugApi = intent.getStringExtra(MESSAGE_DRUG_API);
-            TextView tvName = (TextView) findViewById(R.id.drug_name);
-            tvName.setText(drugName);
-            TextView tvApi = (TextView) findViewById(R.id.drug_api);
-            tvApi.setText(drugApi);
-            int color = ColorUtils.getDrugColor(drugName, drugApi);
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
-            getWindow().setStatusBarColor(ColorUtils.getDarkerColor(color));
-
-        }else{
-            // New drug
-            ViewSwitcher viewSwitcher =   (ViewSwitcher)findViewById(R.id.toolbar_switcher);
-            viewSwitcher.showNext();
+        // If new subpackage
+        if(mDrugId >= 0) {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(mDrugColor));
+            getWindow().setStatusBarColor(ColorUtils.getDarkerColor(mDrugColor));
         }
-        mAddDrugFragment = AddDrugFragment.newInstance();
+
+        mAddDrugFragment = AddDrugFragment.newInstance(mDrugId, mDrugName, mDrugApi, mDrugColor);
         getSupportFragmentManager().beginTransaction().add(R.id.activity_new_drug_container, mAddDrugFragment).commit();
     }
 
@@ -118,125 +76,16 @@ public class AddDrugActivity extends AppCompatActivity implements OnNewDrugListe
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.save:
-                ((OnMenuItemClickListener)mAddDrugFragment).onDone();
+                ((OnMenuItemClickListener)mAddDrugFragment).onSave();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            final ProgressDialog ringProgressDialog = ProgressDialog.show(AddDrugActivity.this, getString(R.string.please_wait),getString(R.string.processing_image), true);
-            ringProgressDialog.setCancelable(true);
-
-            final ImageView image = (ImageView) findViewById(R.id.package_image);
-            final AutoCompleteTextView drugNameEditText = (AutoCompleteTextView) findViewById(R.id.drug_name_et);
-            final AutoCompleteTextView drugApiEditText = (AutoCompleteTextView) findViewById(R.id.drug_api_et);
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), mPhotoUri);
-                        final Bitmap thumb = scaleDown(bitmap, 512, true);
-                        saveToInternalSorage(thumb, mPhotoUri);
-
-                        boolean ocrEnabled = PreferenceManager.getDefaultSharedPreferences(getBaseContext())
-                                .getBoolean(getString(R.string.pref_OCR), false);
-                        final List<String> lines = new ArrayList<String>();
-                        if(ocrEnabled) {
-                            if (traineddataExist) {
-                                TessBaseAPI baseAPI = new TessBaseAPI();
-                                baseAPI.init(getExternalFilesDir(null).getPath(), "ita");
-                                baseAPI.setImage(thumb);
-                                Scanner scanner = new Scanner(baseAPI.getUTF8Text());
-                                baseAPI.end();
-                                while (scanner.hasNextLine()) {
-                                    String line = scanner.nextLine().replaceAll("[^A-Za-z\\s]+", "");
-                                    line = line.trim().replaceAll(" +", " ");
-                                    if (line.length() > 8)
-                                        line = Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
-                                    lines.add(line);
-                                    Log.v(LOG_TAG, line + " -> " + line);
-                                }
-                            }
-                        }
-                            ringProgressDialog.dismiss();
-
-                            drugNameEditText.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplication(),
-                                            android.R.layout.simple_dropdown_item_1line, lines.toArray(new String[lines.size()]));
-                                    drugNameEditText.setAdapter(adapter);
-                                    drugApiEditText.setAdapter(adapter);
-                                    mAddDrugFragment.getDescriptionEt().setAdapter(adapter);
-                                    image.setImageURI(mPhotoUri);
-                                }
-                            });
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                }
-                }
-            }).start();
-
-        }
+    public interface OnMenuItemClickListener {
+        public void onSave();
+        public void onCancel();
     }
-
-
-    @Override
-    public void addDrug(String description, int units, int isPercentage, int exp_date, byte[] image) {
-        /*
-        if (drugId < 0){
-            ContentValues drug = new ContentValues();
-            drug.put(DataContract.DrugEntry.COLUMN_NAME, ((EditText) findViewById(R.id.drug_name_et)).getText().toString());
-            drug.put(DataContract.DrugEntry.COLUMN_API, ((EditText) findViewById(R.id.drug_api_et)).getText().toString());
-            drug.put(DataContract.DrugEntry.COLUMN_NEED_PRESCRIPTION, 0);
-            Uri uri = getContentResolver().insert(
-                    DataContract.DrugEntry.CONTENT_URI,
-                    drug
-            );
-            drugId = ContentUris.parseId(uri);
-            Log.v(LOG_TAG, "New drug id " + drugId);
-        }
-
-        if(drugId>=0) {
-            ContentValues pkg = new ContentValues();
-            pkg.put(DataContract.PackageEntry.COLUMN_DRUG, drugId);
-            pkg.put(DataContract.PackageEntry.COLUMN_DESCRIPTION, description);
-            pkg.put(DataContract.PackageEntry.COLUMN_UNITS, units);
-            pkg.put(DataContract.PackageEntry.COLUMN_IS_PERCENTAGE, isPercentage);
-            pkg.put(DataContract.PackageEntry.COLUMN_EXPIRATION_DATE, exp_date);
-            pkg.put(DataContract.PackageEntry.COLUMN_IMAGE, (mPhotoUri!=null) ? mPhotoUri.toString() : null);
-            Log.v(LOG_TAG, "New pkg");
-            AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {};
-
-            queryHandler.startInsert(0, null,
-                    DataContract.PackageEntry.CONTENT_URI,
-                    pkg
-            );
-        }
-        finish();*/
-    }
-
-    public void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            mPhotoUri = null;
-            try {
-                mPhotoUri = createImageFile(this);
-            } catch (IOException ex) {
-                Log.e(LOG_TAG, ex.toString());
-            }
-            if (mPhotoUri != null) {
-                Log.v(LOG_TAG, "before " + mPhotoUri.toString());
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
-
-
 
 }
