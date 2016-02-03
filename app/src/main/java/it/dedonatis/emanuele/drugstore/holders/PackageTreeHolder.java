@@ -73,4 +73,12 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
         doses -= dosesToRemove;
         mTvDoses.setText(doses + "");
     }
+
+    public DrugPackage getPackage() {
+        return mPkg;
+    }
+
+    public void updateDosesLeft() {
+        mTvDoses.setText(mPkg.getAllDosesLeft() + "");
+    }
 }

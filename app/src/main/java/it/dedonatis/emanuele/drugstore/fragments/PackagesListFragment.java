@@ -1,5 +1,6 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
+import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -11,14 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.holders.AddSubpackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.holders.PackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.holders.SubpackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
@@ -27,7 +32,7 @@ import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
 
-public class PackagesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SubpackageTreeHolder.OnSubpackageClickListener {
+public class PackagesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SubpackageTreeHolder.OnSubpackageClickListener, AddSubpackageTreeHolder.OnAddSubpackageClickListener {
     private static final String ARG_DRUG_ID = "id";
     private static final String ARG_DRUG_NAME = "name";
     private static final String ARG_DRUG_API = "api";
@@ -183,10 +188,11 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
                         subpackageCursor.getInt(COL_SUBPACKAGE_DOSES_LEFT),
                         DateUtils.fromDbStringToDate(subpackageCursor.getString(COL_SUBPACKAGE_EXP_DATE))
                 );
-                subpackageNodes.add(new TreeNode(subpackage).setViewHolder(new SubpackageTreeHolder(getActivity(), this, pkgNode )));
+                subpackageNodes.add(new TreeNode(subpackage).setViewHolder(new SubpackageTreeHolder(getActivity(), this, pkgNode)));
                 packageSubpackages.add(subpackage);
             }
             pkgNode.addChildren(subpackageNodes);
+            pkgNode.addChild(new TreeNode(null).setViewHolder(new AddSubpackageTreeHolder(getActivity(), this)));
             root.addChild(pkgNode);
             packages.add(pkg);
         }
@@ -221,22 +227,71 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
     public void onClickButtonUse(TreeNode node, DrugSubpackage subpackage) {
         Log.v(LOG_TAG, "USE " + subpackage.getId());
         int dosesToRemove = 1;
-        if(subpackage.getDosesLeft()-dosesToRemove>=0) {
-            subpackage.removeDosesLeft(dosesToRemove);
-            int doses = subpackage.getDosesLeft();
+        int newDoses = subpackage.getDosesLeft() - dosesToRemove;
+        if (newDoses >= 0) {
             ContentValues values = new ContentValues();
-            values.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, doses);
+            values.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, newDoses);
             getActivity().getContentResolver().update(
                     DataContract.SubpackageEntry.buildSubpackageUri(subpackage.getId()),
                     values,
                     null,
                     null
             );
+            subpackage.setDosesLeft(newDoses);
             ((SubpackageTreeHolder) node.getViewHolder()).updateDosesLeft();
-            ((PackageTreeHolder) node.getParent().getViewHolder()).removeDosesLeft(dosesToRemove);
+            ((PackageTreeHolder) node.getParent().getViewHolder()).updateDosesLeft();
         }
-
     }
+
+    @Override
+    public void onClickButtonAddSubpackage(final TreeNode packageNode, final TreeNode btnNode) {
+        final PackageTreeHolder packageTreeHolder = (PackageTreeHolder) packageNode.getViewHolder();
+        final DrugPackage drugPackage = packageTreeHolder.getPackage();
+        Log.v(LOG_TAG, "ADD " + drugPackage.getDescription());
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        final SubpackageTreeHolder.OnSubpackageClickListener listener = this;
+        final AndroidTreeView treeView = packageNode.getViewHolder().getTreeView();
+        DatePickerDialog datePicker = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Log.v(LOG_TAG, "DATE " + year + " " + String.format("%2d", monthOfYear) + " " + dayOfMonth);
+
+                        DrugSubpackage subpackage = new DrugSubpackage(
+                                0,
+                                drugPackage.getDrugID(),
+                                drugPackage.getId(),
+                                drugPackage.getDefaultDoses(),
+                                DateUtils.fromDbStringToDate(year + String.format("%2d", monthOfYear) + dayOfMonth)
+                        );
+
+                        ContentValues subpack = new ContentValues();
+                        subpack.put(DataContract.SubpackageEntry.COLUMN_DRUG_ID, subpackage.getDrugID());
+                        subpack.put(DataContract.SubpackageEntry.COLUMN_PACKAGE_ID, subpackage.getPackageId());
+                        subpack.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, subpackage.getDosesLeft());
+                        subpack.put(DataContract.SubpackageEntry.COLUMN_EXP_DATE, DateUtils.fromDateToDbString(subpackage.getExpirationDate()));
+
+                        getActivity().getContentResolver().insert(
+                                DataContract.SubpackageEntry.CONTENT_URI,
+                                subpack
+                        );
+
+                        treeView.removeNode(btnNode);
+                        treeView.addNode(packageNode, new TreeNode(subpackage).setViewHolder(new SubpackageTreeHolder(getActivity(), listener, packageNode)));
+                        treeView.addNode(packageNode, btnNode);
+                        drugPackage.getSubpackages().add(subpackage);
+                        packageTreeHolder.updateDosesLeft();
+                    }
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH) + 1);
+        datePicker.setCancelable(true);
+        datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+        datePicker.setTitle(getString(R.string.select_exp_date));
+        datePicker.show();
+    }
+
     /***** PackageRecyclerAdapter METHODS ****
      @Override public void onClickPackageUse(long packageId, int units) {
      int newUnits = units-1;

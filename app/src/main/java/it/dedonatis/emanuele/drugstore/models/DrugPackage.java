@@ -42,7 +42,7 @@ public class DrugPackage {
         return mDescription;
     }
 
-    public int getDoses() {
+    public int getDefaultDoses() {
         return mDoses;
     }
     public int setDosesLeft(int dosesLeft) {
@@ -64,5 +64,13 @@ public class DrugPackage {
 
     public List<DrugSubpackage> getSubpackages() {
         return mSubpackages;
+    }
+
+    public int getAllDosesLeft() {
+        int doses = 0;
+        for (DrugSubpackage sub: mSubpackages) {
+            doses += sub.getDosesLeft();
+        }
+        return doses;
     }
 }
