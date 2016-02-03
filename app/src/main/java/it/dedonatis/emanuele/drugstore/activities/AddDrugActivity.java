@@ -60,6 +60,7 @@ public class AddDrugActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+        ((OnMenuItemClickListener)mAddDrugFragment).onCancel();
         finish();
         return false;
     }
