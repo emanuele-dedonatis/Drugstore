@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.AsyncQueryHandler;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -228,8 +229,20 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onClickButtonUse(TreeNode node, DrugSubpackage subpackage) {
         Log.v(LOG_TAG, "USE " + subpackage.getId());
-        ((SubpackageTreeHolder)node.getViewHolder()).removeDosesLeft(1);
-        ((PackageTreeHolder)node.getParent().getViewHolder()).removeDosesLeft(1);
+        int dosesToRemove = 1;
+        subpackage.removeDosesLeft(dosesToRemove);
+        int doses = subpackage.getDosesLeft();
+            ContentValues values = new ContentValues();
+            values.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, doses);
+            getActivity().getContentResolver().update(
+                    DataContract.SubpackageEntry.buildSubpackageUri(subpackage.getId()),
+                    values,
+                    null,
+                    null
+            );
+            ((SubpackageTreeHolder)node.getViewHolder()).updateDosesLeft();
+            ((PackageTreeHolder)node.getParent().getViewHolder()).removeDosesLeft(dosesToRemove);
+
 
     }
     /***** PackageRecyclerAdapter METHODS ****

@@ -622,6 +622,7 @@ public class DataContentProvider extends ContentProvider{
                 rowsUpdated = db.update(SubpackageEntry.TABLE_NAME, values,
                         SubpackageEntry.TABLE_NAME + "." + SubpackageEntry._ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)});
+                Log.v(LOG_TAG, "Update subpackage " + uri.getPathSegments().get(1) + " rows updated " + rowsUpdated );
                 break;
             case THERAPIES:
                 rowsUpdated = db.update(TherapyEntry.TABLE_NAME, values, selection,
