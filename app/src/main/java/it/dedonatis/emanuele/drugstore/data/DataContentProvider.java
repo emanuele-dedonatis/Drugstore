@@ -536,14 +536,14 @@ public class DataContentProvider extends ContentProvider{
         if ( null == selection ) selection = "1";
         switch (match) {
             // "drug/#"
-            case DRUGS:
+            case DRUGS_ID:
                 rowsDeleted = db.delete(DrugEntry.TABLE_NAME,
                         DrugEntry.TABLE_NAME + "." + DrugEntry._ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)}
                 );
                 break;
             // "package/#"
-            case PACKAGES:
+            case PACKAGES_ID:
                 Cursor cursor = query(uri, new String[] {PackageEntry.COLUMN_IMAGE_URI},null,null,null);
                 Uri imageUri;
                 while (cursor.moveToNext() && cursor.getString(0) != null) {
@@ -558,21 +558,21 @@ public class DataContentProvider extends ContentProvider{
                 );
                 break;
             // "subpackages/#"
-            case SUBPACKAGES:
+            case SUBPACKAGES_ID:
                 rowsDeleted = db.delete(SubpackageEntry.TABLE_NAME,
                         SubpackageEntry.TABLE_NAME + "." + SubpackageEntry._ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)}
                 );
                 break;
             // "therapies/#"
-            case THERAPIES:
+            case THERAPIES_ID:
                 rowsDeleted = db.delete(TherapyEntry.TABLE_NAME,
                         TherapyEntry.TABLE_NAME + "." + TherapyEntry._ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)}
                 );
                 break;
             // "alarms/#"
-            case ALARMS:
+            case ALARMS_ID:
                 rowsDeleted = db.delete(AlarmEntry.TABLE_NAME,
                         AlarmEntry.TABLE_NAME + "." + AlarmEntry._ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)}

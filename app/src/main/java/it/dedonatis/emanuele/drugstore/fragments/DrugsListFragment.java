@@ -83,6 +83,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddDrugActivity.class);
+                intent.putExtra(AddDrugActivity.MESSAGE_DRUG_ID, -1);
                 startActivity(intent);
             }
         });

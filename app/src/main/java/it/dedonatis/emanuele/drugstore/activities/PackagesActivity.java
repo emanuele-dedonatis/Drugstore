@@ -11,6 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -64,10 +67,34 @@ public class PackagesActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction().add(R.id.activity_packages_container, packagesListFragment).commit();
 
     }
+
     @Override
     public boolean onSupportNavigateUp() {
         finish();
         return false;
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_drug_packages, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.add:
+                Intent intent = new Intent(this, AddDrugActivity.class);
+                intent.putExtra(AddDrugActivity.MESSAGE_DRUG_ID, mDrugId);
+                intent.putExtra(AddDrugActivity.MESSAGE_DRUG_NAME, mDrugName);
+                intent.putExtra(AddDrugActivity.MESSAGE_DRUG_API, mDrugApi);
+                intent.putExtra(AddDrugActivity.MESSAGE_DRUG_COLOR, mDrugColor);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

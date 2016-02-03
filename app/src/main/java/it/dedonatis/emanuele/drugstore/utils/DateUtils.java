@@ -35,4 +35,19 @@ public class DateUtils {
         }
     }
 
+    public static Date fromEurStringToDate(String dd_MM_yyyy) {
+        try {
+            if(dd_MM_yyyy != null)
+                return EUR_DATE_FORMAT.parse(dd_MM_yyyy);
+            else
+                return null;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    public static String fromEurStringToDbString(String dd_MM_yyyy){
+        return fromDateToEurString(fromEurStringToDate(dd_MM_yyyy));
+    }
+
 }

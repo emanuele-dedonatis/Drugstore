@@ -43,7 +43,7 @@
                     android:background="@color/white"
                     android:elevation="4dp"
                     android:orientation="vertical"
-                    android:paddingTop="@dimen/screen_margin"
+                    android:paddingTop="@dimen/content_margin"
                     android:paddingBottom="@dimen/content_margin">
 
                     <LinearLayout

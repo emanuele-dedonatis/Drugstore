@@ -3,6 +3,7 @@ package it.dedonatis.emanuele.drugstore.holders;
 import android.content.Context;
 import android.media.Image;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -50,8 +51,10 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
 
         ImageView image = (ImageView) view.findViewById(R.id.item_package_image);
         if(pkg.getImageUri() != null) {
+            Log.v("PACKAGE TREE HOLDER", "set image uri " + pkg.getImageUri().toString());
             image.setImageURI(Uri.parse(pkg.getImageUri().toString()));
         }else {
+            Log.v("PACKAGE TREE HOLDER", "image uri null");
             image.setVisibility(View.GONE);
         }
 

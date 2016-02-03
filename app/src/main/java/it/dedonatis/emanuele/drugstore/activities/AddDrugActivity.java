@@ -27,7 +27,7 @@ public class AddDrugActivity extends AppCompatActivity {
     private long mDrugId = -1;
     private String mDrugName;
     private String mDrugApi;
-    private int mDrugColor = getResources().getColor(R.color.primary);
+    private int mDrugColor;
 
 
     @Override
@@ -48,7 +48,7 @@ public class AddDrugActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
-        // If new subpackage
+        // If drug already exists
         if(mDrugId >= 0) {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(mDrugColor));
             getWindow().setStatusBarColor(ColorUtils.getDarkerColor(mDrugColor));
@@ -61,7 +61,6 @@ public class AddDrugActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         ((OnMenuItemClickListener)mAddDrugFragment).onCancel();
-        finish();
         return false;
     }
 

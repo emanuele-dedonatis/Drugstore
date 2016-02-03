@@ -32,7 +32,7 @@ public class AddSubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<Void> {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.item_add_subpackage_treeview, null, false);
 
-        Button btnAdd = (Button) view.findViewById(R.id.item_subpackage_button_add);
+        ImageView btnAdd = (ImageView) view.findViewById(R.id.item_subpackage_button_add);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

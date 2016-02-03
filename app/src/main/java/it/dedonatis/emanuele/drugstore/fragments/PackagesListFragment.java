@@ -118,10 +118,8 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.v(LOG_TAG, "onCreateLoader");
         switch (id) {
             case PACKAGE_LOADER:
-                Log.v(LOG_TAG, "onCreateLoader: PACKAGE_LOADER");
                 return new CursorLoader(getActivity(),
                         DataContract.PackageEntry.buildPackagesFromDrug(mDrugId),
                         PACKAGE_COLUMNS,
@@ -135,10 +133,8 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.v(LOG_TAG, "onLoadFinished");
         switch (loader.getId()) {
             case PACKAGE_LOADER:
-                Log.v(LOG_TAG, "onLoadFinished: PACKAGE_LOADER " + data.getCount());
                 createTree(data);
             default:
                 return;
@@ -147,8 +143,6 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
 
 
     private void createTree(final Cursor packageCursor) {
-        Log.v(LOG_TAG, "creatingTree");
-
         // Create root node
         final TreeNode root = TreeNode.root();
 
@@ -225,7 +219,6 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onClickButtonUse(TreeNode node, DrugSubpackage subpackage) {
-        Log.v(LOG_TAG, "USE " + subpackage.getId());
         int dosesToRemove = 1;
         int newDoses = subpackage.getDosesLeft() - dosesToRemove;
         if (newDoses >= 0) {
@@ -247,7 +240,6 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
     public void onClickButtonAddSubpackage(final TreeNode packageNode, final TreeNode btnNode) {
         final PackageTreeHolder packageTreeHolder = (PackageTreeHolder) packageNode.getViewHolder();
         final DrugPackage drugPackage = packageTreeHolder.getPackage();
-        Log.v(LOG_TAG, "ADD " + drugPackage.getDescription());
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
         final SubpackageTreeHolder.OnSubpackageClickListener listener = this;
         final AndroidTreeView treeView = packageNode.getViewHolder().getTreeView();
@@ -255,7 +247,6 @@ public class PackagesListFragment extends Fragment implements LoaderManager.Load
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        Log.v(LOG_TAG, "DATE " + year + " " + String.format("%2d", monthOfYear) + " " + dayOfMonth);
 
                         DrugSubpackage subpackage = new DrugSubpackage(
                                 0,
