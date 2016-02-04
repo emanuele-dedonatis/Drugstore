@@ -47,7 +47,16 @@ public class DateUtils {
     }
 
     public static String fromEurStringToDbString(String dd_MM_yyyy){
-        return fromDateToEurString(fromEurStringToDate(dd_MM_yyyy));
+        return fromDateToDbString(fromEurStringToDate(dd_MM_yyyy));
     }
+
+    public static Date fromPickerToDate(int year, int monthOfYear, int dayOfMonth) {
+        return DateUtils.fromDbStringToDate(year + String.format("%2d", (monthOfYear + 1)) + dayOfMonth);
+    }
+
+    public static String fromPickerToEurString(int year, int monthOfYear, int dayOfMonth) {
+        return String.format("%02d", dayOfMonth) + "/" + String.format("%02d", (monthOfYear+1)) + "/" + year;
+    }
+
 
 }

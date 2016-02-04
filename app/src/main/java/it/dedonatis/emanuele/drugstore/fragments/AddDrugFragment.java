@@ -175,8 +175,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                        mPackageExpDateEt.setText(String.format("%02d", dayOfMonth) + "/" + String.format("%02d", monthOfYear) + "/" + year);
+                        mPackageExpDateEt.setText(DateUtils.fromPickerToEurString(year, monthOfYear, dayOfMonth));
                     }
                 },
                 Calendar.getInstance().get(Calendar.YEAR),
@@ -283,13 +282,15 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
         pkg.put(DataContract.PackageEntry.COLUMN_DRUG_ID, mDrugId);
         pkg.put(DataContract.PackageEntry.COLUMN_DESCRIPTION, packDescription);
         pkg.put(DataContract.PackageEntry.COLUMN_DOSES, doses);
-        pkg.put(DataContract.PackageEntry.COLUMN_IMAGE_URI, mPhotoUri.toString());
+        if(mPhotoUri != null) {
+            pkg.put(DataContract.PackageEntry.COLUMN_IMAGE_URI, mPhotoUri.toString());
+        }
         Uri uri = getActivity().getContentResolver().insert(
                 DataContract.PackageEntry.CONTENT_URI,
                 pkg
         );
         long packId = ContentUris.parseId(uri);
-        Log.v(LOG_TAG, "Insert new package id = " + packId);
+        Log.d(LOG_TAG, "Insert new package id = " + packId);
 
         ContentValues subpack = new ContentValues();
         subpack.put(DataContract.SubpackageEntry.COLUMN_DRUG_ID, mDrugId);
@@ -300,6 +301,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                 DataContract.SubpackageEntry.CONTENT_URI,
                 subpack
         );
+        Log.d(LOG_TAG, subpack.toString());
         long subId = ContentUris.parseId(uri);
         Log.v(LOG_TAG, "Insert new subpackage id = " + subId);
         getActivity().finish();

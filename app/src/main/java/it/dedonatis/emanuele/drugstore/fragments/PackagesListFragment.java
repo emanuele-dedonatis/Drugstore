@@ -275,7 +275,7 @@ public class PackagesListFragment extends Fragment
                                 drugPackage.getDrugID(),
                                 drugPackage.getId(),
                                 drugPackage.getDefaultDoses(),
-                                DateUtils.fromDbStringToDate(year + String.format("%2d", monthOfYear) + dayOfMonth)
+                                DateUtils.fromPickerToDate(year,monthOfYear,dayOfMonth)
                         );
 
                         ContentValues subpack = new ContentValues();
