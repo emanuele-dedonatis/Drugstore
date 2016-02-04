@@ -35,6 +35,7 @@
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:layout_width">@dimen/dialog_min_width</item>
         <item name="android:background">#FFFFFF</item>
     </style>
 

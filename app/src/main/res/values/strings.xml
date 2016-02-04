@@ -48,6 +48,7 @@
     <string name="google_api_key">AIzaSyA1YtIDJpygHHGN9MD43opEM0Xx_e7mhhA</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="share">Share</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
 

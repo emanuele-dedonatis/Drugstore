@@ -1,10 +1,12 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.adapters.DialogAdapter;
 import it.dedonatis.emanuele.drugstore.holders.AddSubpackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.holders.PackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.holders.SubpackageTreeHolder;
@@ -42,7 +45,7 @@ import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 public class PackagesListFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
         SubpackageTreeHolder.OnSubpackageClickListener,
-        AddSubpackageTreeHolder.OnAddSubpackageClickListener{
+        AddSubpackageTreeHolder.OnAddSubpackageClickListener {
 
     private static final String ARG_DRUG_ID = "id";
     private static final String ARG_DRUG_NAME = "name";
@@ -222,13 +225,13 @@ public class PackagesListFragment extends Fragment
 
 
         // If empty show empty image
-            if (root.getChildren().size() == 0) {
-                mFragmentView.findViewById(R.id.empty_pack_list).setVisibility(View.VISIBLE);
-                mFragmentView.findViewById(R.id.drug_packages_list).setVisibility(View.GONE);
-            } else {
-                mFragmentView.findViewById(R.id.empty_pack_list).setVisibility(View.GONE);
-                mFragmentView.findViewById(R.id.drug_packages_list).setVisibility(View.VISIBLE);
-            }
+        if (root.getChildren().size() == 0) {
+            mFragmentView.findViewById(R.id.empty_pack_list).setVisibility(View.VISIBLE);
+            mFragmentView.findViewById(R.id.drug_packages_list).setVisibility(View.GONE);
+        } else {
+            mFragmentView.findViewById(R.id.empty_pack_list).setVisibility(View.GONE);
+            mFragmentView.findViewById(R.id.drug_packages_list).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -305,42 +308,51 @@ public class PackagesListFragment extends Fragment
     private TreeNode.TreeNodeLongClickListener nodeLongClickListener = new TreeNode.TreeNodeLongClickListener() {
         @Override
         public boolean onLongClick(TreeNode node, Object value) {
-            if(value instanceof DrugPackage) {
-                //Toast.makeText(getActivity(), "Package long click: " + ((DrugPackage)value).getId(), Toast.LENGTH_SHORT).show();
-                showPackageDialog();
-            }
-            if(value instanceof DrugSubpackage) {
-                Toast.makeText(getActivity(), "Subpackage long click: " + ((DrugSubpackage) value).getId(), Toast.LENGTH_SHORT).show();
-                showPackageDialog();
-            }
+            showBottomDialog(node, value);
             return true;
         }
     };
 
-    private void showPackageDialog() {
-        final String optionEdit = getString(R.string.edit);
-        final String optionDelete = getString(R.string.delete);
-        ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new String[]{optionEdit, optionDelete});
+    private void showBottomDialog(final TreeNode node, final Object value) {
         DialogPlus dialog = DialogPlus.newDialog(getActivity())
                 .setContentHolder(new ListHolder())
                 .setCancelable(true)
-                .setAdapter(adapter)
+                .setAdapter(new DialogAdapter(getActivity()))
+                .setFooter(R.layout.item_dialog_empty_space)
+                .setHeader(R.layout.item_dialog_empty_space)
                 .setGravity(Gravity.BOTTOM)
                 .setOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
-                        String optionSelected = (String)item;
-                        if(optionSelected.equals(optionEdit)) {
-                            Log.d(LOG_TAG, "EDIT");
-                            dialog.dismiss();
-                        }
-                        else if (optionSelected.equals(optionDelete)) {
-                            Log.d(LOG_TAG, "DELETE");
-                            dialog.dismiss();
+                        Log.d(LOG_TAG, "Click on item " + position);
+                        switch (position) {
+                            case DialogAdapter.SHARE_POSITION:
+                                if (value instanceof DrugPackage) {
+                                    Log.d(LOG_TAG, "share package " + ((DrugPackage) value).getDescription());
+                                }
+                                if (value instanceof DrugSubpackage) {
+                                    Log.d(LOG_TAG, "share subpackage " + ((DrugSubpackage) value).getId());
+                                }
+                                dialog.dismiss();
+                                break;
+                            case DialogAdapter.EDIT_POSITION:
+                                if (value instanceof DrugPackage) {
+                                    Log.d(LOG_TAG, "edit package " + ((DrugPackage) value).getDescription());
+                                }
+                                if (value instanceof DrugSubpackage) {
+                                    Log.d(LOG_TAG, "edit subpackage " + ((DrugSubpackage) value).getId());
+                                }
+                                dialog.dismiss();
+                                break;
+                            case DialogAdapter.DELETE_POSITION:
+                                requestConfirmDelete(node, value);
+                                dialog.dismiss();
+                                break;
+                            default:
+                                break;
                         }
                     }
                 })
-                .setExpanded(true)
 //        .setContentWidth(800)
                 .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
 //        .setContentBackgroundResource(R.drawable.corner_background)
@@ -349,31 +361,57 @@ public class PackagesListFragment extends Fragment
         dialog.show();
     }
 
-    /***** PackageRecyclerAdapter METHODS ****
-     @Override public void onClickPackageUse(long packageId, int units) {
-     int newUnits = units-1;
-     if(newUnits >= 0) {
-     ContentValues values = new ContentValues();
-     values.put(PackageEntry.COLUMN_UNITS, newUnits);
-     getActivity().getContentResolver().update(DataContract.PackageEntry.buildPackageUri(packageId), values, null, null);
-     getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
-     }
-     }
+    private void requestConfirmDelete(final TreeNode node, final Object value) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+        builder.setMessage(R.string.delete_question);
+        final LoaderManager.LoaderCallbacks loaderCallbacks = this;
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (value instanceof DrugPackage) {
+                    getActivity().getContentResolver().delete(DataContract.PackageEntry.buildPackageUri(((DrugPackage) value).getId()), null, null);
+                    AndroidTreeView treeView = node.getViewHolder().getTreeView();
+                    treeView.removeNode(node);
+                }
+                if (value instanceof DrugSubpackage) {
+                    DrugSubpackage subpackage = (DrugSubpackage) value;
+                    PackageTreeHolder packageTreeHolder = ((PackageTreeHolder) node.getParent().getViewHolder());
+                    getActivity().getContentResolver().delete(DataContract.SubpackageEntry.buildSubpackageUri(subpackage.getId()), null, null);
+                    packageTreeHolder.removeSubpackage(node);
 
-     @Override public void onClickPackageDelete(final long packageId) {
-     Log.v(LOG_TAG, "Request deleting package " + packageId);
-     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
-     builder.setMessage(R.string.delete_question);
-     builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-     @Override public void onClick(DialogInterface dialog, int which) {
-     getActivity().getContentResolver().delete(PackageEntry.buildPackageUri(packageId), null, null);
-     Log.v(LOG_TAG, "Package " + packageId + " deleted");
-     getLoaderManager().restartLoader(PACKAGE_LOADER, null, PackagesListFragment.this);
-     }
-     });
-     builder.setNegativeButton(R.string.cancel, null);
-     builder.show();
-     }*/
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.show();
+    }
+/*****
+ * PackageRecyclerAdapter METHODS ****
+ *
+ * @Override public void onClickPackageUse(long packageId, int units) {
+ * int newUnits = units-1;
+ * if(newUnits >= 0) {
+ * ContentValues values = new ContentValues();
+ * values.put(PackageEntry.COLUMN_UNITS, newUnits);
+ * getActivity().getContentResolver().update(DataContract.PackageEntry.buildPackageUri(packageId), values, null, null);
+ * getLoaderManager().restartLoader(PACKAGE_LOADER, null, this);
+ * }
+ * }
+ * @Override public void onClickPackageDelete(final long packageId) {
+ * Log.v(LOG_TAG, "Request deleting package " + packageId);
+ * AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+ * builder.setMessage(R.string.delete_question);
+ * builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+ * @Override public void onClick(DialogInterface dialog, int which) {
+ * getActivity().getContentResolver().delete(PackageEntry.buildPackageUri(packageId), null, null);
+ * Log.v(LOG_TAG, "Package " + packageId + " deleted");
+ * getLoaderManager().restartLoader(PACKAGE_LOADER, null, PackagesListFragment.this);
+ * }
+ * });
+ * builder.setNegativeButton(R.string.cancel, null);
+ * builder.show();
+ * }
+ */
 
 
 }

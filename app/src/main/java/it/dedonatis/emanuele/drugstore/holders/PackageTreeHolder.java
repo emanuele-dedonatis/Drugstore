@@ -78,4 +78,13 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
         mTvDoses.setText(mPkg.getAllDosesLeft() + "");
     }
 
+    public void removeSubpackage(TreeNode node) {
+        DrugSubpackage subpackage = ((SubpackageTreeHolder) node.getViewHolder()).getSubpackage();
+        mPkg.getSubpackages().remove(subpackage);
+        getTreeView().removeNode(node);
+        updateDosesLeft();
+
+
+    }
+
 }

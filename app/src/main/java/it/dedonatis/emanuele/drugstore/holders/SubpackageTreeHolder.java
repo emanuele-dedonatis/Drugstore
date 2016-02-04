@@ -64,6 +64,10 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
         }
     }
 
+    public DrugSubpackage getSubpackage() {
+        return this.mSubpackage;
+    }
+
     public interface OnSubpackageClickListener {
         public void onClickButtonUse(TreeNode node, DrugSubpackage subpackageId);
     }
