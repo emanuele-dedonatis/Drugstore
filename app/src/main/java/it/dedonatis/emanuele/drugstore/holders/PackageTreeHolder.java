@@ -4,16 +4,24 @@ import android.content.Context;
 import android.media.Image;
 import android.net.Uri;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.GridHolder;
+import com.orhanobut.dialogplus.ListHolder;
+import com.orhanobut.dialogplus.OnItemClickListener;
 import com.unnamed.b.atv.model.TreeNode;
 
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.adapters.DialogAdapter;
+import it.dedonatis.emanuele.drugstore.adapters.DialogImageAdapter;
 import it.dedonatis.emanuele.drugstore.models.Drug;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
@@ -30,7 +38,7 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
     }
 
     @Override
-    public View createNodeView(TreeNode node, DrugPackage pkg) {
+    public View createNodeView(TreeNode node, final DrugPackage pkg) {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.item_package_treeview, null, false);
         this.mPkg = pkg;
@@ -52,23 +60,47 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
         if (pkg.getImageUri() != null) {
             Log.v("PACKAGE TREE HOLDER", "set image uri " + pkg.getImageUri().toString());
             image.setImageURI(Uri.parse(pkg.getImageUri().toString()));
-        } else {
-            Log.v("PACKAGE TREE HOLDER", "image uri null");
-            image.setVisibility(View.GONE);
+            image.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View v) {
+
+                                             Uri imageUri = pkg.getImageUri();
+                                             if (imageUri != null) {
+                                                 DialogPlus dialog = DialogPlus.newDialog(context)
+                                                         .setContentHolder(new GridHolder(1))
+                                                         .setCancelable(true)
+                                                         .setAdapter(new DialogImageAdapter(context, pkg.getImageUri()))
+                                                         .setGravity(Gravity.CENTER)
+                                                         .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                                                         .setOnItemClickListener(new OnItemClickListener() {
+                                                             @Override
+                                                             public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                                                                 dialog.dismiss();
+                                                             }
+                                                         })
+                                                         .create();
+                                                 dialog.show();
+                                             }
+                                         }
+                                     }
+
+                );
+            }else{
+                Log.v("PACKAGE TREE HOLDER", "image uri null");
+                image.setVisibility(View.GONE);
+            }
+            mArrow = (ImageView) view.findViewById(R.id.item_package_arrow);
+            return view;
         }
-        mArrow = (ImageView) view.findViewById(R.id.item_package_arrow);
-        return view;
-    }
 
 
-
-    @Override
-    public void toggle(boolean active) {
-        if (active)
-            mArrow.animate().rotation(180).start();
-        else
-            mArrow.animate().rotation(0).start();
-    }
+        @Override
+        public void toggle ( boolean active){
+            if (active)
+                mArrow.animate().rotation(180).start();
+            else
+                mArrow.animate().rotation(0).start();
+        }
 
     public DrugPackage getPackage() {
         return mPkg;
