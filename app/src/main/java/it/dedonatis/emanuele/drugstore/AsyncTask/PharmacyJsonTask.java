@@ -322,8 +322,10 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
                     .strokeColor(0x99009688)
                     .fillColor(0x22009688));
             mapCircle.setStrokeWidth(3);
-            LatLng extremeBound = new LatLng(mCurrentPosition.latitude, mCurrentPosition.longitude + RADIUS_IN_METER * FROM_METER_TO_DEGREE);
-            bounds.include(extremeBound);
+            LatLng extremeWestBound = new LatLng(mCurrentPosition.latitude, mCurrentPosition.longitude - RADIUS_IN_METER * FROM_METER_TO_DEGREE);
+            LatLng extremeEstBound = new LatLng(mCurrentPosition.latitude, mCurrentPosition.longitude + RADIUS_IN_METER * FROM_METER_TO_DEGREE);
+            bounds.include(extremeWestBound);
+            bounds.include(extremeEstBound);
 
         }
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 200));
