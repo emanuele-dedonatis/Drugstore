@@ -37,7 +37,7 @@ public class AddDrugActivity extends AppCompatActivity {
 
         // Get extras from intent
         Intent intent = getIntent();
-        mDrugId = intent.getIntExtra(MESSAGE_DRUG_ID, -1);
+        mDrugId = intent.getLongExtra(MESSAGE_DRUG_ID, -1);
         mDrugName = intent.getStringExtra(MESSAGE_DRUG_NAME);
         mDrugApi = intent.getStringExtra(MESSAGE_DRUG_API);
         mDrugColor = intent.getIntExtra(MESSAGE_DRUG_COLOR, ColorUtils.getDrugColor(mDrugName, mDrugApi));
