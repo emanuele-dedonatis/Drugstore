@@ -1,13 +1,18 @@
 package it.dedonatis.emanuele.drugstore.AsyncTask;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -44,8 +49,9 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
     final String TYPES_PARAM = "types";
     final String RANKBY_PARAM = "rankBy";
     final String KEY_PARAM = "key";
+    final double FROM_METER_TO_DEGREE = 0.000012;
 
-    final int RADIUS = 500;
+    final int RADIUS_IN_METER = 500;
 
     /*
 {
@@ -120,9 +126,10 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
     String result = "";
     GoogleMap mMap;
     LatLng mCurrentPosition;
-
-    public PharmacyJsonTask(GoogleMap map) {
+    Context mContext;
+    public PharmacyJsonTask(GoogleMap map, Context context) {
         super();
+        this.mContext = context;
         this.mMap = map;
     }
 
@@ -146,7 +153,7 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
         // Will contain the raw JSON response as a string.
         String resultJsonStr = null;
 
-        String radius = RADIUS + "";
+        String radius = RADIUS_IN_METER + "";
         String type = "pharmacy";
         String rankby = "distance";
         try {
@@ -226,6 +233,22 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
 
     @Override
     protected void onPostExecute(JSONArray resultsArray) {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.clear();
+        mMap.setMyLocationEnabled(true);
+
+        LatLngBounds.Builder bounds = new LatLngBounds.Builder();
+        bounds.include(mCurrentPosition);
+
         if(resultsArray != null) {
             float min_distance = Float.MAX_VALUE;
             float max_distance = 0;
@@ -281,19 +304,29 @@ public class PharmacyJsonTask extends AsyncTask<String, String, JSONArray> {
 
             }
             if(nearest != null) {
-                LatLngBounds bounds = new LatLngBounds(
-                        nearest.getPosition(),
-                        mCurrentPosition
-                );
                 nearest.showInfoWindow();
-                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+                bounds.include(nearest.getPosition());
             }
 
             mMap.addCircle(new CircleOptions()
                     .center(mCurrentPosition)
-                    .radius(((max_distance > 0) ? max_distance : RADIUS) + 50)
+                    .radius(((max_distance > 0) ? max_distance : RADIUS_IN_METER) + 50)
                     .strokeColor(0x99009688)
                     .fillColor(0x22009688)).setStrokeWidth(3);
+
+        }else {
+            // no result
+            Circle mapCircle = mMap.addCircle(new CircleOptions()
+                    .center(mCurrentPosition)
+                    .radius(RADIUS_IN_METER + 50)
+                    .strokeColor(0x99009688)
+                    .fillColor(0x22009688));
+            mapCircle.setStrokeWidth(3);
+            LatLng extremeBound = new LatLng(mCurrentPosition.latitude, mCurrentPosition.longitude + RADIUS_IN_METER * FROM_METER_TO_DEGREE);
+            bounds.include(extremeBound);
+
         }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 200));
+
     }
 }

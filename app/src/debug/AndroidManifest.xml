@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="it.dedonatis.emanuele.drugstore">
+
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <!-- Avoid AOT compilation if we're in development mode to speed up launches -->
+    <application android:vmSafeMode="true" />
+
+</manifest>

@@ -22,6 +22,11 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'GOOGLE_API_KEY', MyGoogleApiKey
     }
+    sourceSets {
+        debug {
+            manifest.srcFile 'src/debug/AndroidManifest.xml'
+        }
+    }
 }
 
 configurations {

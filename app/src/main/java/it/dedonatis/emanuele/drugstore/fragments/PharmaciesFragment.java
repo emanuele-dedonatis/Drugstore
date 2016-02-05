@@ -116,7 +116,6 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
                     new String[]{Manifest.permission.READ_CONTACTS},
                     MY_PERMISSIONS_REQUEST_LOCATION);
         }
-        mMap.setMyLocationEnabled(true);
 
         if (mGoogleApiClient == null) {
             buildGoogleApiClient();
@@ -229,7 +228,7 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-        PharmacyJsonTask pharmTask = new PharmacyJsonTask(mMap);
+        PharmacyJsonTask pharmTask = new PharmacyJsonTask(mMap, getActivity());
         pharmTask.execute(location.getLatitude() + "", location.getLongitude() + "");
     }
 }

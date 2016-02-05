@@ -32,4 +32,6 @@ public class LocationUtils {
         return gps_enabled || network_enabled;
     }
 
+
+
 }
