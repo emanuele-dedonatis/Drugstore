@@ -223,7 +223,12 @@ public class MainActivity extends AppCompatActivity
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         Uri uri = intent.getData();
-                        Log.d(LOG_TAG, "Select file " + uri.getPath());
+                        DataDbHelper dataDbHelper = new DataDbHelper(this);
+                        try {
+                            dataDbHelper.importDatabase(uri.getPath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
                 }
         }

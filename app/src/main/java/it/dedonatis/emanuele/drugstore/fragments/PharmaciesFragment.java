@@ -76,12 +76,6 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DataDbHelper dataDbHelper = new DataDbHelper(getActivity());
-        try {
-            dataDbHelper.importDatabase("/storage/emulated/0/Drugstore/database.db");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
