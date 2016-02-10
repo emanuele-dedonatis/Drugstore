@@ -10,10 +10,12 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -75,18 +77,32 @@ public class MainActivity extends AppCompatActivity
     private void scheduleNotification() {
         Intent notificationIntent = new Intent(this, NotifyExpDate.class);
         notificationIntent.putExtra(NotifyExpDate.NOTIFICATION_ID, 1);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        int hourOfDay = 12;
-        int repeatDays = 7;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int hourOfDay = Integer.valueOf(preferences.getString(getString(R.string.pref_hour_of_day_notify), "9"));
+        int dayOfWeek = Integer.valueOf(preferences.getString(getString(R.string.pref_days_notify), "0"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
+        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+        if (weekday != Calendar.MONDAY)
+        {
+            // set next monday
+            int days = (Calendar.SATURDAY - weekday + 2) % 7;
+            calendar.add(Calendar.DAY_OF_YEAR, days);
+        }
+        calendar.add(Calendar.DAY_OF_YEAR, -7 + dayOfWeek);
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, 0);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY * repeatDays, alarmIntent);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, alarmIntent);
+        boolean isDebug = preferences.getBoolean(getString(R.string.pref_debug), false);
+        if(isDebug)
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 30000, alarmIntent);
+        else
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, alarmIntent);
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

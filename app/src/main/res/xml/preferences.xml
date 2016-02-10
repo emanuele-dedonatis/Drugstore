@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference android:title="@string/pref_OCR"
-        android:defaultValue="false"
-        android:summary="@string/pref_OCR_summary"
-        android:key="@string/pref_OCR" />
+    <PreferenceCategory
+        android:title="@string/pref_group_image_tools" >
+        <CheckBoxPreference android:title="@string/pref_OCR"
+            android:defaultValue="false"
+            android:summary="@string/pref_OCR_summary"
+            android:key="@string/pref_OCR" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_group_notification" >
+        <ListPreference
+            android:key="@string/pref_days_notify"
+            android:title="@string/pref_days_notify"
+            android:summary="@string/pref_days_notify_summary"
+            android:defaultValue="0"
+            android:entries="@array/day_of_week"
+            android:entryValues="@array/day_of_week_values"/>
+        <ListPreference
+            android:key="@string/pref_hour_of_day_notify"
+            android:title="@string/pref_hour_of_day_notify"
+            android:summary="@string/pref_hour_of_day_notify_summary"
+            android:defaultValue="9"
+            android:entries="@array/hour_of_day"
+            android:entryValues="@array/hour_of_day_values"/>
+        <CheckBoxPreference android:title="@string/pref_debug"
+            android:defaultValue="false"
+            android:key="@string/pref_debug" />
+    </PreferenceCategory>
 </PreferenceScreen>

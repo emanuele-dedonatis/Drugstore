@@ -47,8 +47,18 @@
     <string name="empty_prescriptions">No prescriptions</string>
 
     <string name="settings">Settings</string>
+    <string name="pref_group_image_tools">Image tools</string>
     <string name="pref_OCR">OCR</string>
     <string name="pref_OCR_summary">Enable Optical Character Recognition from drug image</string>
+    <string name="pref_group_notification">Notification</string>
+    <string name="pref_days_notify">Default check day</string>
+    <string name="pref_days_notify_summary">Choose day of week to check expiring drugs</string>
+    <string name="pref_hour_of_day_notify">Default notification time</string>
+    <string name="pref_hour_of_day_notify_summary">Choose preferred time of notifications</string>
+    <string name="pref_debug">Debug</string>
+    <string name="pref_debug_summary">Notify every 30 sec</string>
+
+
     <string name="google_api_key">AIzaSyA1YtIDJpygHHGN9MD43opEM0Xx_e7mhhA</string>
     <string name="title_activity_settings">Settings</string>
 
