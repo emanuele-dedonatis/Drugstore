@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class DateUtils {
     public static final SimpleDateFormat DB_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+    public static final SimpleDateFormat DB_HOUR_FORMAT = new SimpleDateFormat("HHmmss");
     public static final SimpleDateFormat EUR_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
     public static Date fromDbStringToDate(String yyyyMMdd) {
@@ -26,6 +27,13 @@ public class DateUtils {
             return DB_DATE_FORMAT.format(date);
         }
     }
+    public static String fromDateToDbHourString(Date date) {
+        if (date == null) {
+            return "";
+        } else {
+            return DB_HOUR_FORMAT.format(date);
+        }
+    }
 
     public static String fromDateToEurString(Date date) {
         if (date == null) {
@@ -34,6 +42,9 @@ public class DateUtils {
             return EUR_DATE_FORMAT.format(date);
         }
     }
+
+
+
 
     public static Date fromEurStringToDate(String dd_MM_yyyy) {
         try {

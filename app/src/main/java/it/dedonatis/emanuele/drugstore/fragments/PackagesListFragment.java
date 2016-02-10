@@ -137,12 +137,7 @@ public class PackagesListFragment extends Fragment
         mDrugName = getArguments().getString(ARG_DRUG_NAME);
         mDrugApi = getArguments().getString(ARG_DRUG_API);
 
-        DataDbHelper dbHelper = new DataDbHelper(getActivity());
-        try {
-            dbHelper.backupDatabase("database.db");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override

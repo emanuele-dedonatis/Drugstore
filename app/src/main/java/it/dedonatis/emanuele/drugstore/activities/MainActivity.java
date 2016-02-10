@@ -27,16 +27,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
+import it.dedonatis.emanuele.drugstore.data.DataDbHelper;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PharmaciesFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
 import it.dedonatis.emanuele.drugstore.services.NotifyExpDate;
+import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -146,6 +150,25 @@ public class MainActivity extends AppCompatActivity
         */
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.nav_export_db:
+                DataDbHelper dbHelper = new DataDbHelper(this);
+                try {
+                    Date today = new Date();
+                    File filePath = dbHelper.backupDatabase("drugstore_" + DateUtils.fromDateToDbString(today) +
+                            "_" + DateUtils.fromDateToDbHourString(today) + ".db");
+                    if(filePath!=null) {
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(filePath));
+                        sendIntent.setType("*/*");
+                        startActivity(sendIntent);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.nav_import_db:
                 break;
             default:
                 break;

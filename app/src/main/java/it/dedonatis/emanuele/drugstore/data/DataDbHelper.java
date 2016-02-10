@@ -184,7 +184,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void backupDatabase(String fileName) throws IOException {
+    public File backupDatabase(String fileName) throws IOException {
 
         if (isSDCardWriteable()) {
             // Open your local db as the input stream
@@ -213,6 +213,9 @@ public class DataDbHelper extends SQLiteOpenHelper {
             output.flush();
             output.close();
             fis.close();
+            return new File(outFileName);
+        }else {
+            return null;
         }
     }
 
