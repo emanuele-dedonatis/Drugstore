@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.dialogplus.DialogPlus;
@@ -341,27 +342,27 @@ public class PackagesListFragment extends Fragment
     }
 
     private void requestConfirmDelete(final TreeNode node, final Object value) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
-        builder.setMessage(R.string.delete_question);
-        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (value instanceof DrugPackage) {
-                    getActivity().getContentResolver().delete(DataContract.PackageEntry.buildPackageUri(((DrugPackage) value).getId()), null, null);
-                    AndroidTreeView treeView = node.getViewHolder().getTreeView();
-                    treeView.removeNode(node);
-                }
-                if (value instanceof DrugSubpackage) {
-                    DrugSubpackage subpackage = (DrugSubpackage) value;
-                    PackageTreeHolder packageTreeHolder = ((PackageTreeHolder) node.getParent().getViewHolder());
-                    getActivity().getContentResolver().delete(DataContract.SubpackageEntry.buildSubpackageUri(subpackage.getId()), null, null);
-                    packageTreeHolder.removeSubpackage(node);
+        new AlertDialogWrapper.Builder(getActivity())
+                .setMessage(R.string.delete_question)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (value instanceof DrugPackage) {
+                            getActivity().getContentResolver().delete(DataContract.PackageEntry.buildPackageUri(((DrugPackage) value).getId()), null, null);
+                            AndroidTreeView treeView = node.getViewHolder().getTreeView();
+                            treeView.removeNode(node);
+                        }
+                        if (value instanceof DrugSubpackage) {
+                            DrugSubpackage subpackage = (DrugSubpackage) value;
+                            PackageTreeHolder packageTreeHolder = ((PackageTreeHolder) node.getParent().getViewHolder());
+                            getActivity().getContentResolver().delete(DataContract.SubpackageEntry.buildSubpackageUri(subpackage.getId()), null, null);
+                            packageTreeHolder.removeSubpackage(node);
 
-                }
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, null);
-        builder.show();
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void showEditDialog(final TreeNode node, final Object value) {

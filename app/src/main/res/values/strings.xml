@@ -30,7 +30,7 @@
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
-    <string name="delete_question">Delete package?</string>
+    <string name="delete_question">Are you sure?</string>
     <string name="exp">EXP</string>
 
     <string name="please_wait">Please wait</string>
