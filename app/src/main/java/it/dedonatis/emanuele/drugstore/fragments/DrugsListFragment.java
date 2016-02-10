@@ -243,6 +243,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
     private void showEditDialog(final long drugId, final String name, final String api) {
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .title(R.string.edit)
                 .customView(R.layout.dialog_edit_drug, true)
                 .positiveText(R.string.done)
                 .negativeText(R.string.cancel)
