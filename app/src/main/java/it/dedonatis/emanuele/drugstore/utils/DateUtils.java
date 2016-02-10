@@ -50,6 +50,10 @@ public class DateUtils {
         return fromDateToDbString(fromEurStringToDate(dd_MM_yyyy));
     }
 
+    public static String fromDbStringToEurString(String yyyyMMdd) {
+        return fromDateToEurString(fromDbStringToDate(yyyyMMdd));
+    }
+
     public static Date fromPickerToDate(int year, int monthOfYear, int dayOfMonth) {
         return DateUtils.fromDbStringToDate(year + String.format("%2d", (monthOfYear + 1)) + dayOfMonth);
     }

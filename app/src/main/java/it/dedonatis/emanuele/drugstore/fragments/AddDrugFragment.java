@@ -170,7 +170,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
     }
 
     private void showDateDialog() {
-        new DatePickerDialog(
+        DatePickerDialog datePicker = new DatePickerDialog(
                 getActivity(),
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
@@ -181,7 +181,12 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                 Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH),
                 Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        ).show();
+        );
+
+        datePicker.setCancelable(true);
+        datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+        datePicker.setTitle(getString(R.string.select_exp_date));
+        datePicker.show();
     }
 
     public void dispatchTakePictureIntent() {

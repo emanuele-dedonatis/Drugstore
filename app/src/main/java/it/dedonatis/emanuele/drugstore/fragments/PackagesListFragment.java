@@ -5,16 +5,19 @@ import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
@@ -27,6 +30,7 @@ import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -47,13 +51,22 @@ public class PackagesListFragment extends Fragment
         SubpackageTreeHolder.OnSubpackageClickListener,
         AddSubpackageTreeHolder.OnAddSubpackageClickListener {
 
+    public static final int COL_PACKAGE_ID = 0;
+    public static final int COL_PACKAGE_DRUG_ID = 1;
+    public static final int COL_PACKAGE_DESCRIPTION = 2;
+    public static final int COL_PACKAGE_DOSES = 3;
+    public static final int COL_PACKAGE_IMAGE_URI = 4;
+    public static final int COL_SUBPACKAGE_ID = 0;
+    public static final int COL_SUBPACKAGE_DRUG_ID = 1;
+    public static final int COL_SUBPACKAGE_PACKAGE_ID = 2;
+    public static final int COL_SUBPACKAGE_DOSES_LEFT = 3;
+    public static final int COL_SUBPACKAGE_EXP_DATE = 4;
     private static final String ARG_DRUG_ID = "id";
     private static final String ARG_DRUG_NAME = "name";
     private static final String ARG_DRUG_API = "api";
     private static final String ARG_DRUG_COLOR = "color";
     private static final String LOG_TAG = PackagesListFragment.class.getSimpleName();
     private static final int PACKAGE_LOADER = 1;
-
     /*****
      * CONTENT PROVIDER PROJECTION
      *****/
@@ -64,13 +77,6 @@ public class PackagesListFragment extends Fragment
             DataContract.PackageEntry.COLUMN_DOSES,
             DataContract.PackageEntry.COLUMN_IMAGE_URI
     };
-
-    public static final int COL_PACKAGE_ID = 0;
-    public static final int COL_PACKAGE_DRUG_ID = 1;
-    public static final int COL_PACKAGE_DESCRIPTION = 2;
-    public static final int COL_PACKAGE_DOSES = 3;
-    public static final int COL_PACKAGE_IMAGE_URI = 4;
-
     private static final String[] SUBPACKAGE_COLUMNS = {
             DataContract.SubpackageEntry.TABLE_NAME + "." + DataContract.SubpackageEntry._ID,
             DataContract.SubpackageEntry.COLUMN_DRUG_ID,
@@ -78,20 +84,19 @@ public class PackagesListFragment extends Fragment
             DataContract.SubpackageEntry.COLUMN_DOSES_LEFT,
             DataContract.SubpackageEntry.COLUMN_EXP_DATE
     };
-
-    public static final int COL_SUBPACKAGE_ID = 0;
-    public static final int COL_SUBPACKAGE_DRUG_ID = 1;
-    public static final int COL_SUBPACKAGE_PACKAGE_ID = 2;
-    public static final int COL_SUBPACKAGE_DOSES_LEFT = 3;
-    public static final int COL_SUBPACKAGE_EXP_DATE = 4;
-
+    ViewGroup mContainerView;
+    View mFragmentView;
     private long mDrugId;
     private int mDrugColor;
     private String mDrugName;
     private String mDrugApi;
-
-    ViewGroup mContainerView;
-    View mFragmentView;
+    private TreeNode.TreeNodeLongClickListener nodeLongClickListener = new TreeNode.TreeNodeLongClickListener() {
+        @Override
+        public boolean onLongClick(TreeNode node, Object value) {
+            showBottomDialog(node, value);
+            return true;
+        }
+    };
 
     public PackagesListFragment() {
     }
@@ -161,7 +166,6 @@ public class PackagesListFragment extends Fragment
                 return;
         }
     }
-
 
     private void createTree(final Cursor packageCursor) {
         // Create root node
@@ -305,14 +309,6 @@ public class PackagesListFragment extends Fragment
         datePicker.show();
     }
 
-    private TreeNode.TreeNodeLongClickListener nodeLongClickListener = new TreeNode.TreeNodeLongClickListener() {
-        @Override
-        public boolean onLongClick(TreeNode node, Object value) {
-            showBottomDialog(node, value);
-            return true;
-        }
-    };
-
     private void showBottomDialog(final TreeNode node, final Object value) {
         DialogPlus dialog = Dialogs.setupBottomDialog(getActivity(), new DialogBottomAdapter(getActivity()), new OnItemClickListener() {
             @Override
@@ -404,8 +400,68 @@ public class PackagesListFragment extends Fragment
             ((EditText) dialog.getView().findViewById(R.id.dialog_edit_package_default_doses)).setText(oldDefaultDoses);
             dialog.show();
         }
+        if (value instanceof DrugSubpackage) {
+            final long subpackageId = ((DrugSubpackage) value).getId();
+            final String oldExpDbDate = DateUtils.fromDateToDbString(((DrugSubpackage) value).getExpirationDate());
+            final String oldDosesLeft = ((DrugSubpackage) value).getDosesLeft() + "";
+            MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                    .title(R.string.edit)
+                    .customView(R.layout.dialog_edit_subpackage, true)
+                    .positiveText(R.string.done)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        View view = dialog.getView();
+                                        String newExpDbDate = DateUtils.fromEurStringToDbString(((EditText) view.findViewById(R.id.dialog_edit_subpackage_exp_date)).getText().toString());
+                                        String newDosesLeft = ((EditText) view.findViewById(R.id.dialog_edit_subpackage_doses_left)).getText().toString();
+                                        if (newExpDbDate.equals(oldExpDbDate) && newDosesLeft.equals(oldDosesLeft)) {
+                                            return;
+                                        } else {
+                                            ContentValues values = new ContentValues();
+                                            values.put(DataContract.SubpackageEntry.COLUMN_EXP_DATE, newExpDbDate);
+                                            values.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, newDosesLeft);
+                                            getActivity().getContentResolver().update(DataContract.SubpackageEntry.buildSubpackageUri(subpackageId), values, null, null);
+                                            ((DrugSubpackage) value).setExpirationDate(newExpDbDate);
+                                            ((DrugSubpackage) value).setDosesLeft(Integer.valueOf(newDosesLeft));
+                                            ((SubpackageTreeHolder)node.getViewHolder()).updateAll();
+                                        }
+
+
+                                    }
+                                }
+                    ).build();
+            ((EditText) dialog.getView().findViewById(R.id.dialog_edit_subpackage_doses_left)).setText(oldDosesLeft);
+            final EditText expDateEt = (EditText) dialog.getView().findViewById(R.id.dialog_edit_subpackage_exp_date);
+            expDateEt.setText(DateUtils.fromDbStringToEurString(oldExpDbDate));
+            expDateEt.setInputType(InputType.TYPE_NULL);
+            expDateEt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    DatePickerDialog datePicker = new DatePickerDialog(
+                            getActivity(),
+                            new DatePickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                    expDateEt.setText(DateUtils.fromPickerToEurString(year, monthOfYear, dayOfMonth));
+                                }
+                            },
+                            Calendar.getInstance().get(Calendar.YEAR),
+                            Calendar.getInstance().get(Calendar.MONTH),
+                            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                    );
+                    datePicker.setCancelable(true);
+                    datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                    datePicker.setTitle(getString(R.string.select_exp_date));
+                    datePicker.show();
+                }
+            });
+            dialog.show();
+        }
 
     }
+
 }
 /*****
  * PackageRecyclerAdapter METHODS ****

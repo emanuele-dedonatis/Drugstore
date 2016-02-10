@@ -176,7 +176,7 @@
                                 style="@style/Base.Widget.AppCompat.EditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/package_expiration"
+                                android:hint="@string/expiration_date"
                                 android:inputType="none"
                                 android:imeOptions="actionNext"
                                 android:singleLine="true" />

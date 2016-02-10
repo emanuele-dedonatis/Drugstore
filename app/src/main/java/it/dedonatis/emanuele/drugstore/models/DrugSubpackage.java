@@ -2,6 +2,8 @@ package it.dedonatis.emanuele.drugstore.models;
 
 import java.util.Date;
 
+import it.dedonatis.emanuele.drugstore.utils.DateUtils;
+
 public class DrugSubpackage {
     private long mId;
     private long mDrugId;
@@ -44,6 +46,11 @@ public class DrugSubpackage {
     }
 
     public Date getExpirationDate() {
+        return mExpirationDate;
+    }
+
+    public Date setExpirationDate(String dbExpDate) {
+        mExpirationDate = DateUtils.fromDbStringToDate(dbExpDate);
         return mExpirationDate;
     }
 }

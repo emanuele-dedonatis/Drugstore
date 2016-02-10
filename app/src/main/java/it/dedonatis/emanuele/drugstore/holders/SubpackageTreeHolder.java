@@ -21,6 +21,7 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
     private DrugSubpackage mSubpackage;
     private TreeNode mNode;
     private TextView mTvDoses;
+    private TextView mTvExp;
     private Button mBtnUse;
 
     public SubpackageTreeHolder(Context context, OnSubpackageClickListener listener, TreeNode parent) {
@@ -35,22 +36,18 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
         final View view = inflater.inflate(R.layout.item_subpackage_treeview, null, false);
 
         this.mSubpackage = subpackage;
-        TextView tvExp = (TextView) view.findViewById(R.id.item_subpackage_exp);
-        tvExp.setText(context.getString(R.string.exp) + " " + DateUtils.fromDateToEurString(subpackage.getExpirationDate()));
+        mTvExp = (TextView) view.findViewById(R.id.item_subpackage_exp);
         mTvDoses = (TextView) view.findViewById(R.id.item_subpackage_doses);
-        int doses = subpackage.getDosesLeft();
-        mTvDoses.setText(doses + " " + ((doses == 1) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase()));
-
         mBtnUse = (Button) view.findViewById(R.id.item_subpackage_button_use);
-        if (doses <= 0) {
-            mBtnUse.setEnabled(false);
-        }
         mBtnUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onClickButtonUse(mNode, mSubpackage);
             }
         });
+
+        update();
+
         return view;
     }
 
@@ -62,6 +59,26 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
         if (doses <= 0) {
             mBtnUse.setEnabled(false);
         }
+    }
+
+    public void updateExpDate() {
+        mTvExp.setText(context.getString(R.string.exp) + " " + DateUtils.fromDateToEurString(mSubpackage.getExpirationDate()));
+    }
+
+    public void updateParentDosesLeft() {
+        PackageTreeHolder parentHolder = (PackageTreeHolder) mNode.getParent().getViewHolder();
+        if(parentHolder != null)
+            parentHolder.updateDosesLeft();
+    }
+
+    public void update() {
+        updateDosesLeft();
+        updateExpDate();
+    }
+
+    public void updateAll() {
+        update();
+        updateParentDosesLeft();
     }
 
     public DrugSubpackage getSubpackage() {
