@@ -46,6 +46,7 @@ public class PackagesActivity extends AppCompatActivity {
 
         // Get extras from intent
         Intent intent = getIntent();
+        Log.d(LOG_TAG, intent.getExtras().toString());
         mDrugId = intent.getLongExtra(MESSAGE_DRUG_ID, -1);
         mDrugName = intent.getStringExtra(MESSAGE_DRUG_NAME);
         mDrugApi = intent.getStringExtra(MESSAGE_DRUG_API);

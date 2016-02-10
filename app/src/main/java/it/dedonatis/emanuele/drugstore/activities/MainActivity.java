@@ -77,12 +77,15 @@ public class MainActivity extends AppCompatActivity
         notificationIntent.putExtra(NotifyExpDate.NOTIFICATION_ID, 1);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
+        int hourOfDay = 12;
+        int repeatDays = 7;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(), 30000, alarmIntent);
-
+        //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY * repeatDays, alarmIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000, alarmIntent);
     }
     @Override
     public void onBackPressed() {
