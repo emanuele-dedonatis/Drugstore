@@ -21,7 +21,7 @@ import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 public class NotifyExpDate extends BroadcastReceiver {
 
     public static String NOTIFICATION_ID = "notification-id";
-    private static final int NEXT_DAYS = 7;
+    public static final int NEXT_DAYS = 7;
 
     private static final String[] DRUG_COLUMNS = {
             DataContract.DrugEntry.TABLE_NAME + "." + DataContract.DrugEntry._ID,
@@ -132,4 +132,5 @@ public class NotifyExpDate extends BroadcastReceiver {
             }
         }
     }
+
 }
