@@ -16,6 +16,7 @@
     <string name="drug_name">Drug name</string>
     <string name="drug_api">Active ingredient</string>
     <string name="package_description">Package description</string>
+    <string name="package_default_doses">Default doses</string>
     <string name="package_units">Units</string>
     <string name="package_expiration">Expiration date</string>
     <string name="dose">dose</string>

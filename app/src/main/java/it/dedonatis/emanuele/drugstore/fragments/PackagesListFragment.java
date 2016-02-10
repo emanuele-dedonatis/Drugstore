@@ -10,12 +10,16 @@ import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.EditText;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
 import com.unnamed.b.atv.model.TreeNode;
@@ -325,12 +329,7 @@ public class PackagesListFragment extends Fragment
                         dialog.dismiss();
                         break;
                     case DialogBottomAdapter.EDIT_POSITION:
-                        if (value instanceof DrugPackage) {
-                            Log.d(LOG_TAG, "edit package " + ((DrugPackage) value).getDescription());
-                        }
-                        if (value instanceof DrugSubpackage) {
-                            Log.d(LOG_TAG, "edit subpackage " + ((DrugSubpackage) value).getId());
-                        }
+                        showEditDialog(node, value);
                         dialog.dismiss();
                         break;
                     case DialogBottomAdapter.DELETE_POSITION:
@@ -348,7 +347,6 @@ public class PackagesListFragment extends Fragment
     private void requestConfirmDelete(final TreeNode node, final Object value) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
         builder.setMessage(R.string.delete_question);
-        final LoaderManager.LoaderCallbacks loaderCallbacks = this;
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -369,6 +367,46 @@ public class PackagesListFragment extends Fragment
         builder.setNegativeButton(R.string.cancel, null);
         builder.show();
     }
+
+    private void showEditDialog(final TreeNode node, final Object value) {
+        if (value instanceof DrugPackage) {
+            final long packageId = ((DrugPackage) value).getId();
+            final String oldDescription = ((DrugPackage) value).getDescription();
+            final String oldDefaultDoses = ((DrugPackage) value).getDefaultDoses() + "";
+            MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                    .title(R.string.edit)
+                    .customView(R.layout.dialog_edit_package, true)
+                    .positiveText(R.string.done)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        View view = dialog.getView();
+                                        String newDescription = ((EditText) view.findViewById(R.id.dialog_edit_package_description)).getText().toString();
+                                        String newDefaultDoses = ((EditText) view.findViewById(R.id.dialog_edit_package_default_doses)).getText().toString();
+                                        if (newDescription.equals(oldDescription) && newDefaultDoses.equals(oldDefaultDoses)) {
+                                            return;
+                                        } else {
+                                            ContentValues values = new ContentValues();
+                                            values.put(DataContract.PackageEntry.COLUMN_DESCRIPTION, newDescription);
+                                            values.put(DataContract.PackageEntry.COLUMN_DOSES, newDefaultDoses);
+                                            getActivity().getContentResolver().update(DataContract.PackageEntry.buildPackageUri(packageId), values, null, null);
+                                            ((DrugPackage) value).setDescription(newDescription);
+                                            ((DrugPackage) value).setDefaultDoses(Integer.valueOf(newDefaultDoses));
+                                            ((PackageTreeHolder)node.getViewHolder()).updateDescription();
+                                        }
+
+
+                                    }
+                                }
+                    ).build();
+            ((EditText) dialog.getView().findViewById(R.id.dialog_edit_package_description)).setText(oldDescription);
+            ((EditText) dialog.getView().findViewById(R.id.dialog_edit_package_default_doses)).setText(oldDefaultDoses);
+            dialog.show();
+        }
+
+    }
+}
 /*****
  * PackageRecyclerAdapter METHODS ****
  *
@@ -398,4 +436,4 @@ public class PackagesListFragment extends Fragment
  */
 
 
-}
+

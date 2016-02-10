@@ -41,8 +41,17 @@ public class DrugPackage {
     public String getDescription() {
         return mDescription;
     }
+    public String setDescription(String description) {
+        mDescription = description;
+        return mDescription;
+    }
 
     public int getDefaultDoses() {
+        return mDoses;
+    }
+
+    public int setDefaultDoses(int doses) {
+        this.mDoses = doses;
         return mDoses;
     }
     public int setDosesLeft(int dosesLeft) {

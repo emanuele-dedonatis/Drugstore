@@ -25,6 +25,7 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
 
     private DrugPackage mPkg;
     private ImageView mArrow;
+    private TextView mTvDescription;
     private TextView mTvDoses;
 
     public PackageTreeHolder(Context context) {
@@ -36,8 +37,8 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.item_package_treeview, null, false);
         this.mPkg = pkg;
-        TextView tvDescription = (TextView) view.findViewById(R.id.item_package_description);
-        tvDescription.setText(pkg.getDescription());
+        mTvDescription = (TextView) view.findViewById(R.id.item_package_description);
+        mTvDescription.setText(pkg.getDescription());
         mTvDoses = (TextView) view.findViewById(R.id.item_package_total_doses_number);
         int doses = 0;
         for (DrugSubpackage subpackage : pkg.getSubpackages()) {
@@ -102,6 +103,10 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
 
     public void updateDosesLeft() {
         mTvDoses.setText(mPkg.getAllDosesLeft() + "");
+    }
+
+    public void updateDescription() {
+        mTvDescription.setText(mPkg.getDescription());
     }
 
     public void removeSubpackage(TreeNode node) {
