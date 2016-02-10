@@ -15,6 +15,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,21 +23,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.OnItemClickListener;
+import com.unnamed.b.atv.model.TreeNode;
+import com.unnamed.b.atv.view.AndroidTreeView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
 import it.dedonatis.emanuele.drugstore.activities.PackagesActivity;
+import it.dedonatis.emanuele.drugstore.adapters.DialogAdapter;
 import it.dedonatis.emanuele.drugstore.adapters.DrugRecyclerAdapter;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
+import it.dedonatis.emanuele.drugstore.holders.PackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.models.Drug;
+import it.dedonatis.emanuele.drugstore.models.DrugPackage;
+import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
+import it.dedonatis.emanuele.drugstore.utils.Dialogs;
 
-public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, DrugRecyclerAdapter.DrugClickListener, SearchView.OnQueryTextListener{
+public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, DrugRecyclerAdapter.DrugClickListener, SearchView.OnQueryTextListener {
     private static final String LOG_TAG = DrugsListFragment.class.getSimpleName();
     private static final int DRUG_LOADER = 0;
 
-    /** CONTENT PROVIDER PROJECTION **/
+    /**
+     * CONTENT PROVIDER PROJECTION
+     **/
     private static final String[] DRUG_COLUMNS = {
             DataContract.DrugEntry.TABLE_NAME + "." + DataContract.DrugEntry._ID,
             DataContract.DrugEntry.COLUMN_NAME,
@@ -52,7 +65,8 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     private String mCursorFilter;
     private SearchView mSearchView;
 
-    public DrugsListFragment() {}
+    public DrugsListFragment() {
+    }
 
     public static DrugsListFragment newInstance() {
         DrugsListFragment fragment = new DrugsListFragment();
@@ -71,7 +85,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         View fragmentView = inflater.inflate(R.layout.fragment_drugs_list, container, false);
 
         // Recycler view
-        RecyclerView mRecyclerView = (RecyclerView)fragmentView.findViewById(R.id.drugs_recyclerview);
+        RecyclerView mRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.drugs_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new DrugRecyclerAdapter(getActivity(), mDrugs, this);
@@ -87,7 +101,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
                 startActivity(intent);
             }
         });
-        return  fragmentView;
+        return fragmentView;
     }
 
     @Override
@@ -96,11 +110,13 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         getLoaderManager().restartLoader(DRUG_LOADER, null, this);
     }
 
-    /***** CURSOR LOADER *****/
+    /*****
+     * CURSOR LOADER
+     *****/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri drugsUri;
-        if(mCursorFilter != null) {
+        if (mCursorFilter != null) {
             drugsUri = DataContract.DrugEntry.buildDrugLikeNameOrApi(mCursorFilter);
         } else {
             drugsUri = DataContract.DrugEntry.CONTENT_URI;
@@ -113,7 +129,7 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mDrugs.clear();
-        while(data.moveToNext()) {
+        while (data.moveToNext()) {
             Drug drug = new Drug(
                     data.getLong(COL_DRUG_ID),
                     data.getString(COL_DRUG_NAME),
@@ -123,10 +139,10 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         }
         mAdapter.notifyDataSetChanged();
 
-        if(data.getCount() == 0)  {
+        if (data.getCount() == 0) {
             getActivity().findViewById(R.id.empty_drug_list).setVisibility(View.VISIBLE);
             getActivity().findViewById(R.id.drugs_recyclerview).setVisibility(View.GONE);
-        }else {
+        } else {
             getActivity().findViewById(R.id.empty_drug_list).setVisibility(View.GONE);
             getActivity().findViewById(R.id.drugs_recyclerview).setVisibility(View.VISIBLE);
         }
@@ -138,8 +154,11 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
 
-    /***** SEARCHVIEW METHODS *****/
-    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    /*****
+     * SEARCHVIEW METHODS
+     *****/
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_drugs, menu);
         mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearchView.setOnQueryTextListener(this);
@@ -166,7 +185,9 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
         return false;
     }
 
-    /** RECYCLER LISTENER **/
+    /**
+     * RECYCLER LISTENER
+     **/
     @Override
     public void onDrugClick(long drugId, String name, String api, int color) {
         Intent intent = new Intent(getActivity(), PackagesActivity.class);
@@ -179,17 +200,43 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onDrugLongClick(final long drugId) {
+        DialogPlus dialog = Dialogs.setupBottomDialog(getActivity(), new DialogAdapter(getActivity()), new OnItemClickListener() {
+            @Override
+            public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                Log.d(LOG_TAG, "Click on item " + position);
+                switch (position) {
+                    case DialogAdapter.SHARE_POSITION:
+                        Log.d(LOG_TAG, "share drug " + drugId);
+                        dialog.dismiss();
+                        break;
+                    case DialogAdapter.EDIT_POSITION:
+                        Log.d(LOG_TAG, "edit drug " + drugId);
+                        dialog.dismiss();
+                        break;
+                    case DialogAdapter.DELETE_POSITION:
+                        requestConfirmDelete(drugId);
+                        dialog.dismiss();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    private void requestConfirmDelete(final long drugId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
         builder.setMessage(R.string.delete_question);
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-               @Override
-                public void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                     getActivity().getContentResolver().delete(DataContract.DrugEntry.buildDrugUri(drugId), null, null);
-                    getLoaderManager().restartLoader(DRUG_LOADER, null, DrugsListFragment.this);
-                }
-            });
-            builder.setNegativeButton(R.string.cancel, null);
-            builder.show();
-        }
+                    //getLoaderManager().restartLoader(DRUG_LOADER, null, DrugsListFragment.this);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.show();
     }
+}
 

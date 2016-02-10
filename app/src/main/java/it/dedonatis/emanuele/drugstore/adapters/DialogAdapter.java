@@ -61,7 +61,7 @@ public class DialogAdapter extends BaseAdapter {
                 break;
             case EDIT_POSITION:
                 viewHolder.textView.setText(context.getString(R.string.edit));
-                viewHolder.imageView.setImageDrawable(context.getDrawable(R.drawable.ic_menu_slideshow));
+                viewHolder.imageView.setImageDrawable(context.getDrawable(R.drawable.ic_create_black_24dp));
                 break;
             case DELETE_POSITION:
                 viewHolder.textView.setText(context.getString(R.string.delete));

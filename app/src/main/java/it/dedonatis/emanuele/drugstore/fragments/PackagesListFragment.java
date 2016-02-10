@@ -40,6 +40,7 @@ import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
+import it.dedonatis.emanuele.drugstore.utils.Dialogs;
 
 
 public class PackagesListFragment extends Fragment
@@ -314,50 +315,38 @@ public class PackagesListFragment extends Fragment
     };
 
     private void showBottomDialog(final TreeNode node, final Object value) {
-        DialogPlus dialog = DialogPlus.newDialog(getActivity())
-                .setContentHolder(new ListHolder())
-                .setCancelable(true)
-                .setAdapter(new DialogAdapter(getActivity()))
-                .setFooter(R.layout.item_dialog_empty_space)
-                .setHeader(R.layout.item_dialog_empty_space)
-                .setGravity(Gravity.BOTTOM)
-                .setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
-                        Log.d(LOG_TAG, "Click on item " + position);
-                        switch (position) {
-                            case DialogAdapter.SHARE_POSITION:
-                                if (value instanceof DrugPackage) {
-                                    Log.d(LOG_TAG, "share package " + ((DrugPackage) value).getDescription());
-                                }
-                                if (value instanceof DrugSubpackage) {
-                                    Log.d(LOG_TAG, "share subpackage " + ((DrugSubpackage) value).getId());
-                                }
-                                dialog.dismiss();
-                                break;
-                            case DialogAdapter.EDIT_POSITION:
-                                if (value instanceof DrugPackage) {
-                                    Log.d(LOG_TAG, "edit package " + ((DrugPackage) value).getDescription());
-                                }
-                                if (value instanceof DrugSubpackage) {
-                                    Log.d(LOG_TAG, "edit subpackage " + ((DrugSubpackage) value).getId());
-                                }
-                                dialog.dismiss();
-                                break;
-                            case DialogAdapter.DELETE_POSITION:
-                                requestConfirmDelete(node, value);
-                                dialog.dismiss();
-                                break;
-                            default:
-                                break;
+        DialogPlus dialog = Dialogs.setupBottomDialog(getActivity(), new DialogAdapter(getActivity()), new OnItemClickListener() {
+            @Override
+            public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                Log.d(LOG_TAG, "Click on item " + position);
+                switch (position) {
+                    case DialogAdapter.SHARE_POSITION:
+                        if (value instanceof DrugPackage) {
+                            Log.d(LOG_TAG, "share package " + ((DrugPackage) value).getDescription());
                         }
-                    }
-                })
-//        .setContentWidth(800)
-                .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-//        .setContentBackgroundResource(R.drawable.corner_background)
-                        //                .setOutMostMargin(0, 100, 0, 0)
-                .create();
+                        if (value instanceof DrugSubpackage) {
+                            Log.d(LOG_TAG, "share subpackage " + ((DrugSubpackage) value).getId());
+                        }
+                        dialog.dismiss();
+                        break;
+                    case DialogAdapter.EDIT_POSITION:
+                        if (value instanceof DrugPackage) {
+                            Log.d(LOG_TAG, "edit package " + ((DrugPackage) value).getDescription());
+                        }
+                        if (value instanceof DrugSubpackage) {
+                            Log.d(LOG_TAG, "edit subpackage " + ((DrugSubpackage) value).getId());
+                        }
+                        dialog.dismiss();
+                        break;
+                    case DialogAdapter.DELETE_POSITION:
+                        requestConfirmDelete(node, value);
+                        dialog.dismiss();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         dialog.show();
     }
 
