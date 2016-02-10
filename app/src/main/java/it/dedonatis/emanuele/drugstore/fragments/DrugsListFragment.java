@@ -1,11 +1,14 @@
 package it.dedonatis.emanuele.drugstore.fragments;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,12 +24,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.SearchView;
 
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
-import com.unnamed.b.atv.model.TreeNode;
-import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +39,10 @@ import java.util.List;
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.activities.AddDrugActivity;
 import it.dedonatis.emanuele.drugstore.activities.PackagesActivity;
-import it.dedonatis.emanuele.drugstore.adapters.DialogAdapter;
+import it.dedonatis.emanuele.drugstore.adapters.DialogBottomAdapter;
 import it.dedonatis.emanuele.drugstore.adapters.DrugRecyclerAdapter;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
-import it.dedonatis.emanuele.drugstore.holders.PackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.models.Drug;
-import it.dedonatis.emanuele.drugstore.models.DrugPackage;
-import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.Dialogs;
 
 public class DrugsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, DrugRecyclerAdapter.DrugClickListener, SearchView.OnQueryTextListener {
@@ -199,21 +201,21 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public void onDrugLongClick(final long drugId) {
-        DialogPlus dialog = Dialogs.setupBottomDialog(getActivity(), new DialogAdapter(getActivity()), new OnItemClickListener() {
+    public void onDrugLongClick(final long drugId, final String name, final String api) {
+        DialogPlus dialog = Dialogs.setupBottomDialog(getActivity(), new DialogBottomAdapter(getActivity()), new OnItemClickListener() {
             @Override
             public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
                 Log.d(LOG_TAG, "Click on item " + position);
                 switch (position) {
-                    case DialogAdapter.SHARE_POSITION:
+                    case DialogBottomAdapter.SHARE_POSITION:
                         Log.d(LOG_TAG, "share drug " + drugId);
                         dialog.dismiss();
                         break;
-                    case DialogAdapter.EDIT_POSITION:
-                        Log.d(LOG_TAG, "edit drug " + drugId);
+                    case DialogBottomAdapter.EDIT_POSITION:
+                        showEditDialog(drugId, name, api);
                         dialog.dismiss();
                         break;
-                    case DialogAdapter.DELETE_POSITION:
+                    case DialogBottomAdapter.DELETE_POSITION:
                         requestConfirmDelete(drugId);
                         dialog.dismiss();
                         break;
@@ -226,17 +228,52 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     private void requestConfirmDelete(final long drugId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
-        builder.setMessage(R.string.delete_question);
-        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                    getActivity().getContentResolver().delete(DataContract.DrugEntry.buildDrugUri(drugId), null, null);
-                    //getLoaderManager().restartLoader(DRUG_LOADER, null, DrugsListFragment.this);
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, null);
-        builder.show();
+        new AlertDialogWrapper.Builder(getActivity())
+                .setMessage(R.string.delete_question)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getActivity().getContentResolver().delete(DataContract.DrugEntry.buildDrugUri(drugId), null, null);
+                        //getLoaderManager().restartLoader(DRUG_LOADER, null, DrugsListFragment.this);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
-}
+
+    private void showEditDialog(final long drugId, final String name, final String api) {
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .customView(R.layout.dialog_edit_drug, true)
+                .positiveText(R.string.done)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    View view = dialog.getView();
+                                    String newName = ((EditText) view.findViewById(R.id.dialog_edit_drug_name)).getText().toString();
+                                    String newApi = ((EditText) view.findViewById(R.id.dialog_edit_drug_api)).getText().toString();
+                                    if (newName.equals(name) && newApi.equals(api)) {
+                                        return;
+                                    } else {
+                                        ContentValues values = new ContentValues();
+                                        values.put(DataContract.DrugEntry.COLUMN_NAME, newName);
+                                        values.put(DataContract.DrugEntry.COLUMN_API, newApi);
+                                        getActivity().getContentResolver().update(DataContract.DrugEntry.buildDrugUri(drugId), values, null, null);
+
+                                    }
+
+
+                                }
+                            }
+                ).build();
+
+                    View view = dialog.getView();
+                    EditText drugName = (EditText) view.findViewById(R.id.dialog_edit_drug_name);
+                    EditText drugApi = (EditText) view.findViewById(R.id.dialog_edit_drug_api);
+                    drugName.setText(name);
+                    drugApi.setText(api);
+                    dialog.show();
+
+                }
+    }
 

@@ -12,13 +12,13 @@ import android.widget.TextView;
 
 import it.dedonatis.emanuele.drugstore.R;
 
-public class DialogAdapter extends BaseAdapter {
+public class DialogBottomAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     public static final int SHARE_POSITION = 0;
     public static final int EDIT_POSITION = 1;
     public static final int DELETE_POSITION = 2;
 
-    public DialogAdapter(Context context) {
+    public DialogBottomAdapter(Context context) {
         layoutInflater = LayoutInflater.from(context);
     }
 

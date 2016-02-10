@@ -52,7 +52,9 @@ public class DrugRecyclerAdapter extends RecyclerView.Adapter<DrugRecyclerAdapte
         drugViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                mDrugClickListener.onDrugLongClick(drug.getId());
+                mDrugClickListener.onDrugLongClick(drug.getId(),
+                        drug.getName(),
+                        drug.getApi());
                 return true;
             }
         });
@@ -84,6 +86,6 @@ public class DrugRecyclerAdapter extends RecyclerView.Adapter<DrugRecyclerAdapte
 
     public interface DrugClickListener {
         public void onDrugClick(long drugId, String name, String api, int color);
-        public void onDrugLongClick(long drugId);
+        public void onDrugLongClick(long drugId, String name, String api);
     }
 }

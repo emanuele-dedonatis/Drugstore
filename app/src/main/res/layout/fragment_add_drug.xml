@@ -62,17 +62,6 @@
                             android:paddingTop="@dimen/content_margin"
                             android:paddingBottom="@dimen/content_margin">
 
-                            <ImageView
-                                android:id="@+id/add_drug_name_icon"
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_centerVertical="true"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="@dimen/screen_margin"
-                                android:layout_marginRight="@dimen/screen_margin"
-                                android:src="@drawable/medical15"
-                                android:tint="@color/secondary_text" />
-
                             <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
                             <LinearLayout
                                 android:focusable="true"
@@ -84,8 +73,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/screen_margin"
-                                android:layout_marginRight="@dimen/screen_margin"
-                                android:layout_toRightOf="@+id/add_drug_name_icon">
+                                android:layout_marginRight="@dimen/screen_margin">
                             <AutoCompleteTextView
                                 android:id="@+id/add_drug_name"
                                 style="@style/Base.Widget.AppCompat.EditText"
@@ -110,7 +98,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:layout_gravity="center_vertical"
-                                android:layout_marginLeft="@dimen/list_item"
+                                android:layout_marginLeft="@dimen/screen_margin"
                                 android:layout_marginRight="@dimen/screen_margin">
                             <AutoCompleteTextView
                                 android:id="@+id/add_drug_api"
@@ -150,16 +138,6 @@
                             android:orientation="horizontal"
                             android:paddingBottom="@dimen/content_margin">
 
-                            <ImageView
-                                android:id="@+id/add_package_description_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="@dimen/screen_margin"
-                                android:layout_marginRight="@dimen/screen_margin"
-                                android:src="@drawable/ic_label_black_24dp"
-                                android:tint="@color/secondary_text" />
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -167,14 +145,14 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="@dimen/screen_margin"
                                 android:layout_marginRight="@dimen/screen_margin"
-                                android:layout_toRightOf="@+id/add_package_description_icon"
 >
 
                             <AutoCompleteTextView
                                 android:id="@+id/add_package_description"
                                 style="@style/Base.Widget.AppCompat.EditText"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"                                android:hint="@string/package_description"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/package_description"
                                 android:imeOptions="actionNext"
                                 android:singleLine="true" />
                             </android.support.design.widget.TextInputLayout>
@@ -190,7 +168,7 @@
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/list_item"
+                                android:layout_marginLeft="@dimen/screen_margin"
                                 android:layout_marginRight="@dimen/content_margin"
                                 android:layout_weight="1">
                             <EditText
@@ -207,7 +185,7 @@
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/content_margin"
+                                android:layout_marginLeft="@dimen/screen_margin"
                                 android:layout_marginRight="@dimen/screen_margin"
                                 android:layout_weight="2">
                             <EditText

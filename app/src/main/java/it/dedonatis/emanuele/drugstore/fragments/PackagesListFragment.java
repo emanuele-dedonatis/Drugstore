@@ -11,17 +11,12 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.BaseAdapter;
-import android.widget.Toast;
 
 import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.ListHolder;
 import com.orhanobut.dialogplus.OnItemClickListener;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
@@ -32,7 +27,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.adapters.DialogAdapter;
+import it.dedonatis.emanuele.drugstore.adapters.DialogBottomAdapter;
 import it.dedonatis.emanuele.drugstore.holders.AddSubpackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.holders.PackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.holders.SubpackageTreeHolder;
@@ -315,12 +310,12 @@ public class PackagesListFragment extends Fragment
     };
 
     private void showBottomDialog(final TreeNode node, final Object value) {
-        DialogPlus dialog = Dialogs.setupBottomDialog(getActivity(), new DialogAdapter(getActivity()), new OnItemClickListener() {
+        DialogPlus dialog = Dialogs.setupBottomDialog(getActivity(), new DialogBottomAdapter(getActivity()), new OnItemClickListener() {
             @Override
             public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
                 Log.d(LOG_TAG, "Click on item " + position);
                 switch (position) {
-                    case DialogAdapter.SHARE_POSITION:
+                    case DialogBottomAdapter.SHARE_POSITION:
                         if (value instanceof DrugPackage) {
                             Log.d(LOG_TAG, "share package " + ((DrugPackage) value).getDescription());
                         }
@@ -329,7 +324,7 @@ public class PackagesListFragment extends Fragment
                         }
                         dialog.dismiss();
                         break;
-                    case DialogAdapter.EDIT_POSITION:
+                    case DialogBottomAdapter.EDIT_POSITION:
                         if (value instanceof DrugPackage) {
                             Log.d(LOG_TAG, "edit package " + ((DrugPackage) value).getDescription());
                         }
@@ -338,7 +333,7 @@ public class PackagesListFragment extends Fragment
                         }
                         dialog.dismiss();
                         break;
-                    case DialogAdapter.DELETE_POSITION:
+                    case DialogBottomAdapter.DELETE_POSITION:
                         requestConfirmDelete(node, value);
                         dialog.dismiss();
                         break;

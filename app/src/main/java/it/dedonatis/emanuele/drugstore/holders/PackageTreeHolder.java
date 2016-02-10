@@ -1,7 +1,6 @@
 package it.dedonatis.emanuele.drugstore.holders;
 
 import android.content.Context;
-import android.media.Image;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,16 +12,11 @@ import android.widget.TextView;
 
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.GridHolder;
-import com.orhanobut.dialogplus.ListHolder;
 import com.orhanobut.dialogplus.OnItemClickListener;
 import com.unnamed.b.atv.model.TreeNode;
 
-import java.util.List;
-
 import it.dedonatis.emanuele.drugstore.R;
-import it.dedonatis.emanuele.drugstore.adapters.DialogAdapter;
 import it.dedonatis.emanuele.drugstore.adapters.DialogImageAdapter;
-import it.dedonatis.emanuele.drugstore.models.Drug;
 import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.ImageUtils;
