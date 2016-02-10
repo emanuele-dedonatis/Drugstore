@@ -45,6 +45,7 @@ import it.dedonatis.emanuele.drugstore.models.DrugPackage;
 import it.dedonatis.emanuele.drugstore.models.DrugSubpackage;
 import it.dedonatis.emanuele.drugstore.utils.DateUtils;
 import it.dedonatis.emanuele.drugstore.utils.Dialogs;
+import it.dedonatis.emanuele.drugstore.utils.ShareUtils;
 
 
 public class PackagesListFragment extends Fragment
@@ -318,10 +319,10 @@ public class PackagesListFragment extends Fragment
                 switch (position) {
                     case DialogBottomAdapter.SHARE_POSITION:
                         if (value instanceof DrugPackage) {
-                            Log.d(LOG_TAG, "share package " + ((DrugPackage) value).getDescription());
+                            ShareUtils.shareDrugPackage(getActivity(), mDrugName, mDrugApi, (DrugPackage)value);
                         }
                         if (value instanceof DrugSubpackage) {
-                            Log.d(LOG_TAG, "share subpackage " + ((DrugSubpackage) value).getId());
+                            ShareUtils.shareDrugSubpackage(getActivity(), mDrugName, mDrugApi, ((PackageTreeHolder)node.getParent().getViewHolder()).getPackage(), (DrugSubpackage)value);
                         }
                         dialog.dismiss();
                         break;
