@@ -133,7 +133,7 @@ public class DataContentProvider extends ContentProvider{
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor retCursor;
-        Log.v(LOG_TAG, "query: " + uri.toString());
+        Log.d(LOG_TAG, "query: " + uri.toString());
         switch (sUriMatcher.match(uri)) {
             /*
                 content://it.drugstore.app/drugs
@@ -451,7 +451,7 @@ public class DataContentProvider extends ContentProvider{
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        Log.v(LOG_TAG, "insert: " + uri.toString());
+        Log.d(LOG_TAG, "insert: " + uri.toString() + " " + values.toString());
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
@@ -531,7 +531,7 @@ public class DataContentProvider extends ContentProvider{
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         int rowsDeleted;
-        Log.v(LOG_TAG, "Delete: " + uri.toString());
+        Log.d(LOG_TAG, "Delete: " + uri.toString());
 
         if ( null == selection ) selection = "1";
         switch (match) {
@@ -550,7 +550,7 @@ public class DataContentProvider extends ContentProvider{
                     imageUri = Uri.parse(cursor.getString(0));
                     File imageFile = new File(imageUri.getPath());
                     imageFile.delete();
-                    Log.v(LOG_TAG, "Deleting image file " + imageUri.getPath());
+                    Log.d(LOG_TAG, "Deleting image file " + imageUri.getPath());
                 }
                 rowsDeleted = db.delete(PackageEntry.TABLE_NAME,
                         PackageEntry.TABLE_NAME + "." + PackageEntry._ID + " = ?",
@@ -590,7 +590,7 @@ public class DataContentProvider extends ContentProvider{
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        Log.v(LOG_TAG, "Update: " + uri.toString());
+        Log.d(LOG_TAG, "Update: " + uri.toString());
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         int rowsUpdated;
@@ -622,7 +622,6 @@ public class DataContentProvider extends ContentProvider{
                 rowsUpdated = db.update(SubpackageEntry.TABLE_NAME, values,
                         SubpackageEntry.TABLE_NAME + "." + SubpackageEntry._ID + " = ?",
                         new String[]{uri.getPathSegments().get(1)});
-                Log.v(LOG_TAG, "Update subpackage " + uri.getPathSegments().get(1) + " rows updated " + rowsUpdated );
                 break;
             case THERAPIES:
                 rowsUpdated = db.update(TherapyEntry.TABLE_NAME, values, selection,

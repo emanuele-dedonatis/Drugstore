@@ -276,7 +276,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                     drugValues
             );
             mDrugId = ContentUris.parseId(uri);
-            Log.v(LOG_TAG, "Insert new drug id = " + mDrugId);
+            Log.d(LOG_TAG, "Insert new drug id = " + mDrugId);
         }
 
         String packDescription = mPackageDescriptionEt.getText().toString();
@@ -306,9 +306,8 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                 DataContract.SubpackageEntry.CONTENT_URI,
                 subpack
         );
-        Log.d(LOG_TAG, subpack.toString());
         long subId = ContentUris.parseId(uri);
-        Log.v(LOG_TAG, "Insert new subpackage id = " + subId);
+        Log.d(LOG_TAG, "Insert new subpackage id = " + subId);
         getActivity().finish();
     }
 

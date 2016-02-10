@@ -1,15 +1,19 @@
 package it.dedonatis.emanuele.drugstore.activities;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.LoaderManager;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,12 +26,15 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.data.DataContract;
 import it.dedonatis.emanuele.drugstore.fragments.DrugsListFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PharmaciesFragment;
 import it.dedonatis.emanuele.drugstore.fragments.PrescriptionFragment;
+import it.dedonatis.emanuele.drugstore.services.NotifyExpDate;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,9 +66,24 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(getString(R.string.drugs));
         DrugsListFragment drugsListFragment = DrugsListFragment.newInstance();
         getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, drugsListFragment).commit();
+
+        // Create ALARM to check exp date
+        scheduleNotification();
+
     }
 
+    private void scheduleNotification() {
+        Intent notificationIntent = new Intent(this, NotifyExpDate.class);
+        notificationIntent.putExtra(NotifyExpDate.NOTIFICATION_ID, 1);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(), 30000, alarmIntent);
+
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -91,12 +113,13 @@ public class MainActivity extends AppCompatActivity
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, mPharmaciesFragment).commit();
                 break;
 
+            /*
             case R.id.nav_prescriptions:
                 getSupportActionBar().setTitle(getString(R.string.prescriptions));
                 PrescriptionFragment prescriptionFragment = PrescriptionFragment.newInstance();
                 getFragmentManager().beginTransaction().replace(R.id.activity_drugs_container, prescriptionFragment).commit();
                 break;
-
+            */
             case R.id.nav_settings:
                 /*
                 title.setText(getString(R.string.settings));

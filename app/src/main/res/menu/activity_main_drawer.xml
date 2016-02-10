@@ -8,10 +8,12 @@
             android:id="@+id/nav_drugs"
             android:icon="@drawable/medical15"
             android:title="@string/drugs" />
+        <!--
         <item
             android:id="@+id/nav_prescriptions"
             android:icon="@drawable/document296"
             android:title="@string/prescriptions" />
+            -->
         <item
             android:id="@+id/nav_pharmacies"
             android:icon="@drawable/cross5"

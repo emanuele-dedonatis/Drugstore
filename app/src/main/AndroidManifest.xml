@@ -70,6 +70,8 @@
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver android:name=".services.NotifyExpDate" />
     </application>
 
 </manifest>
