@@ -29,8 +29,11 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
+
 import it.dedonatis.emanuele.drugstore.AsyncTask.PharmacyJsonTask;
 import it.dedonatis.emanuele.drugstore.R;
+import it.dedonatis.emanuele.drugstore.data.DataDbHelper;
 
 public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
         LocationListener,
@@ -73,6 +76,12 @@ public class PharmaciesFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DataDbHelper dataDbHelper = new DataDbHelper(getActivity());
+        try {
+            dataDbHelper.importDatabase("/storage/emulated/0/Drugstore/database.db");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

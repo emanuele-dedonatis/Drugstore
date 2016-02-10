@@ -29,6 +29,7 @@ import com.orhanobut.dialogplus.OnItemClickListener;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +38,7 @@ import java.util.TimeZone;
 
 import it.dedonatis.emanuele.drugstore.R;
 import it.dedonatis.emanuele.drugstore.adapters.DialogBottomAdapter;
+import it.dedonatis.emanuele.drugstore.data.DataDbHelper;
 import it.dedonatis.emanuele.drugstore.holders.AddSubpackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.holders.PackageTreeHolder;
 import it.dedonatis.emanuele.drugstore.holders.SubpackageTreeHolder;
@@ -124,6 +126,7 @@ public class PackagesListFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(PACKAGE_LOADER, null, this);
+
     }
 
     @Override
@@ -133,6 +136,13 @@ public class PackagesListFragment extends Fragment
         mDrugColor = getArguments().getInt(ARG_DRUG_COLOR);
         mDrugName = getArguments().getString(ARG_DRUG_NAME);
         mDrugApi = getArguments().getString(ARG_DRUG_API);
+
+        DataDbHelper dbHelper = new DataDbHelper(getActivity());
+        try {
+            dbHelper.backupDatabase("database.db");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
