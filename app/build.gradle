@@ -35,6 +35,7 @@ configurations {
 }
 
 repositories {
+    jcenter()
     maven { url 'http://dl.bintray.com/amulyakhare/maven' }
     maven { url "https://jitpack.io" }
 
@@ -51,6 +52,7 @@ dependencies {
     compile 'com.github.bmelnychuk:atv:1.2.+'
     compile 'com.code-troopers.betterpickers:library:2.5.0'
     compile 'com.orhanobut:dialogplus:1.11@aar'
+    compile 'com.nononsenseapps:filepicker:2.5.0'
 
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.android.support:appcompat-v7:23.1.1'

@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -26,6 +27,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     final static String LOG_TAG = MainActivity.class.getSimpleName();
+    final static int GET_FILE = 0;
     NavigationView mNavigationView;
 
     PharmaciesFragment mPharmaciesFragment;
@@ -95,7 +99,7 @@ public class MainActivity extends AppCompatActivity
             int days = (Calendar.SATURDAY - weekday + 2) % 7;
             calendar.add(Calendar.DAY_OF_YEAR, days);
         }
-        calendar.add(Calendar.DAY_OF_YEAR, -7 + dayOfWeek);
+        calendar.add(Calendar.DAY_OF_YEAR, dayOfWeek - 7);
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, 0);
 
@@ -169,6 +173,23 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.nav_import_db:
+                // This always works
+                Intent i = new Intent(this, FilePickerActivity.class);
+                // This works if you defined the intent filter
+                // Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+
+                // Set these depending on your use case. These are the defaults.
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+
+                // Configure initial directory by specifying a String.
+                // You could specify a String like "/storage/emulated/0/", but that can
+                // dangerous. Always use Android's API calls to get paths to the SD-card or
+                // internal memory.
+                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
+
+                startActivityForResult(i, GET_FILE);
                 break;
             default:
                 break;
@@ -198,6 +219,13 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
                 break;
+            case GET_FILE:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Uri uri = intent.getData();
+                        Log.d(LOG_TAG, "Select file " + uri.getPath());
+
+                }
         }
     }
 
