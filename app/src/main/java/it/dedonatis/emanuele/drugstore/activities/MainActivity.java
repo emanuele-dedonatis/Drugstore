@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         boolean isDebug = preferences.getBoolean(getString(R.string.pref_debug), false);
         if(isDebug)
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 30000, alarmIntent);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 120000, alarmIntent);
         else
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, alarmIntent);
     }

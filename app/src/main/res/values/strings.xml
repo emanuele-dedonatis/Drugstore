@@ -57,7 +57,7 @@
     <string name="pref_hour_of_day_notify">Default notification time</string>
     <string name="pref_hour_of_day_notify_summary">Choose preferred time of notifications</string>
     <string name="pref_debug">Debug</string>
-    <string name="pref_debug_summary">Notify every 30 sec</string>
+    <string name="pref_debug_summary">Notify every 120 sec</string>
 
 
     <string name="google_api_key">AIzaSyA1YtIDJpygHHGN9MD43opEM0Xx_e7mhhA</string>

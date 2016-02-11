@@ -55,7 +55,7 @@
     <string name="pref_hour_of_day_notify">Orario di notifica</string>
     <string name="pref_hour_of_day_notify_summary">Scegli l\'orario in cui ricevere notifiche</string>
     <string name="pref_debug">Debug</string>
-    <string name="pref_debug_summary">Notifica ogni 30 sec</string>
+    <string name="pref_debug_summary">Notifica ogni 120 sec</string>
 
 
     <string name="google_api_key">AIzaSyA1YtIDJpygHHGN9MD43opEM0Xx_e7mhhA</string>
