@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.DialogAction;
@@ -312,7 +313,10 @@ public class PackagesListFragment extends Fragment
                 cal.get(Calendar.DAY_OF_MONTH) + 1);
         datePicker.setCancelable(true);
         datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        datePicker.setTitle(getString(R.string.select_exp_date));
+        //datePicker.setTitle(getString(R.string.select_exp_date));
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view=inflater.inflate(R.layout.header_date_picker, null);
+        datePicker.setCustomTitle(view);
         datePicker.show();
     }
 
@@ -387,6 +391,17 @@ public class PackagesListFragment extends Fragment
                                         View view = dialog.getView();
                                         String newDescription = ((EditText) view.findViewById(R.id.dialog_edit_package_description)).getText().toString();
                                         String newDefaultDoses = ((EditText) view.findViewById(R.id.dialog_edit_package_default_doses)).getText().toString();
+
+                                        if (newDescription.equals("") || newDefaultDoses.equals("")) {
+                                            Toast.makeText(getActivity(), getString(R.string.alert_empty_fields), Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        try {
+                                            Integer.valueOf(newDefaultDoses);
+                                        }catch (NumberFormatException e) {
+                                            Toast.makeText(getActivity(), getString(R.string.alert_dose_not_number), Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
                                         if (newDescription.equals(oldDescription) && newDefaultDoses.equals(oldDefaultDoses)) {
                                             return;
                                         } else {
@@ -420,8 +435,23 @@ public class PackagesListFragment extends Fragment
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         View view = dialog.getView();
-                                        String newExpDbDate = DateUtils.fromEurStringToDbString(((EditText) view.findViewById(R.id.dialog_edit_subpackage_exp_date)).getText().toString());
+                                        String newExpEurDate = ((EditText) view.findViewById(R.id.dialog_edit_subpackage_exp_date)).getText().toString();
                                         String newDosesLeft = ((EditText) view.findViewById(R.id.dialog_edit_subpackage_doses_left)).getText().toString();
+                                        if (newExpEurDate.equals("") || newDosesLeft.equals("")) {
+                                            Toast.makeText(getActivity(), getString(R.string.alert_empty_fields), Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        try {
+                                            Integer.valueOf(newDosesLeft);
+                                        }catch (NumberFormatException e) {
+                                            Toast.makeText(getActivity(), getString(R.string.alert_dose_not_number), Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        String newExpDbDate = DateUtils.fromEurStringToDbString(newExpEurDate);
+                                        if(newExpDbDate == null) {
+                                            Toast.makeText(getActivity(), getString(R.string.alert_date_not_correct), Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
                                         if (newExpDbDate.equals(oldExpDbDate) && newDosesLeft.equals(oldDosesLeft)) {
                                             return;
                                         } else {
@@ -460,7 +490,10 @@ public class PackagesListFragment extends Fragment
                     );
                     datePicker.setCancelable(true);
                     datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-                    datePicker.setTitle(getString(R.string.select_exp_date));
+                    //datePicker.setTitle(getString(R.string.select_exp_date));
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    View view=inflater.inflate(R.layout.header_date_picker, null);
+                    datePicker.setCustomTitle(view);
                     datePicker.show();
                 }
             });

@@ -18,7 +18,7 @@
     <string name="package_default_doses">Default doses</string>
     <string name="package_units">Units</string>
     <string name="expiration_date">Expiration date</string>
-    <string name="dose">dose</string>
+    <string name="dose">Dose</string>
     <string name="doses">Doses</string>
     <string name="doses_left">Doses left</string>
 
@@ -32,7 +32,7 @@
     <string name="delete_question">Are you sure?</string>
     <string name="exp">EXP</string>
 
-    <string name="please_wait">Please wait</string>
+    <string name="please_wait">OCR</string>
     <string name="processing_image">Processing Image ...</string>
 
     <string name="title_activity_drug_detail">DrugDetailActivity</string>
@@ -42,6 +42,7 @@
     <string name="empty_drugs">No drugs</string>
     <string name="empty_pack">No packages</string>
     <string name="empty_prescriptions">No prescriptions</string>
+
 
     <string name="export_db">Backup</string>
     <string name="import_db">Restore</string>
@@ -82,5 +83,11 @@
     <string name="hours">Hours</string>
 
     <string name="is_running_out">is ​running out</string>
+
+    <string name="alert_empty_fields">Please fill in all fields</string>
+    <string name="alert_date_not_correct">Date format not correct</string>
+    <string name="alert_dose_not_number">Dose must be an integer number</string>
+    <string name="alert_file_error">File not valid</string>
+
 
 </resources>

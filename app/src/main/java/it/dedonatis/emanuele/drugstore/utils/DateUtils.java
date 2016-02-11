@@ -22,14 +22,14 @@ public class DateUtils {
 
     public static String fromDateToDbString(Date date) {
         if (date == null) {
-            return "";
+            return null;
         } else {
             return DB_DATE_FORMAT.format(date);
         }
     }
     public static String fromDateToDbHourString(Date date) {
         if (date == null) {
-            return "";
+            return null;
         } else {
             return DB_HOUR_FORMAT.format(date);
         }
@@ -37,7 +37,7 @@ public class DateUtils {
 
     public static String fromDateToEurString(Date date) {
         if (date == null) {
-            return "";
+            return null;
         } else {
             return EUR_DATE_FORMAT.format(date);
         }

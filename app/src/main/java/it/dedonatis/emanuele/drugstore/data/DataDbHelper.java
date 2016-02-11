@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.text.ParseException;
 
 import it.dedonatis.emanuele.drugstore.data.DataContract.*;
 
@@ -147,21 +148,26 @@ public class DataDbHelper extends SQLiteOpenHelper {
      * Copies the database file at the specified location
      * over the current internal application database.
      * */
-    public boolean importDatabase(String dbPath) throws IOException {
-
-        // Close the SQLiteOpenHelper so it will
-        // commit the created empty database to internal storage.
-        close();
-        File newDb = new File(dbPath);
-        File oldDb = new File(DB_FILEPATH);
-        if (newDb.exists()) {
-            copyFile(new FileInputStream(newDb), new FileOutputStream(oldDb));
-            // Access the copied database so SQLiteHelper
-            // will cache it and mark it as created.
-            getWritableDatabase().close();
-            return true;
+    public boolean importDatabase(String dbPath) throws IOException, ParseException {
+        String filenameArray[] = dbPath.split("\\.");
+        String extension = filenameArray[filenameArray.length-1];
+        if(extension.equals("db")) {
+            // Close the SQLiteOpenHelper so it will
+            // commit the created empty database to internal storage.
+            close();
+            File newDb = new File(dbPath);
+            File oldDb = new File(DB_FILEPATH);
+            if (newDb.exists()) {
+                copyFile(new FileInputStream(newDb), new FileOutputStream(oldDb));
+                // Access the copied database so SQLiteHelper
+                // will cache it and mark it as created.
+                getWritableDatabase().close();
+                return true;
+            }
+            return false;
+        }else{
+            throw new ParseException("not db extension", 0);
         }
-        return false;
     }
 
     private void copyFile(FileInputStream fromFile, FileOutputStream toFile) throws IOException {
@@ -195,9 +201,6 @@ public class DataDbHelper extends SQLiteOpenHelper {
             File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + FOLDER_NAME);
             if (!folder.exists()) {
                 boolean succes = folder.mkdir();
-                Log.d("MUMU", folder.getAbsolutePath() + " not exist, success is " + succes);
-            }else{
-                Log.d("MUMU",  folder.getAbsolutePath() + " folder exist");
             }
 
             String outFileName = folder.getAbsolutePath() + "/" + fileName;

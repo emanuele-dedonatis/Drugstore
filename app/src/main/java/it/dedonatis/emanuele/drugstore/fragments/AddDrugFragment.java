@@ -25,6 +25,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
@@ -125,8 +126,32 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
 
         // Get all view elements
         mDrugNameEt = (AutoCompleteTextView) fragmentView.findViewById(R.id.add_drug_name);
+        mDrugNameEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    ((AutoCompleteTextView)v).showDropDown();
+                }
+            }
+        });
         mDrugApiEt = (AutoCompleteTextView) fragmentView.findViewById(R.id.add_drug_api);
+        mDrugApiEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    ((AutoCompleteTextView)v).showDropDown();
+                }
+            }
+        });
         mPackageDescriptionEt = (AutoCompleteTextView) fragmentView.findViewById(R.id.add_package_description);
+        mPackageDescriptionEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    ((AutoCompleteTextView)v).showDropDown();
+                }
+            }
+        });
         mPackageExpDateEt = (EditText) fragmentView.findViewById(R.id.add_package_exp_date);
         mPackageDosesEt = (EditText) fragmentView.findViewById(R.id.add_package_doses);
         mPackageImage = (ImageView) fragmentView.findViewById(R.id.package_image);
@@ -234,7 +259,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                                     if (line.length() > 8)
                                         line = Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
                                     lines.add(line);
-                                    Log.v(LOG_TAG, line + " -> " + line);
+                                    Log.d(LOG_TAG, line + " -> " + line);
                                 }
                             }
                         }
@@ -262,12 +287,31 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
 
     @Override
     public void onSave() {
-        // TODO Check if no empty fields and no existing values
-        if (mDrugId < 0) {
-            // ADD DRUG + PACKAGE
-            String drugName = mDrugNameEt.getText().toString();
-            String drugApi = mDrugApiEt.getText().toString();
+        String drugName = mDrugNameEt.getText().toString();
+        String drugApi = mDrugApiEt.getText().toString();
+        String packDescription = mPackageDescriptionEt.getText().toString();
+        String expEurDate = mPackageExpDateEt.getText().toString();
+        String doses = mPackageDosesEt.getText().toString();
 
+        if (drugName.matches("") || drugApi.matches("") || packDescription.matches("") || expEurDate.matches("") || doses.matches("")) {
+            Toast.makeText(getActivity(), getString(R.string.alert_empty_fields), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String expDbDate = DateUtils.fromEurStringToDbString(expEurDate);
+        if(expDbDate == null) {
+            Toast.makeText(getActivity(), getString(R.string.alert_date_not_correct), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            Integer.valueOf(doses);
+        }catch (NumberFormatException e) {
+            Toast.makeText(getActivity(), getString(R.string.alert_dose_not_number), Toast.LENGTH_SHORT).show();
+            return;
+        }
+            if (mDrugId < 0) {
+            // ADD DRUG + PACKAGE
             ContentValues drugValues = new ContentValues();
             drugValues.put(DataContract.DrugEntry.COLUMN_NAME, drugName);
             drugValues.put(DataContract.DrugEntry.COLUMN_API, drugApi);
@@ -279,9 +323,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
             Log.d(LOG_TAG, "Insert new drug id = " + mDrugId);
         }
 
-        String packDescription = mPackageDescriptionEt.getText().toString();
-        String expDate = DateUtils.fromEurStringToDbString(mPackageExpDateEt.getText().toString());
-        String doses = mPackageDosesEt.getText().toString();
+
 
         ContentValues pkg = new ContentValues();
         pkg.put(DataContract.PackageEntry.COLUMN_DRUG_ID, mDrugId);
@@ -301,7 +343,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
         subpack.put(DataContract.SubpackageEntry.COLUMN_DRUG_ID, mDrugId);
         subpack.put(DataContract.SubpackageEntry.COLUMN_PACKAGE_ID, packId);
         subpack.put(DataContract.SubpackageEntry.COLUMN_DOSES_LEFT, doses);
-        subpack.put(DataContract.SubpackageEntry.COLUMN_EXP_DATE, expDate);
+        subpack.put(DataContract.SubpackageEntry.COLUMN_EXP_DATE, expDbDate);
         uri = getActivity().getContentResolver().insert(
                 DataContract.SubpackageEntry.CONTENT_URI,
                 subpack

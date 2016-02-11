@@ -18,9 +18,9 @@
     <string name="package_default_doses">Dosi previste</string>
     <string name="package_units">Unità</string>
     <string name="expiration_date">Data di scadenza</string>
-    <string name="dose">dose</string>
-    <string name="doses">dosi</string>
-    <string name="doses_left">dosi rimaste</string>
+    <string name="dose">Dose</string>
+    <string name="doses">Dosi</string>
+    <string name="doses_left">Dosi rimaste</string>
 
     <string name="wait">Attendi</string>
     <string name="loading_pharmacies">Carico farmacie ...</string>
@@ -32,7 +32,7 @@
     <string name="delete_question">Sei sicuro?</string>
     <string name="exp">SCAD.</string>
 
-    <string name="please_wait">Attendi</string>
+    <string name="please_wait">OCR</string>
     <string name="processing_image">Analizzo l\'immagine ...</string>
 
     <string name="button_ok">Ok</string>
@@ -41,13 +41,14 @@
     <string name="empty_pack">Nessuna confezione</string>
     <string name="empty_prescriptions">Nessuna prescrizione</string>
 
+
     <string name="export_db">Backup</string>
-    <string name="import_db">Ripristina</string>
+    <string name="import_db">Ripristino</string>
 
     <string name="settings">Impostazioni</string>
-    <string name="pref_group_image_tools">Strumenti immagini</string>
+    <string name="pref_group_image_tools">Inserimento nuovo farmaco</string>
     <string name="pref_OCR">OCR</string>
-    <string name="pref_OCR_summary">Abilita Optical Character Recognition sulle immagini</string>
+    <string name="pref_OCR_summary">Abilita Optical Character Recognition per il completamento automatico</string>
     <string name="pref_group_notification">Notifiche</string>
     <string name="pref_days_notify">Giorno di notifica</string>
     <string name="pref_days_notify_summary">Scegli il giorno in cui controllare i farmaci</string>
@@ -80,5 +81,10 @@
     <string name="hours">Ore</string>
 
     <string name="is_running_out">sta finendo</string>
+
+    <string name="alert_empty_fields">Per favore riempi tutti i campi</string>
+    <string name="alert_date_not_correct">Formato data non corretto</string>
+    <string name="alert_dose_not_number">Per favore inserisci un numero intero di dosi</string>
+    <string name="alert_file_error">File non valido</string>
 
 </resources>

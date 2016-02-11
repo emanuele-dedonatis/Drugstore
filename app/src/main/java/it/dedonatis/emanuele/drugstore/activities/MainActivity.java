@@ -27,11 +27,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        populateDb();
+        //populateDb();
 
         // Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -227,7 +229,11 @@ public class MainActivity extends AppCompatActivity
                         try {
                             dataDbHelper.importDatabase(uri.getPath());
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            Toast.makeText(this, getString(R.string.alert_file_error), Toast.LENGTH_SHORT).show();
+                            return;
+                        } catch (ParseException e) {
+                            Toast.makeText(this, getString(R.string.alert_file_error), Toast.LENGTH_SHORT).show();
+                            return;
                         }
 
                 }

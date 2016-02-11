@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.afollestad.materialdialogs.DialogAction;
@@ -261,6 +262,10 @@ public class DrugsListFragment extends Fragment implements LoaderManager.LoaderC
                                     View view = dialog.getView();
                                     String newName = ((EditText) view.findViewById(R.id.dialog_edit_drug_name)).getText().toString();
                                     String newApi = ((EditText) view.findViewById(R.id.dialog_edit_drug_api)).getText().toString();
+                                    if (newName.equals("") || newApi.equals("")) {
+                                        Toast.makeText(getActivity(), getString(R.string.alert_empty_fields), Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
                                     if (newName.equals(name) && newApi.equals(api)) {
                                         return;
                                     } else {
