@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Drugstore</string>
-    <string name="hello_user">Dear user</string>
     <string name="save">Save</string>
     <string name="title_activity_drugs">Drugs</string>
     <string name="action_settings">Settings</string>
@@ -36,8 +35,6 @@
     <string name="please_wait">Please wait</string>
     <string name="processing_image">Processing Image ...</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_drug_detail">DrugDetailActivity</string>
     <string name="title_activity_new_drug">NewDrugActivity</string>
     <string name="button_ok">Ok</string>

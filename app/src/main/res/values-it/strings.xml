@@ -1,0 +1,84 @@
+<resources>
+    <string name="app_name">Drugstore</string>
+    <string name="save">Salva</string>
+    <string name="title_activity_drugs">Farmaci</string>
+    <string name="action_settings">Impostazioni</string>
+
+    <string name="navigation_drawer_open">Apri navigation drawer</string>
+    <string name="navigation_drawer_close">Chiudi navigation drawer</string>
+
+    <string name="drugs">Farmaci</string>
+    <string name="my_drugs">I miei farmaci</string>
+    <string name="pharmacies">Farmacie</string>
+    <string name="prescriptions">Prescrizioni</string>
+
+    <string name="drug_name">Nome del farmaco</string>
+    <string name="drug_api">Principio attivo</string>
+    <string name="package_description">Descrizione confezione</string>
+    <string name="package_default_doses">Dosi previste</string>
+    <string name="package_units">Unità</string>
+    <string name="expiration_date">Data di scadenza</string>
+    <string name="dose">dose</string>
+    <string name="doses">dosi</string>
+    <string name="doses_left">dosi rimaste</string>
+
+    <string name="wait">Attendi</string>
+    <string name="loading_pharmacies">Carico farmacie ...</string>
+
+    <string name="use">Utilizza</string>
+    <string name="add">Aggiungi</string>
+    <string name="cancel">Cancella</string>
+    <string name="done">Fatto</string>
+    <string name="delete_question">Sei sicuro?</string>
+    <string name="exp">SCAD.</string>
+
+    <string name="please_wait">Attendi</string>
+    <string name="processing_image">Analizzo l\'immagine ...</string>
+
+    <string name="button_ok">Ok</string>
+
+    <string name="empty_drugs">Nessun farmaco</string>
+    <string name="empty_pack">Nessuna confezione</string>
+    <string name="empty_prescriptions">Nessuna prescrizione</string>
+
+    <string name="export_db">Backup</string>
+    <string name="import_db">Ripristina</string>
+
+    <string name="settings">Impostazioni</string>
+    <string name="pref_group_image_tools">Strumenti immagini</string>
+    <string name="pref_OCR">OCR</string>
+    <string name="pref_OCR_summary">Abilita Optical Character Recognition sulle immagini</string>
+    <string name="pref_group_notification">Notifiche</string>
+    <string name="pref_days_notify">Giorno di notifica</string>
+    <string name="pref_days_notify_summary">Scegli il giorno in cui controllare i farmaci</string>
+    <string name="pref_hour_of_day_notify">Orario di notifica</string>
+    <string name="pref_hour_of_day_notify_summary">Scegli l\'orario in cui ricevere notifiche</string>
+    <string name="pref_debug">Debug</string>
+    <string name="pref_debug_summary">Notifica ogni 30 sec</string>
+
+
+    <string name="google_api_key">AIzaSyA1YtIDJpygHHGN9MD43opEM0Xx_e7mhhA</string>
+    <string name="title_activity_settings">Impostazioni</string>
+
+
+    <string name="share">Condividi</string>
+    <string name="edit">Modifica</string>
+    <string name="delete">Cancella</string>
+
+    <string name="select_exp_date">Seleziona data di scadenza</string>
+    <string name="is_expiring">sta scadendo</string>
+
+    <string name="every">Ogni</string>
+    <string name="until">Fino</string>
+    <string name="month">Mese</string>
+    <string name="months">Mesi</string>
+    <string name="week">Settimana</string>
+    <string name="weeks">Settimane</string>
+    <string name="day">Giorno</string>
+    <string name="days">Giorni</string>
+    <string name="hour">Ora</string>
+    <string name="hours">Ore</string>
+
+    <string name="is_running_out">sta finendo</string>
+
+</resources>
