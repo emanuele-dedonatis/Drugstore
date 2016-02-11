@@ -247,7 +247,7 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
 
                         final List<String> lines = new ArrayList<String>();
                         if (mOcrEnabled) {
-                            if (traineddataExist) {
+                            if (traineddataExist) {/*
                                 TessBaseAPI baseAPI = new TessBaseAPI();
                                 baseAPI.init(getActivity().getExternalFilesDir(null).getPath(), "ita");
                                 baseAPI.setImage(thumb);
@@ -256,11 +256,17 @@ public class AddDrugFragment extends Fragment implements AddDrugActivity.OnMenuI
                                 while (scanner.hasNextLine()) {
                                     String line = scanner.nextLine().replaceAll("[^A-Za-z\\s]+", "");
                                     line = line.trim().replaceAll(" +", " ");
-                                    if (line.length() > 8)
+                                    if (line.length() > 5) {
                                         line = Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
-                                    lines.add(line);
+                                        lines.add(line);
+                                    }
                                     Log.d(LOG_TAG, line + " -> " + line);
+
                                 }
+                                */
+                                lines.add("Aspirina");
+                                lines.add("Compresse");
+                                lines.add("Acido folico");
                             }
                         }
                         ringProgressDialog.dismiss();
