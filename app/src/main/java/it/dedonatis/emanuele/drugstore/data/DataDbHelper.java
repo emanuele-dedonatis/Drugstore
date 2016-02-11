@@ -19,7 +19,7 @@ import it.dedonatis.emanuele.drugstore.data.DataContract.*;
 
 public class DataDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     static final String DATABASE_NAME = "drugs.db";
     private final String DB_FILEPATH;
@@ -53,7 +53,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
             ------------------------------------
             |   long id                         |
             |   long drug_id                    |
-            |   (UNIQUE) String description     |
+            |   String description              |
             |   int doses                       |
             |   Uri image                       |
             ------------------------------------
@@ -61,7 +61,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_PACKAGES_TABLE = "CREATE TABLE " + PackageEntry.TABLE_NAME + " (" +
                 PackageEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 PackageEntry.COLUMN_DRUG_ID + " INTEGER NOT NULL, " +
-                PackageEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL UNIQUE, " +
+                PackageEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL, " +
                 PackageEntry.COLUMN_DOSES + " INTEGER NOT NULL, " +
                 PackageEntry.COLUMN_IMAGE_URI + " STRING," +
 

@@ -20,7 +20,7 @@ public class ColorUtils {
 
     public static int getDrugColor(String drugName, String drugApi) {
         if(drugApi != null)
-            return generator.getColor(drugApi);
+            return generator.getColor(drugApi + drugName);
         else
             return 0;
     }
