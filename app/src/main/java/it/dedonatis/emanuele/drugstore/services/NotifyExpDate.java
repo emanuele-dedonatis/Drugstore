@@ -34,10 +34,12 @@ public class NotifyExpDate extends BroadcastReceiver {
 
     private static final String[] PACKAGE_COLUMNS = {
             DataContract.PackageEntry.TABLE_NAME + "." + DataContract.PackageEntry._ID,
-            DataContract.PackageEntry.COLUMN_DESCRIPTION
+            DataContract.PackageEntry.COLUMN_DESCRIPTION,
+            DataContract.PackageEntry.COLUMN_DRUG_ID
     };
     public static final int COL_PACKAGE_ID = 0;
     public static final int COL_PACKAGE_DESCRIPTION = 1;
+    public static final int COL_PACKAGE_DRUGID = 2;
 
     private static final String[] SUBPACKAGE_COLUMNS = {
             DataContract.SubpackageEntry.TABLE_NAME + "." + DataContract.SubpackageEntry._ID,
@@ -51,10 +53,21 @@ public class NotifyExpDate extends BroadcastReceiver {
     public static final int COL_SUBPACKAGE_PACKAGE_ID = 2;
     public static final int COL_SUBPACKAGE_EXP_DATE = 3;
 
+    private static final String[] SUBPACKAGE_DOSE_COLUMNS = {
+            DataContract.SubpackageEntry.TABLE_NAME + "." + DataContract.SubpackageEntry._ID,
+            DataContract.SubpackageEntry.COLUMN_DOSES_LEFT
+    };
+
+    public static final int COL_SUBPACKAGE_DOSES_LEFT = 1;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("MUMU", "Ho ricevuto l'alarm");
+        checkExpDate(context);
+        checkDosesLeft(context);
+    }
+
+    private void checkExpDate(Context context) {
         Cursor subpackageCursor = context.getContentResolver().query(DataContract.SubpackageEntry.CONTENT_URI,
                 SUBPACKAGE_COLUMNS,
                 null,
@@ -112,7 +125,7 @@ public class NotifyExpDate extends BroadcastReceiver {
                 PendingIntent resultPendingIntent =
                         PendingIntent.getActivity(
                                 context,
-                                (int)subpackageId,
+                                (int)Calendar.getInstance().getTimeInMillis(),
                                 drugIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT
                         );
@@ -124,7 +137,7 @@ public class NotifyExpDate extends BroadcastReceiver {
                 builder.setContentIntent(resultPendingIntent);
                 builder.setAutoCancel(true);
                 Notification notification = builder.build();
-                notificationManager.notify((int)subpackageId, notification);
+                notificationManager.notify((int)Calendar.getInstance().getTimeInMillis(), notification);
 
 
                 packageCursor.close();
@@ -133,4 +146,80 @@ public class NotifyExpDate extends BroadcastReceiver {
         }
     }
 
+    private void checkDosesLeft(Context context) {
+
+        Cursor packageCursor = context.getContentResolver().query(DataContract.PackageEntry.CONTENT_URI,
+                PACKAGE_COLUMNS,
+                null,
+                null,
+                null
+        );
+
+        while (packageCursor.moveToNext()) {
+            long packageId = packageCursor.getLong(COL_PACKAGE_ID);
+            long drugId = packageCursor.getLong(COL_PACKAGE_DRUGID);
+            String packageName = packageCursor.getString(COL_PACKAGE_DESCRIPTION);
+
+            Cursor subpackageCursor = context.getContentResolver().query(DataContract.SubpackageEntry.buildSubackagesFromPackage(packageId),
+                    SUBPACKAGE_DOSE_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
+
+            int dosesLeft = 0;
+
+            while(subpackageCursor.moveToNext()) {
+                int doses = subpackageCursor.getInt(COL_SUBPACKAGE_DOSES_LEFT);
+                dosesLeft+=doses;
+            }
+
+            if(dosesLeft < 3) {
+                // Get drug name and api
+                Cursor drugCursor = context.getContentResolver().query(DataContract.DrugEntry.buildDrugUri(drugId),
+                        DRUG_COLUMNS,
+                        null,
+                        null,
+                        null);
+
+                String drugName = "";
+                String drugApi = "";
+                while(drugCursor.moveToNext()) {
+                    drugName = drugCursor.getString(COL_DRUG_NAME);
+                    drugApi = drugCursor.getString(COL_DRUG_API);
+                }
+
+                Intent drugIntent = new Intent(context, PackagesActivity.class);
+                drugIntent.putExtra(PackagesActivity.MESSAGE_DRUG_ID, drugId);
+                drugIntent.putExtra(PackagesActivity.MESSAGE_DRUG_NAME, drugName);
+                drugIntent.putExtra(PackagesActivity.MESSAGE_DRUG_API, drugApi);
+
+                PendingIntent resultPendingIntent =
+                        PendingIntent.getActivity(
+                                context,
+                                (int)Calendar.getInstance().getTimeInMillis(),
+                                drugIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+
+                NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+                Notification.Builder builder = new Notification.Builder(context);
+                builder.setContentTitle(drugName + " " + context.getString(R.string.is_running_out));
+                builder.setContentText(packageName + " (" + dosesLeft + " "
+                        + ((dosesLeft < 2) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase()) +")");
+                builder.setSmallIcon(R.drawable.ic_stat_medical15);
+                builder.setContentIntent(resultPendingIntent);
+                builder.setAutoCancel(true);
+                Notification notification = builder.build();
+                notificationManager.notify((int)Calendar.getInstance().getTimeInMillis(), notification);
+
+            }
+
+
+
+            subpackageCursor.close();
+        }
+        packageCursor.close();
+    }
 }
+

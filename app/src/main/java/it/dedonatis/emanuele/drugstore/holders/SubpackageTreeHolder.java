@@ -61,6 +61,9 @@ public class SubpackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugSubpac
         int doses = mSubpackage.getDosesLeft();
         mTvDoses.setText(doses + " " + ((doses == 1) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase()));
 
+        if(doses < 3)
+            mTvDoses.setTextColor(Color.parseColor("#B71C1C"));
+
         if (doses <= 0) {
             mBtnUse.setEnabled(false);
         }

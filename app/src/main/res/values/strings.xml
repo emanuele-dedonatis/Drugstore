@@ -84,4 +84,6 @@
     <string name="hour">Hour</string>
     <string name="hours">Hours</string>
 
+    <string name="is_running_out">is ​running out</string>
+
 </resources>

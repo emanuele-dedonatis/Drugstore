@@ -1,6 +1,7 @@
 package it.dedonatis.emanuele.drugstore.holders;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
@@ -40,13 +41,8 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
         mTvDescription = (TextView) view.findViewById(R.id.item_package_description);
         mTvDescription.setText(pkg.getDescription());
         mTvDoses = (TextView) view.findViewById(R.id.item_package_total_doses_number);
-        int doses = 0;
-        for (DrugSubpackage subpackage : pkg.getSubpackages()) {
-            doses += subpackage.getDosesLeft();
-        }
-        mTvDoses.setText(doses + "");
-        TextView tvDosesString = (TextView) view.findViewById(R.id.item_package_total_doses_string);
-        tvDosesString.setText((doses == 1) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase());
+
+        updateDosesLeft();
 
         ImageView letter = (ImageView) view.findViewById(R.id.item_package_letter);
         letter.setImageDrawable(ImageUtils.generateRoundLetter(pkg.getDescription(), pkg.getDrugColor()));
@@ -102,7 +98,10 @@ public class PackageTreeHolder extends TreeNode.BaseNodeViewHolder<DrugPackage> 
     }
 
     public void updateDosesLeft() {
-        mTvDoses.setText(mPkg.getAllDosesLeft() + "");
+        int dosesLeft = mPkg.getAllDosesLeft();
+        mTvDoses.setText(dosesLeft + " " + ((dosesLeft == 1) ? context.getString(R.string.dose).toLowerCase() : context.getString(R.string.doses).toLowerCase()));
+        if(dosesLeft < 3)
+            mTvDoses.setTextColor(Color.parseColor("#B71C1C"));
     }
 
     public void updateDescription() {

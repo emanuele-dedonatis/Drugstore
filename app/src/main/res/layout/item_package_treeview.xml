@@ -49,14 +49,6 @@
                     android:text="22"
                     android:id="@+id/item_package_total_doses_number"
                     android:textColor="@color/secondary_text" />
-                <TextView
-                    style="@style/Base.TextAppearance.AppCompat.Body1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="doses"
-                    android:layout_marginLeft="3dp"
-                    android:id="@+id/item_package_total_doses_string"
-                    android:textColor="@color/secondary_text" />
 
 
             </LinearLayout>
